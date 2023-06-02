@@ -53,10 +53,9 @@ class TimeProfiler(Callback):
             deltas[key] = sum(deltas[key]) / len(deltas[key])
 
         if "train epoch" in deltas:
+            deltas["train epoch"] -= deltas["validation epoch"]
             deltas["total train downtime"] = (
-                    deltas["train epoch"]
-                    - deltas["validation epoch"]
-                    - n_train_batches * deltas["train batch"]
+                    deltas["train epoch"] - n_train_batches * deltas["train batch"]
             )
 
             deltas["total val downtime"] = (
