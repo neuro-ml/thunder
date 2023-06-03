@@ -2,8 +2,8 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List
 
+from lightning import Callback
 from more_itertools import windowed
-from pytorch_lightning.callbacks import Callback
 
 
 class TimeProfiler(Callback):

@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from lazycon import Config
-from pytorch_lightning import LightningModule, Trainer
+from lightning import LightningModule, Trainer
 from typer import Typer
 
 app = Typer()

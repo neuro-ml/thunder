@@ -1,4 +1,4 @@
-pytorch-lightning>=2.0.0
+lightning>=2.0.0,<3.0.0
 lazycon<1.0.0
 typer
 torch

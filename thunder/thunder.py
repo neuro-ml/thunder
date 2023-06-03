@@ -4,8 +4,8 @@ from typing import Any, Dict, Callable, Optional
 
 import numpy as np
 import torch
-from pytorch_lightning import LightningModule, Trainer, Callback
-from pytorch_lightning.utilities.types import STEP_OUTPUT
+from lightning import LightningModule, Trainer, Callback
+from lightning.pytorch.utilities.types import STEP_OUTPUT
 from toolz import valmap
 
 
