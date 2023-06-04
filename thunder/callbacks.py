@@ -54,25 +54,23 @@ class TimeProfiler(Callback):
 
         if "train epoch" in deltas:
             deltas["train epoch"] -= deltas["validation epoch"]
-            deltas["total train downtime"] = (
-                    deltas["train epoch"] - n_train_batches * deltas["train batch"]
-            )
+            deltas["total train downtime"] = deltas["train epoch"] - n_train_batches * deltas["train batch"]
 
-            deltas["total val downtime"] = (
-                    deltas["validation epoch"] - n_val_batches * deltas["validation batch"]
-            )
+            deltas["total val downtime"] = deltas["validation epoch"] - n_val_batches * deltas["validation batch"]
 
-            deltas["avg train downtime"] = (
-                    deltas["total train downtime"] / n_train_batches
-            )
+            deltas["avg train downtime"] = deltas["total train downtime"] / n_train_batches
             deltas["avg val downtime"] = deltas["total val downtime"] / n_val_batches
 
         return deltas
 
-    def log_to_logger(self, pl_module, clear: bool = True):
+    def log_to_logger(self, pl_module, on_epoch: bool = False, clear: bool = True):
         deltas = self.compute_time_delta()
-        pl_module.log_dict({f"{self.__class__.__name__}/{k}": v for k, v in deltas.items() if k in self.keys},
-                           prog_bar=False)
+        pl_module.log_dict(
+            {f"{self.__class__.__name__}/{k}": v for k, v in deltas.items() if k in self.keys},
+            prog_bar=False,
+            on_step=not on_epoch,
+            on_epoch=on_epoch,
+        )
         if clear:
             self.time_stamps.clear()
 
@@ -82,28 +80,27 @@ class TimeProfiler(Callback):
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
         self.log_time("train batch")
         self.log_time("optimizer step")
-        self.log_to_logger(pl_module, False)
+        self.log_to_logger(pl_module, False, False)
 
     def on_train_epoch_start(self, trainer, pl_module):
         self.log_time("train epoch")
 
     def on_train_epoch_end(self, trainer, pl_module):
         self.log_time("train epoch")
-        self.log_to_logger(pl_module, True)
+        self.log_to_logger(pl_module, True, True)
 
     def on_validation_batch_start(self, trainer, pl_module, batch, batch_idx, dataloader_idx=0):
         self.log_time("validation batch")
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=0):
         self.log_time("validation batch")
-        self.log_to_logger(pl_module, False)
+        self.log_to_logger(pl_module, False, False)
 
     def on_validation_epoch_start(self, trainer, pl_module):
         self.log_time("validation epoch")
 
     def on_validation_epoch_end(self, trainer, pl_module):
         self.log_time("validation epoch")
-        self.log_to_logger(pl_module, False)
 
     def on_before_backward(self, trainer, pl_module, loss):
         self.log_time("backward")
@@ -113,7 +110,7 @@ class TimeProfiler(Callback):
 
     def on_before_optimizer_step(self, trainer, pl_module, optimizer):
         self.log_time("optimizer step")
-        self.log_to_logger(pl_module, False)
+        self.log_to_logger(pl_module, False, False)
 
     def setup(self, trainer, pl_module, stage: str):
         if stage == "fit":
