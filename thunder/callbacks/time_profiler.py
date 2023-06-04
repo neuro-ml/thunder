@@ -1,13 +1,14 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from lightning import Callback
+from lightning.pytorch.utilities.exceptions import MisconfigurationException
 from more_itertools import windowed
 
 
 class TimeProfiler(Callback):
-    def __init__(self, *keys: str):
+    def __init__(self, *keys: Union[str, bool]):
         self._default_keys = (
             "train batch",
             "validation batch",
@@ -23,9 +24,12 @@ class TimeProfiler(Callback):
             "total val downtime",
         )
 
+        if len(keys) != 0 and keys[0] is True:
+            keys = sorted(self._optional_keys)
+
         _keys = sorted(set(keys).intersection(self._optional_keys))
         if _keys != sorted(keys):
-            raise ValueError(f"TimeProfiler got unknown keys: {set(_keys) - set(keys)}")
+            raise ValueError(f"TimeProfiler got unknown keys: {set(keys) - set(_keys)}")
 
         self.keys = sorted(set(keys).union(self._default_keys))
         self.time_stamps: Dict[str, List[datetime]] = defaultdict(list)
@@ -113,6 +117,8 @@ class TimeProfiler(Callback):
         self.log_to_logger(pl_module, False, False)
 
     def setup(self, trainer, pl_module, stage: str):
+        if not trainer.loggers:
+            raise MisconfigurationException(f"Cannot use {self.__class__.__name__} callback with no logger")
         if stage == "fit":
             self.time_stamps.clear()
 
