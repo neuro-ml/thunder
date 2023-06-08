@@ -39,6 +39,10 @@ include = ['thunder']
 version = { attr = 'thunder.__version__.__version__' }
 dependencies = { file = 'requirements.txt' }
 
+[tool.coverage.run]
+branch = true
+source = ['thunder/']
+
 [tool.black]
 line-length = 120
 skip-string-normalization = true
