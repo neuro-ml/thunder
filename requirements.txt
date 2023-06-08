@@ -5,3 +5,4 @@ torch
 toolz
 numpy
 more_itertools
+pyyaml

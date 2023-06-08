@@ -69,12 +69,13 @@ class CrossValTest(Layout):
         return self._subset(2)
 
     def build(self, experiment: Path, config: Config):
+        name = experiment.name
         for fold in range(self.n_folds):
             folder = experiment / f'fold_{fold}'
             folder.mkdir()
             save(self.splits[fold], folder / 'split.json')
 
-            local = config.copy().update(ExpName=f'fold_{fold}', GroupName=experiment.name)
+            local = config.copy().update(ExpName=f'{name}({fold})', GroupName=name)
             local.dump(folder / 'experiment.config')
 
     def load(self, experiment: Path) -> Dict[str, Any]:
