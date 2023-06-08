@@ -1,36 +1,54 @@
-import os
 import shutil
 from io import StringIO
 from pathlib import Path
-from typing import List
+from typing import List, Optional, Annotated
 
 import yaml
 from lazycon import Config
 from lightning import LightningModule, Trainer
-from typer import Typer, Option
+from typer import Typer, Option, Argument
+from deli import load, save
 
-from .layout import Layout
+from .layout import Layout, Single, Node
+from .utils import chdir
 
 app = Typer(pretty_exceptions_enable=False)
 
 
 @app.command()
-def start(experiment_or_config: Path):
+def start(experiment_or_config: Path = Argument(show_default=False), name: Annotated[Optional[str], Argument()] = None):
     experiment_or_config = Path(experiment_or_config)
     if experiment_or_config.is_dir():
-        experiment, config = experiment_or_config, experiment_or_config / 'experiment.config'
+        experiment, config_path = experiment_or_config, experiment_or_config / 'experiment.config'
     else:
-        experiment, config = experiment_or_config.parent, experiment_or_config
-    experiment, config = experiment.resolve(), config.resolve()
+        experiment, config_path = experiment_or_config.parent, experiment_or_config
 
-    cwd = os.getcwd()
-    os.chdir(experiment)
-    try:
-        config = Config.load(config)
-        if hasattr(config, 'layout'):
-            layout: Layout = config.layout
-            # FIXME
-            layout.prepare(experiment)
+    nodes = {}
+    if (experiment / 'nodes.json').exists():
+        # TODO: check uniqueness
+        nodes = {x.name: x for x in map(Node.parse_obj, load(experiment / 'nodes.json'))}
+
+    if name is None:
+        if len(nodes) > 1:
+            # TODO
+            raise ValueError
+        elif len(nodes) == 1:
+            node, = nodes.values()
+        else:
+            node = None
+    else:
+        node = nodes[name]
+
+    # load the main config
+    main_config = Config.load(config_path)
+    # get the layout
+    # FIXME
+    main_layout: Layout = getattr(main_config, 'layout', Single())
+    config, root, params = main_layout.load(experiment, node)
+
+    with chdir(root):
+        layout: Layout = getattr(config, 'layout', Single())
+        layout.set(**params)
 
         # TODO: match by type rather than name?
         module: LightningModule = config.module
@@ -49,10 +67,7 @@ def start(experiment_or_config: Path):
 
         # train
         # TODO: move get(..., default) to lazycon
-        trainer.fit(module, config.train_data, getattr(config, 'val_data', None))
-
-    finally:
-        os.chdir(cwd)
+        trainer.fit(module, config.train_data, getattr(config, 'val_data', None), ckpt_path='last')
 
 
 @app.command()
@@ -78,13 +93,12 @@ def build(
     experiment.mkdir(parents=True)
     try:
         # build the layout
-        if hasattr(config, 'layout'):
-            layout: Layout = config.layout
-            layout.build(experiment, config)
+        layout: Layout = getattr(config, 'layout', Single())
+        # TODO: check name uniqueness
+        nodes = list(layout.build(experiment, config))
+        if nodes:
+            save([node.dict() for node in nodes], experiment / 'nodes.json')
 
-        else:
-            config = config.copy().update(ExpName=experiment.name)
-            config.dump(experiment / 'experiment.config')
     except Exception:
         shutil.rmtree(experiment)
         raise

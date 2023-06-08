@@ -1,30 +1,55 @@
+from __future__ import annotations
+
 import warnings
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional, Dict, Any, Union, Sequence
+from typing import Optional, Dict, Any, Union, Sequence, Iterable, Tuple
 
 import numpy as np
 from dpipe.split import train_val_test_split
 from connectome import Layer, Filter
 from lazycon import Config
+from pydantic import BaseModel, Extra
 from torch.utils.data import Dataset, Subset
 from deli import load, save
 
 
-class Layout(ABC):
-    def prepare(self, experiment: Path):
-        self.set(**self.load(experiment))
+class Node(BaseModel):
+    name: str
 
+    # TODO: no layouts with parents so far
+    # parents: Sequence[Node] = ()
+
+    class Config:
+        extra = Extra.forbid
+
+
+class Layout(ABC):
     @abstractmethod
-    def build(self, experiment: Path, config: Config):
+    def build(self, experiment: Path, config: Config) -> Iterable[Node]:
         pass
 
     @abstractmethod
-    def load(self, experiment: Path) -> Dict[str, Any]:
+    def load(self, experiment: Path, node: Optional[Node]) -> Tuple[Config, Path, Dict[str, Any]]:
         pass
 
     @abstractmethod
     def set(self, **kwargs):
+        pass
+
+
+class Single(Layout):
+    def build(self, experiment: Path, config: Config) -> Iterable[Node]:
+        config = config.copy().update(ExpName=experiment.name)
+        config.dump(experiment / 'experiment.config')
+        return []
+
+    def load(self, experiment: Path, node: Optional[Node]) -> Tuple[Config, Path, Dict[str, Any]]:
+        if node is not None:
+            raise ValueError(f'Unknown name: {node.name}')
+        return Config.load(experiment / 'experiment.config'), experiment, {}
+
+    def set(self):
         pass
 
 
@@ -69,6 +94,7 @@ class CrossValTest(Layout):
         return self._subset(2)
 
     def build(self, experiment: Path, config: Config):
+        config.dump(experiment / 'experiment.config')
         name = experiment.name
         for fold in range(self.n_folds):
             folder = experiment / f'fold_{fold}'
@@ -77,11 +103,13 @@ class CrossValTest(Layout):
 
             local = config.copy().update(ExpName=f'{name}({fold})', GroupName=name)
             local.dump(folder / 'experiment.config')
+            yield Node(name=str(fold))
 
-    def load(self, experiment: Path) -> Dict[str, Any]:
-        return {
-            'fold': int(experiment.name.split('_')[-1]),
-            'split': load(experiment / 'split.json'),
+    def load(self, experiment: Path, node: Optional[Node]) -> Tuple[Config, Path, Dict[str, Any]]:
+        folder = experiment / f'fold_{node.name}'
+        return Config.load(folder / 'experiment.config'), folder, {
+            'fold': int(node.name),
+            'split': load(folder / 'split.json'),
         }
 
     def set(self, fold: int, split: Optional[Sequence[Sequence]] = None):
