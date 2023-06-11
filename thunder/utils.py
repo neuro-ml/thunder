@@ -10,3 +10,10 @@ def chdir(folder):
         yield
     finally:
         os.chdir(cwd)
+
+
+def squeeze_first(inputs):
+    """Remove the first dimension in case it is singleton."""
+    if len(inputs) == 1:
+        inputs = inputs[0]
+    return inputs

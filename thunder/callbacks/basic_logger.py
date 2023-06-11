@@ -8,7 +8,7 @@ from lightning import LightningModule, Trainer, Callback
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from toolz import valmap
 
-from thunder.torch.utils import to_np
+from ..torch.utils import to_np
 
 
 class BasicLogger(Callback):

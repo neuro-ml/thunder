@@ -42,12 +42,17 @@ class ThunderModule(LightningModule):
         return self.criterion(self(*x), *y)
 
     def validation_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> STEP_OUTPUT:
-        x, y = batch[: -self.n_targets], batch[-self.n_targets]
-        x = super().transfer_batch_to_device(x, self.device, dataloader_idx)
-        return to_np(self.inference_step(*x), y)
+        return self.predict(batch, batch_idx, dataloader_idx)
 
     def test_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> STEP_OUTPUT:
-        x, y = batch[: -self.n_targets], batch[-self.n_targets]
+        return self.predict(batch, batch_idx, dataloader_idx)
+
+    def predict_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
+        return self.predict(batch, batch_idx, dataloader_idx)
+
+    # TODO: rework predict logic
+    def predict(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> STEP_OUTPUT:
+        x, y = batch[: -self.n_targets], batch[-self.n_targets:]
         x = super().transfer_batch_to_device(x, self.device, dataloader_idx)
         return to_np(self.inference_step(*x), y)
 
