@@ -8,6 +8,8 @@ from lightning import LightningModule, Trainer, Callback
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from toolz import valmap
 
+from thunder.torch.utils import to_np
+
 
 class BasicLogger(Callback):
     def __init__(self, single_metrics: Dict[str, Callable] = None, group_metrics: Dict[str, Callable] = None):
@@ -88,7 +90,3 @@ class BasicLogger(Callback):
 
         for k, value in chain(single_metric_values.items(), group_metric_values.items()):
             pl_module.log(f'val/{k}', value)
-
-
-def to_np(x: torch.Tensor):
-    return x.data.cpu().numpy()
