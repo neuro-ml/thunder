@@ -67,23 +67,30 @@ class ThunderModule(LightningModule):
             )
 
         _optimizers = list(collapse([self.optimizer]))
-        _lr_schedulers = list(padded(collapse([self.lr_scheduler]), None, len(_optimizers)))
-
-        if len(_optimizers) < len(_lr_schedulers):
-            raise ValueError(
-                "The number of optimizers must be greater or equal to number of "
-                f"lr_schedulers, got {len(_optimizers)} and {len(_lr_schedulers)}"
-            )
+        _lr_schedulers = list(collapse([self.lr_scheduler]))
+        max_len = max(map(len, (_optimizers, _lr_schedulers)))
+        _optimizers = list(padded(_optimizers, None, max_len))
+        _lr_schedulers = list(padded(_lr_schedulers, None, max_len))
 
         optimizers = []
         lr_schedulers = []
 
         for optimizer, lr_scheduler in zip_equal(_optimizers, _lr_schedulers):
             if callable(lr_scheduler):
+                if optimizer is None:
+                    raise ValueError(f"The scheduler demands an Optimizer, but received None")
                 lr_scheduler = lr_scheduler(optimizer)
 
             optimizers.append(optimizer if lr_scheduler is None else lr_scheduler.optimizer)
             if lr_scheduler is not None:
                 lr_schedulers.append(lr_scheduler)
+
+        if len(optimizers) < len(lr_schedulers):
+            raise ValueError(
+                "The number of optimizers must be greater or equal to the number of "
+                f"lr_schedulers, got {len(optimizers)} and {len(lr_schedulers)}\n"
+                f"Optimizers: f{optimizers}\n"
+                f"Schedulers: f{lr_schedulers}\n"
+            )
 
         return optimizers, lr_schedulers

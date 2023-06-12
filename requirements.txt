@@ -6,3 +6,4 @@ toolz
 numpy
 more_itertools
 pyyaml
+scikit-learn

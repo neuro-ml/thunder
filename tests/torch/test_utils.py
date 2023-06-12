@@ -15,7 +15,7 @@ from thunder.torch.utils import get_device, to_np, maybe_from_np
     [
         (
             {"x": torch.Tensor([1, 2, 3]), "y": torch.from_numpy(np.ones((3, 3)))},
-            {"x": np.asarray([1, 2, 3]).astype(np.float32), "y": np.ones((3, 3))}
+            {"x": np.asarray([1, 2, 3]).astype(np.float32), "y": np.ones((3, 3))},
         ),
         ([torch.ones(10, 11), torch.zeros(5, 5)], [np.ones((10, 11)), np.zeros((5, 5))]),
         ((torch.ones(10, 11), torch.zeros(5, 5)), (np.ones((10, 11)), np.zeros((5, 5)))),
@@ -40,7 +40,7 @@ def test_to_np(value, target):
     [
         (
             {"x": np.asarray([1, 2, 3]).astype(np.float32), "y": np.ones((3, 3))},
-            {"x": torch.Tensor([1, 2, 3]), "y": torch.from_numpy(np.ones((3, 3)))}
+            {"x": torch.Tensor([1, 2, 3]), "y": torch.from_numpy(np.ones((3, 3)))},
         ),
         ([np.ones((10, 11)), np.zeros((5, 5))], [torch.ones(10, 11), torch.zeros(5, 5)]),
         ((np.ones((10, 11)), np.zeros((5, 5))), (torch.ones(10, 11), torch.zeros(5, 5))),
