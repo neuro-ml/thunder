@@ -11,7 +11,7 @@ from toolz import valmap
 from ..torch.utils import to_np
 
 
-class BasicLogger(Callback):
+class MetricLogger(Callback):
     def __init__(self, single_metrics: Dict[str, Callable] = None, group_metrics: Dict[str, Callable] = None):
         single_metrics = dict(single_metrics or {})
         group_metrics = dict(group_metrics or {})
@@ -80,7 +80,7 @@ class BasicLogger(Callback):
     def on_validation_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
         group_metric_values = {}
         if self.group_metrics and self._all_predictions:
-            predictions, targets = zip(*self._all_predictions)
+            predictions, targets = map(np.asarray, zip(*self._all_predictions))
             group_metric_values = {name: metric(predictions, targets) for name, metric in self.group_metrics.items()}
 
         single_metric_values = valmap(np.mean, self._single_metric_values)
