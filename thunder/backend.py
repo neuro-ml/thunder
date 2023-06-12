@@ -87,7 +87,7 @@ class Slurm(Backend):
         if config.nodelist:
             args.append(f'--nodelist {config.nodelist}')
 
-        args.extend(['#!/bin/bash\n', f'thunder start {str(experiment)}'])
+        args.extend(['/PATH/TO/LAUNCHSCRIPT.sh'])
 
         if config.nodes is None:
             subprocess.check_call(args)
