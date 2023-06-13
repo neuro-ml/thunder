@@ -1,18 +1,21 @@
 from collections import defaultdict
 from itertools import chain
-from typing import Any, Dict, Callable, Optional
+from typing import Any, Dict, Callable, Optional, Collection
 
 import numpy as np
 import torch
 from lightning import LightningModule, Trainer, Callback
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from toolz import valmap
+from inspect import isfunction
 
 from ..torch.utils import to_np
 
 
 class MetricLogger(Callback):
-    def __init__(self, single_metrics: Dict[str, Callable] = None, group_metrics: Dict[str, Callable] = None):
+    def __init__(
+        self, single_metrics: Dict[str, Callable] = None, group_metrics: Dict[str, Callable] = None, aggregate_fn=None
+    ):
         single_metrics = dict(single_metrics or {})
         group_metrics = dict(group_metrics or {})
         for name in set(single_metrics) & set(group_metrics):
@@ -24,11 +27,38 @@ class MetricLogger(Callback):
         self._train_losses = []
         self._single_metric_values = {name: [] for name in single_metrics}
         self._all_predictions = []
+        self._default_aggregators = {"min": np.min, "max": np.max, "median": np.median, "std": np.std}
 
-    # loss
+        self.aggregate_fn = {"": np.mean}
+
+        if isinstance(aggregate_fn, (str, Callable)):
+            aggregate_fn = [aggregate_fn]
+
+        if isinstance(aggregate_fn, (list, tuple)):
+            for fn in aggregate_fn:
+                if callable(fn):
+                    self.aggregate_fn.update({_get_func_name(fn): fn})
+                elif isinstance(fn, str):
+                    if fn not in self._default_aggregators:
+                        raise ValueError(
+                            f"Unknown aggregate_fn: {fn}, if passing a str"
+                            f", it should be one of {sorted(self._default_aggregators.keys())}"
+                        )
+                    self.aggregate_fn.update({fn: self._default_aggregators[fn]})
+                else:
+                    raise TypeError(f"Expected aggregate_fn to callable or str, got {type(fn)}")
+
+        elif isinstance(aggregate_fn, dict):
+            not_callable = {k: v for k, v in filter(lambda it: not callable(it[1]), aggregate_fn.items())}
+            if not_callable:
+                raise TypeError(f"All aggregators must be callable if you pass a dict, got uncallable {not_callable}")
+            self.aggregate_fn.update(aggregate_fn)
+        else:
+            if aggregate_fn is not None:
+                raise ValueError(f"Unknown type of aggrefate_fn: {type(aggregate_fn)}")
 
     def on_train_batch_end(
-            self, trainer: Trainer, pl_module: LightningModule, outputs: STEP_OUTPUT, batch: Any, batch_idx: int
+        self, trainer: Trainer, pl_module: LightningModule, outputs: STEP_OUTPUT, batch: Any, batch_idx: int
     ) -> None:
         if outputs is None:
             return
@@ -62,13 +92,13 @@ class MetricLogger(Callback):
     # val
 
     def on_validation_batch_end(
-            self,
-            trainer: Trainer,
-            pl_module: LightningModule,
-            outputs: Optional[STEP_OUTPUT],
-            batch: Any,
-            batch_idx: int,
-            dataloader_idx: int = 0,
+        self,
+        trainer: Trainer,
+        pl_module: LightningModule,
+        outputs: Optional[STEP_OUTPUT],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int = 0,
     ) -> None:
         if self.group_metrics:
             self._all_predictions.extend(zip(*outputs))
@@ -83,10 +113,22 @@ class MetricLogger(Callback):
             predictions, targets = map(np.asarray, zip(*self._all_predictions))
             group_metric_values = {name: metric(predictions, targets) for name, metric in self.group_metrics.items()}
 
-        single_metric_values = valmap(np.mean, self._single_metric_values)
+        single_metric_values = {}
+        for fn_name, fn in self.aggregate_fn.items():
+            prefix = f"{fn_name}/" if fn_name else ""
+            single_metric_values.update({f"{prefix}{k}": fn(v) for k, v in self._single_metric_values.items()})
 
         self._single_metric_values = {name: [] for name in self.single_metrics}
         self._all_predictions = []
 
         for k, value in chain(single_metric_values.items(), group_metric_values.items()):
             pl_module.log(f'val/{k}', value)
+
+
+def _get_func_name(function: Callable) -> str:
+    if isfunction(function):
+        return function.__name__
+    elif isinstance(function, Callable):
+        return function.__class__.__name__
+
+    raise ValueError(f"You must pass a callable object, got f{type(function)}")
