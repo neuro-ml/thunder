@@ -1,77 +1,129 @@
 from __future__ import annotations
 
 import datetime
-import os
+import re
+import shlex
 import subprocess
 from pathlib import Path
-from typing import Annotated, Optional, Sequence
+from typing import Optional, Sequence, Annotated
 
-from joblib import Parallel, delayed
+from pydantic import validator
 from typer import Option
+from pytimeparse.timeparse import timeparse
+from deli import save
 
 from ..layout import Node
 from .interface import Backend, BackendConfig, backends
 
-
+# TODO: neeeds generalization
 ROOT = Path('~/.cache/thunder/slurm').expanduser().resolve()
 ROOT_CMDSH = ROOT / 'cmdsh'
 ROOT_LOGS = ROOT / 'logs'
+ROOT_ARRAYS = ROOT / 'arrays'
 
 
 class Slurm(Backend):
     class Config(BackendConfig):
-        mem: Annotated[float, Option(..., help='Amount of RAM (in GB) to allocate')] = 16
-        cpus_per_task: Annotated[float, Option(..., help='Number of CPU cores to allocate')] = 4
-        gpus_per_task: Annotated[float, Option(..., help='Number of GPU cards to allocate')] = 0
+        ram: Annotated[str, Option(
+            ..., '-r', '--ram', '--mem',
+            help='The amount of RAM required per node. Default units are megabytes. '
+                 'Different units can be specified using the suffix [K|M|G|T].'
+        )] = None
+        cpu: Annotated[int, Option(
+            ..., '-c', '--cpu', '--cpus-per-task',
+            help='Number of CPU cores to allocate'
+        )] = 1
+        gpu: Annotated[int, Option(
+            ..., '-g', '--gpu', '--gpus-per-node',
+            help='Number of GPUs to allocate'
+        )] = None
+        partition: Annotated[str, Option(
+            ..., '-p', '--partition',
+            help='Request a specific partition for the resource allocation'
+        )] = None
+        nodelist: Annotated[str, Option(
+            ...,
+            help='Request a specific list of hosts. The list may be specified as a comma-separated '
+                 'list of hosts, a range of hosts (host[1-5,7,...] for example).'
+        )] = None
+        time: Annotated[str, Option(
+            ..., '-t', '--time',
+            help='Set a limit on the total run time of the job allocation. When the time limit is reached, '
+                 'each task in each job step is sent SIGTERM followed by SIGKILL.'
+        )] = None
+        limit: Annotated[int, Option(
+            ...,
+            help='Limit the number of jobs that are simultaneously running during the experiment',
+        )] = None
 
-        n_array_jobs: Annotated[int, Option(..., help='Amount of RAM (in GB) to allocate')] = None
-        job_name: Annotated[str, Option(...)] = None
-        partition: Annotated[str, Option(...)] = None
-        nodelist: Annotated[str, Option(...)] = None
+        @validator('time')
+        def val_time(cls, v):
+            if v is None:
+                return
+            return parse_duration(v)
+
+        @validator('limit')
+        def val_limit(cls, v):
+            assert v is None or v > 0, 'The jobs limit, if specified, must be positive'
+            return v
 
     @staticmethod
     def run(config: Slurm.Config, experiment: Path, nodes: Optional[Sequence[Node]]):
-        args = ['sbatch']
+        def add_option(arg, value, *suffix):
+            if value is not None:
+                args.extend((f'--{arg}', str(value)))
+                args.extend(suffix)
 
-        unique_job_name = get_unique_job_name(config.job_name)
-
-        # TODO: neeeds generalization
         ROOT_LOGS.mkdir(exist_ok=True, parents=True)
-        log_file = ROOT_LOGS / f'{unique_job_name}.o%j'
+        ROOT_ARRAYS.mkdir(exist_ok=True, parents=True)
+        ROOT_CMDSH.mkdir(exist_ok=True, parents=True)
+        # TODO: pass the exp name as argument to `run`
+        name = experiment.name
+        unique_job_name = get_unique_job_name(name)
 
-        args.extend(
-            [
-                f'--mem {int(config.mem) * 1024}',
-                f'--cpus-per-task {config.cpus_per_task}',
-                f'--gpus-per-node {config.gpus_per_task}',
-                f'--output {log_file}',
-                f'--error {log_file}',
+        args = ['sbatch']
+        if nodes is None or len(nodes) == 0:
+            log_file = ROOT_LOGS / f'{unique_job_name}.o%j'
+            cmds = [shlex.join(['thunder', 'start', str(experiment)])]
+
+        else:
+            array = f'--array=1-{len(nodes)}'
+            if config.limit is not None:
+                array += f'%{config.limit}'
+
+            args.append(array)
+            log_file = ROOT_LOGS / f'{unique_job_name}.o%A.%a'
+            exp_list = ROOT_ARRAYS / f'{unique_job_name}.json'
+            idx = 0
+            # we need a unique name
+            while exp_list.exists():
+                ROOT_ARRAYS / f'{unique_job_name}_{idx}.json'
+                idx += 1
+
+            save(sorted([x.name for x in nodes]), exp_list)
+            extract_name = (
+                    'python -c "import sys, json; print(json.load(open(sys.argv[1]))[${SLURM_ARRAY_TASK_ID}-1])" ' +
+                    shlex.quote(str(exp_list))
+            )
+            cmds = [
+                f'__NAME=$({extract_name})',
+                shlex.join(['thunder', 'start', str(experiment), '${__NAME}']),
             ]
-        )
 
-        if config.job_name:
-            args.append(f'--job-name {config.job_name}')
+        add_option('mem', config.ram)
+        add_option('cpus-per-task', config.cpu)
+        add_option('gpus-per-node', config.gpu)
+        add_option('partition', config.partition)
+        add_option('nodelist', config.nodelist)
+        add_option('time', config.time, '--signal=B:INT@30')
+        add_option('job-name', name)
+        add_option('output', log_file)
+        add_option('error', log_file)
 
-        if config.partition:
-            args.append(f'--partition {config.partition}')
-
-        if config.nodelist:
-            args.append(f'--nodelist {config.nodelist}')
-
-        cmd_sh = write_sh_script([f'thunder start {str(experiment)}'], f'{unique_job_name}_cmd.sh')
-
-        if config.nodes is None:
-            subprocess.check_call(' '.join([*args, cmd_sh]))
-            return
-
-        def _generator():
-            for node in nodes:
-                cmd_sh = write_sh_script(
-                    [f'thunder start {str(experiment)} {node.name}'], f'{unique_job_name}-{node}_cmd.sh'
-                )
-                yield delayed(subprocess.check_call)([' '.join([*args, cmd_sh], node.name)])
-
-        Parallel(backend='loky', n_jobs=config.n_workers)(_generator())
+        script = ROOT_CMDSH / f'{unique_job_name}_cmd.sh'
+        script.write_text('\n'.join(['#!/bin/bash'] + cmds))
+        args.append(str(script))
+        subprocess.check_call(args, stderr=subprocess.STDOUT)
 
 
 def get_unique_job_name(job_name_prefix):
@@ -92,21 +144,26 @@ def get_unique_job_name(job_name_prefix):
     return job_name
 
 
-def write_sh_script(cmd_list, filename, delimiter='\n'):
-    # dir for shell scripts
-    # TODO: neeeds generalization
-    ROOT_CMDSH.mkdir(exist_ok=True, parents=True)
+TIME_REGEX = re.compile(r'^(\d+-)?(\d{1,2})(:\d{1,2}){1,2}$')
 
-    cmdsh_file = ROOT_CMDSH / filename
-    with open(cmdsh_file, 'w') as sh_file:
-        sh_file.write('#!/bin/bash\n')
-        for i, cmd in enumerate(cmd_list):
-            if i == len(cmd_list) - 1:
-                delimiter = '\n'
-            sh_file.write('{}{}'.format(cmd, delimiter))
 
-    os.chmod(cmdsh_file, 0o755)
-    return str(cmdsh_file)
+def parse_duration(time):
+    if TIME_REGEX.match(time):
+        return time
+
+    time = parse_time_string(time)
+    time = datetime.timedelta(seconds=time)
+    days = time.days
+    hours, remainder = divmod(time.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f'{days}-{hours:02}:{minutes:02}:{seconds:02}'
+
+
+def parse_time_string(time):
+    parsed = timeparse(time)
+    if parsed is None:
+        raise ValueError(f'The time format could not be parsed: {time}')
+    return parsed
 
 
 # TODO: need a registry
