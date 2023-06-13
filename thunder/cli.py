@@ -108,12 +108,13 @@ def build(
 
 def _run(
         experiment: Annotated[Path, Argument(show_default=False)],
-        names: Annotated[Optional[str], Option(...)] = '',
+        names: Annotated[Optional[str], Option(...)] = None,
         *,
         backend: Type[Backend],
         **kwargs,
 ):
-    names = names.split(',') or None
+    if names is not None:
+        names = names.split(',')
     config = backend.Config(**kwargs)
     backend.run(config, experiment, get_nodes(experiment, names))
 
