@@ -68,7 +68,7 @@ class Slurm(Backend):
             return v
 
     @staticmethod
-    def run(config: Slurm.Config, experiment: Path, nodes: Optional[Sequence[Node]]):
+    def run(config: Slurm.Config, experiment: Path, nodes: Optional[Sequence[Node]], wait: Optional[bool] = None):
         def add_option(arg, value, *suffix):
             if value is not None:
                 args.extend((f'--{arg}', str(value)))
@@ -107,7 +107,7 @@ class Slurm(Backend):
             )
             cmds = [
                 f'__NAME=$({extract_name})',
-                shlex.join(['thunder', 'start', str(experiment), '${__NAME}']),
+                f'thunder start {shlex.quote(str(experiment))} ${{__NAME}}',
             ]
 
         add_option('mem', config.ram)
@@ -119,6 +119,8 @@ class Slurm(Backend):
         add_option('job-name', name)
         add_option('output', log_file)
         add_option('error', log_file)
+        if wait:
+            args.append('--wait')
 
         script = ROOT_CMDSH / f'{unique_job_name}_cmd.sh'
         script.write_text('\n'.join(['#!/bin/bash'] + cmds))

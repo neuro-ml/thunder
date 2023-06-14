@@ -16,7 +16,7 @@ class Cli(Backend):
         n_workers: Annotated[int, Option(..., help='The number of worker processes to spawn')] = 1
 
     @staticmethod
-    def run(config: Cli.Config, experiment: Path, nodes: Optional[Sequence[Node]]):
+    def run(config: Cli.Config, experiment: Path, nodes: Optional[Sequence[Node]], wait: Optional[bool] = None):
         if nodes is None:
             subprocess.check_call(['thunder', 'start', str(experiment)])
             return

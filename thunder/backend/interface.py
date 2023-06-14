@@ -15,7 +15,7 @@ class Backend:
     Config: Type[BackendConfig]
 
     @staticmethod
-    def run(config: BackendConfig, experiment: Path, nodes: Optional[Sequence[Node]]):
+    def run(config: BackendConfig, experiment: Path, nodes: Optional[Sequence[Node]], wait: Optional[bool] = None):
         pass
 
 
