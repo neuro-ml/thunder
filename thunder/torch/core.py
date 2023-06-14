@@ -8,7 +8,8 @@ from torch import nn, Tensor
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
 
-from .utils import to_np
+from .utils import to_np, maybe_from_np
+from ..predict import Predictor, DefaultPredictor
 
 
 class ThunderModule(LightningModule):
@@ -20,19 +21,25 @@ class ThunderModule(LightningModule):
             activation: Callable = nn.Identity(),
             optimizer: Union[List[Optimizer], Optimizer] = None,
             lr_scheduler: Union[List[LRScheduler], LRScheduler] = None,
+            predictor: Predictor = None,
+            n_val_targets: int = None
     ):
         super().__init__()
         self.architecture = architecture
         self.criterion = criterion
         self.n_targets = n_targets
+        self.n_val_targets = n_targets if n_val_targets is None else n_val_targets
         self.activation = activation
         self.optimizer = optimizer
         self.lr_scheduler = lr_scheduler
+        self.predictor = predictor if predictor is not None else DefaultPredictor(self.predict)
+        if not callable(self.predictor):
+            raise ValueError(f"predictor must be callable, got {type(self.predictor)}")
 
     def transfer_batch_to_device(self, batch: Tuple, device: torch.device, dataloader_idx: int) -> Any:
         if self.trainer.state.stage != "train":
             return batch
-        return super().transfer_batch_to_device(batch, device, dataloader_idx)
+        return super().transfer_batch_to_device(maybe_from_np(batch, device=device), device, dataloader_idx)
 
     def forward(self, *args: Any, **kwargs: Any) -> Any:
         return self.architecture(*args, **kwargs)
@@ -42,22 +49,22 @@ class ThunderModule(LightningModule):
         return self.criterion(self(*x), *y)
 
     def validation_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> STEP_OUTPUT:
-        return self.predict(batch, batch_idx, dataloader_idx)
+        return self.inference_step(batch, batch_idx, dataloader_idx)
 
     def test_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> STEP_OUTPUT:
-        return self.predict(batch, batch_idx, dataloader_idx)
+        return self.inference_step(batch, batch_idx, dataloader_idx)
 
     def predict_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
-        return self.predict(batch, batch_idx, dataloader_idx)
+        return self.inference_step(batch, batch_idx, dataloader_idx)
 
-    # TODO: rework predict logic
-    def predict(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> STEP_OUTPUT:
-        x, y = batch[: -self.n_targets], batch[-self.n_targets:]
-        x = super().transfer_batch_to_device(x, self.device, dataloader_idx)
-        return to_np(self.inference_step(*x), y)
+    def predict(self, x) -> STEP_OUTPUT:
+        # TODO: do we need super(). ...?, also consider changing maybe_to_np to smth stricter
+        x = maybe_from_np(x, device=self.device)
+        return to_np(self.activation(self(*x)))
 
-    def inference_step(self, *xs: torch.Tensor) -> Any:
-        return self.activation(self(*xs))
+    def inference_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
+        x, y = batch[:-self.n_val_targets], batch[-self.n_val_targets:]
+        return self.predictor(x), y
 
     def configure_optimizers(self) -> Tuple[List[Optimizer], List[LRScheduler]]:
         if not self.optimizer and not self.lr_scheduler:
