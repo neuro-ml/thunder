@@ -13,9 +13,12 @@ def get_device(x: Union[torch.Tensor, nn.Module]) -> torch.device:
     if isinstance(x, (torch.Tensor, LightningModule)):
         return x.device
     elif isinstance(x, nn.Module):
-        return next(x.parameters()).device
+        try:
+            return next(x.parameters()).device
+        except StopIteration as e:
+            raise RuntimeError("Can't infer the device, because the module has no parameters") from e
 
-    raise TypeError(f"Can't get device of {type(x)}")
+    raise TypeError(f"Can't infer the device of {type(x)}")
 
 
 def to_np(*x: Any) -> Any:
