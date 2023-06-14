@@ -1,5 +1,5 @@
 from contextlib import nullcontext
-from functools import wraps
+from functools import wraps, partial
 
 import numpy as np
 import pandas as pd
@@ -20,7 +20,7 @@ from thunder.callbacks import MetricLogger
 def ravel(metric):
     @wraps(metric)
     def wrapper(x, y):
-        return metric(x.ravel(), y.ravel())
+        return metric(np.ravel(x), np.ravel(y))
 
     return wrapper
 
@@ -117,6 +117,7 @@ def test_group_metrics(tmpdir):
         ([np.sum, "max", 2], [], pytest.raises(TypeError, match="int")),
         ({"sum": np.sum, "max": max}, ["accuracy", "sum/accuracy", "max/accuracy"], nullcontext()),
         ({"sum": np.sum, "zero": 0}, [], pytest.raises(TypeError, match="zero")),
+        (partial(np.sum), ["accuracy", "sum/accuracy"], nullcontext()),
     ],
 )
 def test_aggregators(aggregate_fn, target, exception, tmpdir):

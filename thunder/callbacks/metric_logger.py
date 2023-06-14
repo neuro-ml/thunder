@@ -1,13 +1,14 @@
 from collections import defaultdict
+from functools import partial
+from inspect import isfunction
 from itertools import chain
-from typing import Any, Dict, Callable, Optional, Collection
+from typing import Any, Dict, Callable, Optional
 
 import numpy as np
 import torch
 from lightning import LightningModule, Trainer, Callback
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from toolz import valmap
-from inspect import isfunction
 
 from ..torch.utils import to_np
 
@@ -46,7 +47,7 @@ class MetricLogger(Callback):
                         )
                     self.aggregate_fn.update({fn: self._default_aggregators[fn]})
                 else:
-                    raise TypeError(f"Expected aggregate_fn to callable or str, got {type(fn)}")
+                    raise TypeError(f"Expected aggregate_fn to be callable or str, got {type(fn)}")
 
         elif isinstance(aggregate_fn, dict):
             not_callable = {k: v for k, v in filter(lambda it: not callable(it[1]), aggregate_fn.items())}
@@ -89,8 +90,6 @@ class MetricLogger(Callback):
 
         self._train_losses = []
 
-    # val
-
     def on_validation_batch_end(
         self,
         trainer: Trainer,
@@ -110,7 +109,7 @@ class MetricLogger(Callback):
     def on_validation_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
         group_metric_values = {}
         if self.group_metrics and self._all_predictions:
-            predictions, targets = map(np.asarray, zip(*self._all_predictions))
+            predictions, targets = zip(*self._all_predictions)
             group_metric_values = {name: metric(predictions, targets) for name, metric in self.group_metrics.items()}
 
         single_metric_values = {}
@@ -126,6 +125,9 @@ class MetricLogger(Callback):
 
 
 def _get_func_name(function: Callable) -> str:
+    if isinstance(function, partial):
+        function = function.func
+
     if isfunction(function):
         return function.__name__
     elif isinstance(function, Callable):
