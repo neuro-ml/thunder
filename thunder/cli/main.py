@@ -10,6 +10,7 @@ from lightning import LightningModule, Trainer
 from typer import Typer, Option, Argument
 
 from ..backend import Backend
+from ..config import log_hyperparam
 from ..layout import Layout, Single, Node
 from ..utils import chdir
 
@@ -50,12 +51,11 @@ def start(
     # load the main config
     main_config = Config.load(config_path)
     # get the layout
-    # FIXME
-    main_layout: Layout = getattr(main_config, 'layout', Single())
+    main_layout: Layout = main_config.get('layout', Single())
     config, root, params = main_layout.load(experiment, node)
 
     with chdir(root):
-        layout: Layout = getattr(config, 'layout', Single())
+        layout: Layout = config.get('layout', Single())
         layout.set(**params)
 
         # TODO: match by type rather than name?
@@ -70,12 +70,15 @@ def start(
             value = config[name]
             if isinstance(value, (int, float, bool)):
                 hyperparams[name] = value
+            else:
+                log_hyperparam(trainer.logger, name, value)
+
         if hyperparams:
             trainer.logger.log_hyperparams(hyperparams)
 
-        # train
-        # TODO: move get(..., default) to lazycon
-        trainer.fit(module, config.train_data, getattr(config, 'val_data', None), ckpt_path='last')
+        trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path='last')
+        if 'test_data' in config:
+            trainer.test(module, config.test_data, ckpt_path='last')
 
 
 @app.command()
@@ -107,7 +110,7 @@ def build_exp(config, experiment, updates):
     experiment.mkdir(parents=True)
     try:
         # build the layout
-        layout: Layout = getattr(config, 'layout', Single())
+        layout: Layout = config.get('layout', Single())
         # TODO: check name uniqueness
         nodes = list(layout.build(experiment, config))
         if nodes:
