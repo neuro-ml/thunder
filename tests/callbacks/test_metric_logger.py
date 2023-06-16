@@ -143,3 +143,53 @@ def test_aggregators(aggregate_fn, target, exception, tmpdir):
     columns = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv").columns
     columns = [c.replace("val/", "") for c in columns if "val/" in c]
     assert sorted(columns) == sorted(target)
+
+
+def accuracy2(*args, **kwargs):
+    return accuracy(*args, **kwargs)
+
+
+@pytest.mark.parametrize(
+    "single_metrics, target, exception",
+    [
+        ({"accuracy": accuracy}, {"accuracy": 0.75}, nullcontext()),
+        (
+            {lambda x, y: (np.zeros_like(x), y): [accuracy, accuracy2]},
+            {"accuracy_score": 0.25, "accuracy2": 0.25},
+            nullcontext(),
+        ),
+        (
+            {
+                lambda x, y: (np.zeros_like(x), y): {"acc1": accuracy, "acc2": accuracy},
+                lambda x, y: (np.ones_like(x) * 2, y): {"acc3": accuracy, "acc4": accuracy},
+            },
+            {"acc1": 0.25, "acc2": 0.25, "acc3": 0, "acc4": 0},
+            nullcontext(),
+        ),
+        ({lambda *args: args: "std"}, {}, pytest.raises(TypeError, match="str")),
+    ],
+)
+def test_preprocessing(single_metrics, target, exception, tmpdir):
+    metric_logger = None
+    with exception:
+        metric_logger = MetricLogger(single_metrics=single_metrics)
+    if metric_logger is None:
+        return
+
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=1,
+        limit_train_batches=4,
+        limit_val_batches=4,
+        enable_checkpointing=False,
+        enable_progress_bar=False,
+        callbacks=[metric_logger],
+        logger=CSVLogger(tmpdir),
+    )
+    model = NoOptimSegm(nn.Linear(2, 1), lambda x, y: x + y, -1)
+    trainer.fit(model)
+
+    df = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
+    columns = [c.replace("val/", "") for c in df.columns if "val/" in c]
+    assert sorted(columns) == sorted(target.keys())
+    assert all(np.allclose(df[f"val/{c}"].iloc[0], target[c]) for c in columns), (df.iloc[0], target)

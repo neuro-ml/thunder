@@ -2,29 +2,60 @@ from collections import defaultdict
 from functools import partial
 from inspect import isfunction
 from itertools import chain
-from typing import Any, Dict, Callable, Optional
+from typing import Any, Dict, Callable, Optional, List
 
 import numpy as np
 import torch
 from lightning import LightningModule, Trainer, Callback
 from lightning.pytorch.utilities.types import STEP_OUTPUT
-from toolz import valmap
+from toolz import valmap, compose
 
 from ..torch.utils import to_np
+from ..utils import squeeze_first
 
 
 class MetricLogger(Callback):
     def __init__(
-        self, single_metrics: Dict[str, Callable] = None, group_metrics: Dict[str, Callable] = None, aggregate_fn=None
+        self,
+        single_metrics: Dict = None,
+        group_metrics: Dict[str, Callable] = None,
+        aggregate_fn=None,
     ):
-        single_metrics = dict(single_metrics or {})
+        _single_metrics = dict(single_metrics or {})
         group_metrics = dict(group_metrics or {})
+
+        single_metrics = {}
+        preprocess: Dict[Callable, List[str]] = defaultdict(list)
+
+        # collect metrics
+        for k, v in _single_metrics.items():
+            if isinstance(k, str):
+                single_metrics.update({k: v})
+            elif callable(k) or isinstance(k, tuple) and all(map(callable, k)):
+                if isinstance(k, tuple):
+                    k = compose(*k)
+                if isinstance(v, (list, tuple)):
+                    metrics = {_get_func_name(f): f for f in v}
+                elif isinstance(v, dict):
+                    metrics = v
+                else:
+                    raise TypeError(
+                        f"When passing metrics with preprocessing, metrics should be List[Callable] or Dict[str, Callable], got {type(v)}"
+                    )
+                preprocess[k] = metrics
+                single_metrics.update(metrics)
+            else:
+                raise TypeError(f"Metric keys should be of type str or Callable, got {type(k)}")
+
         for name in set(single_metrics) & set(group_metrics):
             single_metrics[f'single/{name}'] = single_metrics.pop(name)
             group_metrics[f'group/{name}'] = group_metrics.pop(name)
 
+        preprocess[_identity] = sorted(set(single_metrics.keys()) - set(chain.from_iterable(preprocess.values())))
+
         self.single_metrics = single_metrics
         self.group_metrics = group_metrics
+        self.preprocess = preprocess
         self._train_losses = []
         self._single_metric_values = {name: [] for name in single_metrics}
         self._all_predictions = []
@@ -103,8 +134,10 @@ class MetricLogger(Callback):
             self._all_predictions.extend(zip(*outputs))
 
         for pred, target in zip(*outputs):
-            for name, metric in self.single_metrics.items():
-                self._single_metric_values[name].append(metric(pred, target))
+            for preprocess, metrics_names in self.preprocess.items():
+                _pred, _target = preprocess(pred, target)
+                for name in metrics_names:
+                    self._single_metric_values[name].append(self.single_metrics[name](_pred, _target))
 
     def on_validation_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
         group_metric_values = {}
@@ -134,3 +167,7 @@ def _get_func_name(function: Callable) -> str:
         return function.__class__.__name__
 
     raise ValueError(f"You must pass a callable object, got f{type(function)}")
+
+
+def _identity(*args):
+    return squeeze_first(args)
