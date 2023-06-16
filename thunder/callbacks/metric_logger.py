@@ -30,7 +30,7 @@ class MetricLogger(Callback):
         # collect metrics
         for k, v in _single_metrics.items():
             if isinstance(k, str):
-                single_metrics.update({k: v})
+                single_metrics[k] = v
             elif callable(k) or isinstance(k, tuple) and all(map(callable, k)):
                 if isinstance(k, tuple):
                     k = compose(*k)
@@ -130,6 +130,34 @@ class MetricLogger(Callback):
         batch_idx: int,
         dataloader_idx: int = 0,
     ) -> None:
+        self.evaluate_batch(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
+
+    def on_validation_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
+        self.evaluate_epoch(trainer, pl_module, "val")
+
+    def on_test_batch_end(
+        self,
+        trainer: Trainer,
+        pl_module: LightningModule,
+        outputs: Optional[STEP_OUTPUT],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int = 0,
+    ) -> None:
+        self.evaluate_batch(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
+
+    def on_test_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
+        self.evaluate_epoch(trainer, pl_module, "test")
+
+    def evaluate_batch(
+        self,
+        trainer: Trainer,
+        pl_module: LightningModule,
+        outputs: Optional[STEP_OUTPUT],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int = 0,
+    ) -> None:
         if self.group_metrics:
             self._all_predictions.extend(zip(*outputs))
 
@@ -139,7 +167,7 @@ class MetricLogger(Callback):
                 for name in metrics_names:
                     self._single_metric_values[name].append(self.single_metrics[name](_pred, _target))
 
-    def on_validation_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
+    def evaluate_epoch(self, trainer: Trainer, pl_module: LightningModule, key: str) -> None:
         group_metric_values = {}
         if self.group_metrics and self._all_predictions:
             predictions, targets = zip(*self._all_predictions)
@@ -154,7 +182,7 @@ class MetricLogger(Callback):
         self._all_predictions = []
 
         for k, value in chain(single_metric_values.items(), group_metric_values.items()):
-            pl_module.log(f'val/{k}', value)
+            pl_module.log(f'{key}/{k}', value)
 
 
 def _get_func_name(function: Callable) -> str:

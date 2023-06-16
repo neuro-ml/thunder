@@ -35,10 +35,16 @@ class NoOptimModule(ThunderModule):
     def validation_step(self, batch, batch_idx, dataloader_idx=0):
         return np.asarray([1, 0]), np.asarray([batch_idx % 2, batch_idx % 3])
 
+    def test_step(self, batch, batch_idx, dataloader_idx = 0):
+        return np.asarray([1, 0]), np.asarray([batch_idx % 2, batch_idx % 3])
+
     def train_dataloader(self):
         return DataLoader(RandomDataset(32, 64), batch_size=16)
 
     def val_dataloader(self):
+        return DataLoader(RandomDataset(32, 64), batch_size=16)
+
+    def test_dataloader(self):
         return DataLoader(RandomDataset(32, 64), batch_size=16)
 
     def configure_optimizers(self):
@@ -52,6 +58,11 @@ class NoOptimSegm(NoOptimModule):
         return torch.tensor(x == y, dtype=torch.float, requires_grad=True).sum()
 
     def validation_step(self, batch, batch_idx):
+        x = np.asarray([[1, 1], [0, 0]])
+        y = np.asarray([[1, 1], [1, 0]])
+        return x, y
+
+    def test_step(self, batch, batch_idx):
         x = np.asarray([[1, 1], [0, 0]])
         y = np.asarray([[1, 1], [1, 0]])
         return x, y
@@ -71,6 +82,7 @@ def test_single_metrics(tmpdir):
     )
     model = NoOptimSegm(nn.Linear(2, 1), lambda x, y: x + y, -1)
     trainer.fit(model)
+    trainer.test(model)
 
     metrics = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
 
@@ -95,6 +107,7 @@ def test_group_metrics(tmpdir):
     )
     model = NoOptimModule(nn.Linear(2, 1), lambda x, y: x + y, -1)
     trainer.fit(model)
+    trainer.test(model)
 
     metrics = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
     assert all([np.allclose(0, metrics["train/loss"].dropna().iloc[i]) for i in range(2)])
@@ -139,6 +152,7 @@ def test_aggregators(aggregate_fn, target, exception, tmpdir):
     )
     model = NoOptimSegm(nn.Linear(2, 1), lambda x, y: x + y, -1)
     trainer.fit(model)
+    trainer.test(model)
 
     columns = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv").columns
     columns = [c.replace("val/", "") for c in columns if "val/" in c]
@@ -188,6 +202,7 @@ def test_preprocessing(single_metrics, target, exception, tmpdir):
     )
     model = NoOptimSegm(nn.Linear(2, 1), lambda x, y: x + y, -1)
     trainer.fit(model)
+    trainer.test(model)
 
     df = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
     columns = [c.replace("val/", "") for c in df.columns if "val/" in c]
