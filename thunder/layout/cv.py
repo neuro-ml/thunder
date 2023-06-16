@@ -1,56 +1,16 @@
 from __future__ import annotations
 
 import warnings
-from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional, Dict, Any, Union, Sequence, Iterable, Tuple
+from typing import Optional, Dict, Any, Union, Sequence, Tuple
 
 import numpy as np
-from dpipe.split import train_val_test_split
-from connectome import Layer, Filter
-from lazycon import Config
-from pydantic import BaseModel, Extra
-from torch.utils.data import Dataset, Subset
 from deli import load, save
+from dpipe.split import train_val_test_split
+from lazycon import Config
 
-
-class Node(BaseModel):
-    name: str
-
-    # TODO: no layouts with parents so far
-    # parents: Sequence[Node] = ()
-
-    class Config:
-        extra = Extra.forbid
-
-
-class Layout(ABC):
-    @abstractmethod
-    def build(self, experiment: Path, config: Config) -> Iterable[Node]:
-        pass
-
-    @abstractmethod
-    def load(self, experiment: Path, node: Optional[Node]) -> Tuple[Config, Path, Dict[str, Any]]:
-        pass
-
-    @abstractmethod
-    def set(self, **kwargs):
-        pass
-
-
-class Single(Layout):
-    def build(self, experiment: Path, config: Config) -> Iterable[Node]:
-        config = config.copy().update(ExpName=experiment.name)
-        config.dump(experiment / 'experiment.config')
-        return []
-
-    def load(self, experiment: Path, node: Optional[Node]) -> Tuple[Config, Path, Dict[str, Any]]:
-        if node is not None:
-            raise ValueError(f'Unknown name: {node.name}')
-        return Config.load(experiment / 'experiment.config'), experiment, {}
-
-    def set(self):
-        pass
+from .interface import Layout, Node
+from .split import entries_to_ids, entries_subset
 
 
 class CrossValTest(Layout):
@@ -59,13 +19,7 @@ class CrossValTest(Layout):
         if not isinstance(random_state, np.random.RandomState):
             random_state = np.random.RandomState(random_state)
 
-        if isinstance(entries, Layer):
-            ids = entries.ids
-        elif isinstance(entries, Dataset):
-            ids = list(range(len(entries)))
-        else:
-            ids = entries
-
+        ids = entries_to_ids(entries)
         self.entries = entries
         self.n_folds = n_folds
         self.val_size = val_size
@@ -74,12 +28,7 @@ class CrossValTest(Layout):
         self.fold: Optional[int] = None
 
     def _subset(self, idx):
-        ids = self.splits[self.fold][idx]
-        if isinstance(self.entries, Layer):
-            return self.entries >> Filter.keep(ids)
-        if isinstance(self.entries, Dataset):
-            return Subset(self.entries, ids)
-        return ids
+        return entries_subset(self.entries, self.splits[self.fold][idx])
 
     @property
     def train(self):

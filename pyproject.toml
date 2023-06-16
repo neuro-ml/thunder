@@ -26,7 +26,7 @@ classifiers = [
 'Source' = 'https://github.com/neuro-ml/thunder'
 
 [project.scripts]
-thunder = 'thunder.cli:main'
+thunder = 'thunder.cli.entrypoint:main'
 
 [build-system]
 requires = ['setuptools>=43.0.0', 'wheel']
