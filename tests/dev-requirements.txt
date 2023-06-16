@@ -1,3 +1,5 @@
 pytest
 pytest-cov
 torchvision
+scikit-learn
+pandas
