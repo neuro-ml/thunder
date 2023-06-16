@@ -9,7 +9,7 @@ from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
 
 from .utils import to_np, maybe_from_np
-from ..predict import Predictor, DefaultPredictor
+from ..predict import BasePredictor, Predictor
 
 
 class ThunderModule(LightningModule):
@@ -21,7 +21,7 @@ class ThunderModule(LightningModule):
             activation: Callable = nn.Identity(),
             optimizer: Union[List[Optimizer], Optimizer] = None,
             lr_scheduler: Union[List[LRScheduler], LRScheduler] = None,
-            predictor: Predictor = None,
+            predictor: BasePredictor = None,
             n_val_targets: int = None
     ):
         super().__init__()
@@ -32,9 +32,7 @@ class ThunderModule(LightningModule):
         self.activation = activation
         self.optimizer = optimizer
         self.lr_scheduler = lr_scheduler
-        self.predictor = predictor if predictor is not None else DefaultPredictor(self.predict)
-        if not callable(self.predictor):
-            raise ValueError(f"predictor must be callable, got {type(self.predictor)}")
+        self.predictor = predictor if predictor else Predictor()
 
     def transfer_batch_to_device(self, batch: Tuple, device: torch.device, dataloader_idx: int) -> Any:
         if self.trainer.state.stage != "train":
@@ -64,7 +62,7 @@ class ThunderModule(LightningModule):
 
     def inference_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
         x, y = batch[:-self.n_val_targets], batch[-self.n_val_targets:]
-        return self.predictor(x), y
+        return self.predictor([x], self.predict)[0], y
 
     def configure_optimizers(self) -> Tuple[List[Optimizer], List[LRScheduler]]:
         if not self.optimizer and not self.lr_scheduler:
