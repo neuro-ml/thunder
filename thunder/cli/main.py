@@ -94,11 +94,10 @@ def build(
         name, value = upd.split('=', 1)
         updates[name] = yaml.safe_load(StringIO(value))
 
-    build_exp(config, experiment, updates)
+    build_exp(Config.load(config), experiment, updates)
 
 
 def build_exp(config, experiment, updates):
-    config = Config.load(config)
     experiment = Path(experiment)
     new = set(updates) - set(config)
     if new:

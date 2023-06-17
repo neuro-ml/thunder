@@ -4,6 +4,7 @@ from typing import Annotated
 
 import wandb
 import yaml
+from lazycon import Config
 from typer import Typer, Argument
 
 from .main import ConfArg, build_exp, NamesArg, get_nodes
@@ -27,11 +28,12 @@ def agent(
 
         assert updates.pop('wandb_version') == 1
         updates = {k: v.pop('value') for k, v in updates.items()}
-        build_exp(config, local, updates)
+        build_exp(config.copy(), local, updates)
 
         cnf = backend.Config(**kwargs)
         backend.run(cnf, local, get_nodes(local, names), wait=True)
 
     if names is not None:
         names = names.split(',')
+    config = Config.load(config)
     wandb.agent(sweep, start)
