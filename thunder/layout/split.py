@@ -6,10 +6,10 @@ from typing import Optional, Dict, Any, Union, Sequence, Tuple, Callable
 
 import numpy as np
 from deli import load, save
-from jboc import collect
 from lazycon import Config
 from torch.utils.data import Dataset, Subset
 
+from ..utils import collect
 from .interface import Layout, Node
 
 try:

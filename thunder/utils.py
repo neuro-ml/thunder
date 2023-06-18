@@ -1,5 +1,6 @@
 import os
 from contextlib import contextmanager
+from more_itertools import make_decorator
 
 
 @contextmanager
@@ -17,3 +18,6 @@ def squeeze_first(inputs):
     if len(inputs) == 1:
         inputs = inputs[0]
     return inputs
+
+
+collect = make_decorator(list)()
