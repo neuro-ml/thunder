@@ -5,13 +5,17 @@ from pathlib import Path
 from typing import Optional, Dict, Any, Union, Sequence, Tuple, Callable
 
 import numpy as np
-from connectome import Layer, Filter
 from deli import load, save
 from jboc import collect
 from lazycon import Config
 from torch.utils.data import Dataset, Subset
 
 from .interface import Layout, Node
+
+try:
+    import connectome
+except ImportError:
+    connectome = None
 
 
 # TODO sklearn
@@ -120,7 +124,7 @@ class SingleSplit(Layout):
 
 
 def entries_to_ids(entries):
-    if isinstance(entries, Layer):
+    if connectome is not None and isinstance(entries, connectome.Layer):
         return entries.ids
     if isinstance(entries, Dataset):
         return list(range(len(entries)))
@@ -128,8 +132,8 @@ def entries_to_ids(entries):
 
 
 def entries_subset(entries, ids):
-    if isinstance(entries, Layer):
-        return entries >> Filter.keep(ids)
+    if isinstance(entries, connectome.Layer):
+        return entries >> connectome.Filter.keep(ids)
     if isinstance(entries, Dataset):
         return Subset(entries, ids)
     return ids

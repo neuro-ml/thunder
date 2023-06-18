@@ -3,25 +3,31 @@ from functools import cache
 from typing import Any
 
 from lightning.pytorch.loggers import TensorBoardLogger
-from connectome import CallableLayer
-from connectome.engine import TreeNode, IdentityEdge
-from tensorboard.compat.proto.config_pb2 import RunMetadata
-from tensorboard.compat.proto.graph_pb2 import GraphDef
-from tensorboard.compat.proto.node_def_pb2 import NodeDef
-from tensorboard.compat.proto.step_stats_pb2 import StepStats, DeviceStepStats
-from tensorboard.compat.proto.versions_pb2 import VersionDef
 
 from .hyperparams import register
 
 
-@register(TensorBoardLogger, CallableLayer)
-def log_connectome_layer(logger: TensorBoardLogger, name: str, layer: CallableLayer):
-    """ Dump a connectome `layer` to `path` in order to be read by TensorBoard """
+def log_connectome_layer(logger: TensorBoardLogger, name: str, layer):
     root = parse(name, layer._container.edges)
     # these 3 lines are copy-pasted from torch
     stats = RunMetadata(step_stats=StepStats(dev_stats=[DeviceStepStats(device="/device:CPU:0")]))
     gr = GraphDef(node=root, versions=VersionDef(producer=22))
     logger.experiment._get_file_writer().add_graph((gr, stats))
+
+
+try:
+    from connectome import CallableLayer
+    from connectome.engine import TreeNode, IdentityEdge
+    from tensorboard.compat.proto.config_pb2 import RunMetadata
+    from tensorboard.compat.proto.graph_pb2 import GraphDef
+    from tensorboard.compat.proto.node_def_pb2 import NodeDef
+    from tensorboard.compat.proto.step_stats_pb2 import StepStats, DeviceStepStats
+    from tensorboard.compat.proto.versions_pb2 import VersionDef
+
+    register(TensorBoardLogger, CallableLayer)(log_connectome_layer)
+
+except ImportError:
+    pass
 
 
 def node_proto(name, inputs, op):
