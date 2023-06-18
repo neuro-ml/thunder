@@ -30,9 +30,9 @@ class Slurm(Backend):
                  'Different units can be specified using the suffix [K|M|G|T].'
         )] = None
         cpu: Annotated[int, Option(
-            ..., '-c', '--cpu', '--cpus-per-task',
-            help='Number of CPU cores to allocate'
-        )] = 1
+            ..., '-c', '--cpu', '--cpus-per-task', show_default=False,
+            help='Number of CPU cores to allocate. Default to 1'
+        )] = None
         gpu: Annotated[int, Option(
             ..., '-g', '--gpu', '--gpus-per-node',
             help='Number of GPUs to allocate'
@@ -97,7 +97,7 @@ class Slurm(Backend):
             idx = 0
             # we need a unique name
             while exp_list.exists():
-                ROOT_ARRAYS / f'{unique_job_name}_{idx}.json'
+                exp_list = ROOT_ARRAYS / f'{unique_job_name}_{idx}.json'
                 idx += 1
 
             save(sorted([x.name for x in nodes]), exp_list)

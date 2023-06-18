@@ -16,7 +16,7 @@ class Backend:
 
     @staticmethod
     def run(config: BackendConfig, experiment: Path, nodes: Optional[Sequence[Node]], wait: Optional[bool] = None):
-        pass
+        """Start running the given `nodes` of an experiment located at the given path"""
 
 
 class BackendEntryConfig(BaseModel):

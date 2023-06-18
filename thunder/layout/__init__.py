@@ -1,4 +1,3 @@
 from .interface import Node, Layout
-from .split import MultiSplit
-from .cv import CrossValTest
+from .split import Split, SingleSplit
 from .single import Single

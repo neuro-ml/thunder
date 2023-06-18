@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import warnings
 from pathlib import Path
-from typing import Optional, Dict, Any, Union, Sequence, Tuple
+from typing import Optional, Dict, Any, Union, Sequence, Tuple, Callable
 
 import numpy as np
 from connectome import Layer, Filter
@@ -14,7 +14,72 @@ from torch.utils.data import Dataset, Subset
 from .interface import Layout, Node
 
 
-class MultiSplit(Layout):
+# TODO sklearn
+class Split(Layout):
+    def __init__(self, split: Callable, entries: Sequence, *args: Any, names: Optional[Sequence[str]] = None,
+                 **kwargs: Any):
+        if not callable(split):
+            if not hasattr(split, 'split'):
+                # TODO
+                raise TypeError(split)
+            split = split.split
+
+        ids = entries_to_ids(entries)
+        # TODO: safer way to unify types
+        splits = [tuple(map(jsonify, xs)) for xs in split(ids, *args, **kwargs)]
+        if names is not None:
+            # TODO
+            assert len(set(names)) == len(names)
+            assert len(splits[0]) == len(names)
+
+        self.entries = entries
+        self.splits = splits
+        self.names = names
+        self.fold: Optional[int] = None
+
+    def __getitem__(self, item: int):
+        return self._subset(item)
+
+    def __getattr__(self, name: str):
+        if self.names is None:
+            raise AttributeError(name)
+        return self._subset(self.names.index(name))
+
+    def _subset(self, idx):
+        # TODO
+        assert self.fold is not None
+        return entries_subset(self.entries, self.splits[self.fold][idx])
+
+    def build(self, experiment: Path, config: Config):
+        config.dump(experiment / 'experiment.config')
+        name = experiment.name
+        for fold, split in enumerate(self.splits):
+            folder = experiment / f'fold_{fold}'
+            folder.mkdir()
+            save(split, folder / 'split.json')
+
+            local = config.copy().update(ExpName=f'{name}({fold})', GroupName=name)
+            local.dump(folder / 'experiment.config')
+            yield Node(name=str(fold))
+
+    def load(self, experiment: Path, node: Optional[Node]) -> Tuple[Config, Path, Dict[str, Any]]:
+        folder = experiment / f'fold_{node.name}'
+        return Config.load(folder / 'experiment.config'), folder, {
+            'fold': int(node.name),
+            'split': tuple(load(folder / 'split.json')),
+        }
+
+    def set(self, fold: int, split: Optional[Sequence[Sequence]] = None):
+        self.fold = fold
+        if split is None:
+            warnings.warn('No reference split provided. Your results might be inconsistent!', UserWarning)
+        else:
+            if split != self.splits[fold]:
+                # TODO: consistency error?
+                raise ValueError
+
+
+class SingleSplit(Layout):
     def __init__(self, entries, *, shuffle: bool = True, random_state: Union[np.random.RandomState, int, None] = 0,
                  **sizes: Union[int, float]):
         if not isinstance(random_state, np.random.RandomState):
@@ -25,6 +90,11 @@ class MultiSplit(Layout):
         self.split = dict(zip(sizes.keys(), multi_split(
             ids, list(sizes.values()), shuffle=shuffle, random_state=random_state
         )))
+
+    def __getattr__(self, name: str):
+        if name not in self.split:
+            raise AttributeError(name)
+        return entries_subset(self.entries, self.split[name])
 
     def build(self, experiment: Path, config: Config):
         config.dump(experiment / 'experiment.config')
@@ -42,15 +112,11 @@ class MultiSplit(Layout):
 
     def set(self, split: Optional[Dict[str, Sequence]] = None):
         if split is None:
-            warnings.warn('No reference split provided. your result might be inconsistent!', UserWarning)
+            warnings.warn('No reference split provided. Your results might be inconsistent!', UserWarning)
         else:
             if split != self.split:
                 # TODO: consistency error?
                 raise ValueError
-
-        for name, ids in self.split.items():
-            # TODO: unsafe?
-            setattr(self, name, entries_subset(self.entries, ids))
 
 
 def entries_to_ids(entries):
@@ -99,3 +165,11 @@ def multi_split(ids: Sequence, sizes: Sequence[int, float],
     for size in sizes:
         yield ids[start:start + size]
         start += size
+
+
+def jsonify(x):
+    if isinstance(x, (np.generic, np.ndarray)):
+        return x.tolist()
+    if isinstance(x, (list, tuple)):
+        return list(map(jsonify, x))
+    return x
