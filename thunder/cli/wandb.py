@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
-from typing import Annotated
 
+from typing_extensions import Annotated
 import wandb
 import yaml
 from lazycon import Config

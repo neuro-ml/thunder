@@ -2,8 +2,9 @@ import inspect
 import sys
 from inspect import Parameter
 from pathlib import Path
-from typing import Optional, Annotated
+from typing import Optional
 
+from typing_extensions import Annotated
 import typer
 import yaml
 from typer import Option

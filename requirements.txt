@@ -10,3 +10,4 @@ pydantic
 deli
 joblib
 pytimeparse
+typing-extensions

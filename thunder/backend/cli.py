@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import subprocess
 from pathlib import Path
-from typing import Optional, Sequence, Annotated
+from typing import Optional, Sequence
 
+from typing_extensions import Annotated
 from joblib import Parallel, delayed
 from typer import Option
 

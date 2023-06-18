@@ -5,8 +5,9 @@ import re
 import shlex
 import subprocess
 from pathlib import Path
-from typing import Optional, Sequence, Annotated
+from typing import Optional, Sequence
 
+from typing_extensions import Annotated
 from pydantic import validator
 from typer import Option
 from pytimeparse.timeparse import timeparse

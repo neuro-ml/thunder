@@ -1,8 +1,9 @@
 import shutil
 from io import StringIO
 from pathlib import Path
-from typing import List, Optional, Annotated, Type, Sequence
+from typing import List, Optional, Type, Sequence
 
+from typing_extensions import Annotated
 import yaml
 from deli import load, save
 from lazycon import Config
