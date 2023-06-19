@@ -132,7 +132,7 @@ def entries_to_ids(entries):
 
 
 def entries_subset(entries, ids):
-    if isinstance(entries, connectome.Layer):
+    if connectome is not None and isinstance(entries, connectome.Layer):
         return entries >> connectome.Filter.keep(ids)
     if isinstance(entries, Dataset):
         return Subset(entries, ids)
