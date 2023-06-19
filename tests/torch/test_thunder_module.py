@@ -7,12 +7,9 @@ from lightning import Trainer
 from lightning.pytorch.demos.boring_classes import RandomDataset
 from lightning.pytorch.loggers import CSVLogger
 from more_itertools import zip_equal
-from torch import nn
 from torch.optim import SGD
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
-from torchvision.transforms import ToTensor
 
 from thunder import ThunderModule
 from thunder.policy import Schedule

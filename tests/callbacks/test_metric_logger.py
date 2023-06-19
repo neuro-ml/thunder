@@ -9,7 +9,7 @@ from lightning import Trainer
 from lightning.pytorch.demos.boring_classes import RandomDataset
 from lightning.pytorch.loggers import CSVLogger
 from more_itertools import collapse
-from sklearn.metrics import accuracy_score, recall_score
+from sklearn.metrics import accuracy_score
 from torch import nn
 from torch.utils.data import DataLoader
 
@@ -87,10 +87,10 @@ def test_single_metrics(tmpdir):
     metrics = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
 
     m = (np.asarray([[1, 1], [0, 0]]) == np.asarray([[1, 0], [0, 0]])).sum()
-    assert all([np.allclose(m, metrics["train/loss"].dropna().iloc[i]) for i in range(2)])
+    assert all(np.allclose(m, metrics["train/loss"].dropna().iloc[i]) for i in range(2))
 
     m = np.mean([accuracy(x, y) for y, x in zip(np.asarray([[1, 1], [1, 0]]), np.asarray([[1, 1], [0, 0]]))] * 4)
-    assert all([np.allclose(m, metrics["val/accuracy"].dropna().iloc[i]) for i in range(2)])
+    assert all(np.allclose(m, metrics["val/accuracy"].dropna().iloc[i]) for i in range(2))
 
 
 def test_group_metrics(tmpdir):
@@ -110,11 +110,11 @@ def test_group_metrics(tmpdir):
     trainer.test(model)
 
     metrics = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
-    assert all([np.allclose(0, metrics["train/loss"].dropna().iloc[i]) for i in range(2)])
+    assert all(np.allclose(0, metrics["train/loss"].dropna().iloc[i]) for i in range(2))
     x = np.asarray(list(collapse([[1, 0] for i in range(4)])))
     y = np.asarray(list(collapse([[i % 2, i % 3] for i in range(4)])))
     acc = accuracy(x, y)
-    assert all([np.allclose(acc, metrics["val/accuracy"].dropna().iloc[i]) for i in range(2)])
+    assert all(np.allclose(acc, metrics["val/accuracy"].dropna().iloc[i]) for i in range(2))
 
 
 @pytest.mark.parametrize(
