@@ -9,8 +9,8 @@ from torch import Tensor, nn
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
 
-from .utils import maybe_from_np, to_np
 from ..predict import BasePredictor, Predictor
+from .utils import maybe_from_np, to_np
 
 
 class ThunderModule(LightningModule):
