@@ -80,7 +80,7 @@ def test_2_optimizers_2_schedulers(architecture, trainer):
     trainer.fit(model)
     opt1, opt2 = model.optimizers()
     lr_sch = model.lr_schedulers()
-    assert all(map(lambda o: o.optimizer is not None, model.optimizers()))
+    assert all(o.optimizer is not None for o in model.optimizers())
     assert opt1.optimizer is lr_sch.optimizer
 
 
@@ -115,7 +115,7 @@ def test_3_optimizers_2_schedulers(architecture, trainer):
     opt1, opt2, opt3 = model.optimizers()
     lr_sch1, lr_sch2 = model.lr_schedulers()
 
-    assert all(map(lambda o: o.optimizer is not None, model.optimizers()))
+    assert all(o.optimizer is not None for o in model.optimizers())
     assert opt1.optimizer is lr_sch1.optimizer and opt2.optimizer is lr_sch2.optimizer
 
 
@@ -132,7 +132,7 @@ def test_no_schedulers(architecture, trainer):
 
     opt1, opt2, opt3 = model.optimizers()
     assert model.lr_schedulers() is None
-    assert all(map(lambda o: o.optimizer is not None, model.optimizers()))
+    assert all(o.optimizer is not None for o in model.optimizers())
 
 
 def test_no_optimizers_and_only_torch_schedulers(architecture, trainer):
@@ -148,5 +148,5 @@ def test_no_optimizers_and_only_torch_schedulers(architecture, trainer):
 
 
 def check_optimizers(optimizers):
-    assert all(map(lambda o: o.optimizer is not None, optimizers))
-    assert all(map(lambda oo: oo[0].optimizer is not oo[1].optimizer, combinations(optimizers, 2)))
+    assert all(o.optimizer is not None for o in optimizers)
+    assert all(oo[0].optimizer is not oo[1].optimizer for oo in combinations(optimizers, 2))

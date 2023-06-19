@@ -125,7 +125,7 @@ def test_group_metrics(tmpdir):
         (["std", "max"], ["accuracy", "std/accuracy", "max/accuracy"], nullcontext()),
         (["std", "wrong_key"], [], pytest.raises(ValueError, match="wrong_key")),
         (np.sum, ["accuracy", "sum/accuracy"], nullcontext()),
-        ([np.std, np.max], ["accuracy", "std/accuracy", "max/accuracy"], nullcontext()),
+        ([np.std, np.max], ["accuracy", "std/accuracy", f"{np.max.__name__}/accuracy"], nullcontext()),
         ([np.sum, "max"], ["accuracy", "sum/accuracy", "max/accuracy"], nullcontext()),
         ([np.sum, "max", 2], [], pytest.raises(TypeError, match="int")),
         ({"sum": np.sum, "max": max}, ["accuracy", "sum/accuracy", "max/accuracy"], nullcontext()),
