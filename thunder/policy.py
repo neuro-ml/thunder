@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
 from copy import deepcopy
-from typing import Union, List, Dict, Any, Callable
+from typing import Any, Callable, Dict, List, Union
 
 from more_itertools import zip_equal
 from toolz import juxt

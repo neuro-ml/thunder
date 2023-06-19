@@ -1,5 +1,5 @@
 from contextlib import nullcontext
-from functools import wraps, partial
+from functools import partial, wraps
 
 import numpy as np
 import pandas as pd
@@ -35,7 +35,7 @@ class NoOptimModule(ThunderModule):
     def validation_step(self, batch, batch_idx, dataloader_idx=0):
         return np.asarray([1, 0]), np.asarray([batch_idx % 2, batch_idx % 3])
 
-    def test_step(self, batch, batch_idx, dataloader_idx = 0):
+    def test_step(self, batch, batch_idx, dataloader_idx=0):
         return np.asarray([1, 0]), np.asarray([batch_idx % 2, batch_idx % 3])
 
     def train_dataloader(self):

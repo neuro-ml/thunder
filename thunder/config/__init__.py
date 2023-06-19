@@ -1,2 +1,2 @@
-from .hyperparams import register, log_hyperparam
+from .hyperparams import log_hyperparam, register
 from . import tb

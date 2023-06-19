@@ -7,7 +7,7 @@ from lightning import LightningModule
 from more_itertools import zip_equal
 
 from thunder import ThunderModule
-from thunder.torch.utils import get_device, to_np, maybe_from_np
+from thunder.torch.utils import get_device, maybe_from_np, to_np
 
 
 @pytest.mark.parametrize(

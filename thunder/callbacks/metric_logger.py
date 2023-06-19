@@ -1,14 +1,13 @@
 from collections import defaultdict
 from functools import partial
-from inspect import isfunction
 from itertools import chain
-from typing import Any, Dict, Callable, Optional, List
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 import torch
-from lightning import LightningModule, Trainer, Callback
+from lightning import Callback, LightningModule, Trainer
 from lightning.pytorch.utilities.types import STEP_OUTPUT
-from toolz import valmap, compose
+from toolz import compose, valmap
 
 from ..torch.utils import to_np
 from ..utils import squeeze_first

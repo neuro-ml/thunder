@@ -4,12 +4,12 @@ import subprocess
 from pathlib import Path
 from typing import Optional, Sequence
 
-from typing_extensions import Annotated
 from joblib import Parallel, delayed
 from typer import Option
+from typing_extensions import Annotated
 
-from .interface import Backend, BackendConfig, backends
 from ..layout import Node
+from .interface import Backend, BackendConfig, backends
 
 
 class Cli(Backend):

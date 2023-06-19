@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional, Dict, Any, Iterable, Tuple
+from typing import Any, Dict, Iterable, Optional, Tuple
 
 from lazycon import Config
 from pydantic import BaseModel, Extra

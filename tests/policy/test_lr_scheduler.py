@@ -1,12 +1,12 @@
+import numpy as np
 import pytest
 import torch
-import numpy as np
 from more_itertools import zip_equal
 from torch import nn
 from torch.nn import Sequential
 from torch.optim import Adam
 
-from thunder.policy import Multiply, Schedule, Switch, Policy
+from thunder.policy import Multiply, Policy, Schedule, Switch
 
 
 @pytest.fixture

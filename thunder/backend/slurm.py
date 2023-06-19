@@ -7,14 +7,15 @@ import subprocess
 from pathlib import Path
 from typing import Optional, Sequence
 
-from typing_extensions import Annotated
-from pydantic import validator
-from typer import Option
-from pytimeparse.timeparse import timeparse
 from deli import save
+from pydantic import validator
+from pytimeparse.timeparse import timeparse
+from typer import Option
+from typing_extensions import Annotated
 
 from ..layout import Node
 from .interface import Backend, BackendConfig, backends
+
 
 # TODO: neeeds generalization
 ROOT = Path('~/.cache/thunder/slurm').expanduser().resolve()
@@ -101,13 +102,11 @@ class Slurm(Backend):
                 exp_list = ROOT_ARRAYS / f'{unique_job_name}_{idx}.json'
                 idx += 1
 
-            save(sorted([x.name for x in nodes]), exp_list)
-            extract_name = (
-                    'python -c "import sys, json; print(json.load(open(sys.argv[1]))[${SLURM_ARRAY_TASK_ID}-1])" ' +
-                    shlex.quote(str(exp_list))
-            )
+            save(sorted(x.name for x in nodes), exp_list)
             cmds = [
-                f'__NAME=$({extract_name})',
+                '__NAME=$('
+                f'python -c "import sys, json; print(json.load(open(sys.argv[1]))[${{SLURM_ARRAY_TASK_ID}}-1])"'
+                f' {shlex.quote(str(exp_list))})',
                 f'thunder start {shlex.quote(str(experiment))} ${{__NAME}}',
             ]
 

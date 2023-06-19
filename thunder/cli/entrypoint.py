@@ -4,14 +4,14 @@ from inspect import Parameter
 from pathlib import Path
 from typing import Optional
 
-from typing_extensions import Annotated
 import typer
 import yaml
 from typer import Option
+from typing_extensions import Annotated
 
-from .main import app, run, build_run
-from .wandb import wand_app, agent
-from ..backend import Cli, BackendEntryConfig
+from ..backend import BackendEntryConfig, Cli
+from .main import app, build_run, run
+from .wandb import agent, wand_app
 
 
 def main():

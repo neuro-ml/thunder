@@ -3,13 +3,13 @@ from pathlib import Path
 import pytest
 from pytest_subprocess import FakeProcess
 
-from thunder.backend import Slurm, Cli
+from thunder.backend import Cli, Slurm
 from thunder.layout import Node
 
 
 @pytest.mark.parametrize('config,nodes', (
-        (Cli.Config(), None),
-        (Cli.Config(), (Node(name='a'), Node(name='b'))),
+    (Cli.Config(), None),
+    (Cli.Config(), (Node(name='a'), Node(name='b'))),
 ))
 def test_cli(fake_process: FakeProcess, temp_dir, config, nodes):
     exp_folder = temp_dir / 'some-exp'
@@ -26,12 +26,12 @@ def test_cli(fake_process: FakeProcess, temp_dir, config, nodes):
 
 
 @pytest.mark.parametrize('config,args,nodes', (
-        (Slurm.Config(), (), None),
-        (Slurm.Config(cpu=10), ('--cpus-per-task', '10'), None),
-        (Slurm.Config(time='5d'), ('--time', None, '--signal=B:INT@30'), None),
-        (Slurm.Config(gpu=3), ('--gpus-per-node', '3'), None),
-        (Slurm.Config(), ('--array=1-2',), (Node(name='a'), Node(name='b'))),
-        (Slurm.Config(limit=1), ('--array=1-2%1',), (Node(name='a'), Node(name='b'))),
+    (Slurm.Config(), (), None),
+    (Slurm.Config(cpu=10), ('--cpus-per-task', '10'), None),
+    (Slurm.Config(time='5d'), ('--time', None, '--signal=B:INT@30'), None),
+    (Slurm.Config(gpu=3), ('--gpus-per-node', '3'), None),
+    (Slurm.Config(), ('--array=1-2',), (Node(name='a'), Node(name='b'))),
+    (Slurm.Config(limit=1), ('--array=1-2%1',), (Node(name='a'), Node(name='b'))),
 ))
 def test_slurm(fake_process: FakeProcess, temp_dir, config, args, nodes):
     exp_folder = temp_dir / 'some-exp'

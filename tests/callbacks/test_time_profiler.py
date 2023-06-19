@@ -8,6 +8,7 @@ from lightning.pytorch.utilities.exceptions import MisconfigurationException
 
 from thunder.callbacks import TimeProfiler
 
+
 TESTKEYS = [
     tuple(), ("optimizer step",),
     ("backward", "optimizer step", "total train downtime", "total val downtime"),

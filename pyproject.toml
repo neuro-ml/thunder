@@ -57,13 +57,15 @@ combine_as_imports = true
 # W503: line break before binary operator is actually considered best-practice
 # E203: spaces around complex variables in slices are pep-right
 # F401: unused imports in __init__.py-s
+# F403: start imports in __init__.py-s
 # I251: allow absolute imports in upper files
 # B019: @lru_cache for static methods is fine
 # B008: calling the function as default value is just part of the typer's interface
 # C408: for identifier-like fields dict(x=y) is just more concise
-ignore = ['W503', 'E203', 'B019', 'B028', 'C408']
+# Q000: we don't care for single vs double quotes
+ignore = ['W503', 'E203', 'B019', 'B028', 'C408', 'Q000']
 per-file-ignores = [
-    '**/__init__.py:F401',
+    '**/__init__.py:F401,F403',
     'tests/*:I251',
     'docs/*:I251',
     'thunder/internals/cli.py:B008',

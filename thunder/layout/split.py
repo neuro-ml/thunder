@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import warnings
 from pathlib import Path
-from typing import Optional, Dict, Any, Union, Sequence, Tuple, Callable
+from typing import Any, Callable, Dict, Optional, Sequence, Tuple, Union
 
 import numpy as np
 from deli import load, save
@@ -11,6 +11,7 @@ from torch.utils.data import Dataset, Subset
 
 from ..utils import collect
 from .interface import Layout, Node
+
 
 try:
     import connectome

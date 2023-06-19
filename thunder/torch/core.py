@@ -1,15 +1,15 @@
-from typing import Callable, Union, List, Tuple, Any
+from typing import Any, Callable, List, Tuple, Union
 
 import torch
 from lightning import LightningModule
 from lightning.pytorch.utilities.types import STEP_OUTPUT
-from more_itertools import collapse, zip_equal, padded
-from torch import nn, Tensor
+from more_itertools import collapse, padded, zip_equal
+from torch import Tensor, nn
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
 
-from .utils import to_np, maybe_from_np
 from ..predict import BasePredictor, Predictor
+from .utils import maybe_from_np, to_np
 
 
 class ThunderModule(LightningModule):
@@ -83,7 +83,7 @@ class ThunderModule(LightningModule):
         for optimizer, lr_scheduler in zip_equal(_optimizers, _lr_schedulers):
             if callable(lr_scheduler):
                 if optimizer is None:
-                    raise ValueError(f"The scheduler demands an Optimizer, but received None")
+                    raise ValueError("The scheduler demands an Optimizer, but received None")
                 lr_scheduler = lr_scheduler(optimizer)
 
             optimizers.append(optimizer if lr_scheduler is None else lr_scheduler.optimizer)

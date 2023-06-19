@@ -1,13 +1,14 @@
 import os
 from pathlib import Path
 
-from typing_extensions import Annotated
 import wandb
 import yaml
 from lazycon import Config
-from typer import Typer, Argument
+from typer import Argument, Typer
+from typing_extensions import Annotated
 
-from .main import ConfArg, build_exp, NamesArg, get_nodes
+from .main import ConfArg, NamesArg, build_exp, get_nodes
+
 
 wand_app = Typer(name='wandb', help='Wrapper around W&B commands')
 

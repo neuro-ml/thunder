@@ -1,19 +1,20 @@
 import shutil
 from io import StringIO
 from pathlib import Path
-from typing import List, Optional, Type, Sequence
+from typing import List, Optional, Sequence, Type
 
-from typing_extensions import Annotated
 import yaml
 from deli import load, save
 from lazycon import Config
 from lightning import LightningModule, Trainer
-from typer import Typer, Option, Argument
+from typer import Argument, Option, Typer
+from typing_extensions import Annotated
 
 from ..backend import Backend
 from ..config import log_hyperparam
-from ..layout import Layout, Single, Node
+from ..layout import Layout, Node, Single
 from ..utils import chdir
+
 
 app = Typer(name='thunder', pretty_exceptions_enable=False)
 ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment')]

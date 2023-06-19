@@ -2,11 +2,11 @@ import pytest
 from lazycon import Config
 from sklearn.model_selection import KFold
 
-from thunder.layout import Single, Node, SingleSplit, Split
+from thunder.layout import Node, Single, SingleSplit, Split
 
 
 @pytest.mark.parametrize('layout', (
-        Single(), SingleSplit([1, 2, 3], train=1, test=2), Split(KFold(3), [1, 2, 3]),
+    Single(), SingleSplit([1, 2, 3], train=1, test=2), Split(KFold(3), [1, 2, 3]),
 ))
 def test_basic_properties(layout, temp_dir):
     text = 'a = 1\nb = 2\n'
