@@ -39,7 +39,8 @@ class MetricLogger(Callback):
                     metrics = v
                 else:
                     raise TypeError(
-                        f"When passing metrics with preprocessing, metrics should be List[Callable] or Dict[str, Callable], got {type(v)}"
+                        f"When passing metrics with preprocessing, metrics should be "
+                        f"List[Callable] or Dict[str, Callable], got {type(v)}"
                     )
                 preprocess[k] = metrics
                 single_metrics.update(metrics)
@@ -80,7 +81,7 @@ class MetricLogger(Callback):
                     raise TypeError(f"Expected aggregate_fn to be callable or str, got {type(fn)}")
 
         elif isinstance(aggregate_fn, dict):
-            not_callable = {k: v for k, v in filter(lambda it: not callable(it[1]), aggregate_fn.items())}
+            not_callable = dict(filter(lambda it: not callable(it[1]), aggregate_fn.items()))
             if not_callable:
                 raise TypeError(f"All aggregators must be callable if you pass a dict, got uncallable {not_callable}")
             self.aggregate_fn.update(aggregate_fn)

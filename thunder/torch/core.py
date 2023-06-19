@@ -4,12 +4,13 @@ import torch
 from lightning import LightningModule
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from more_itertools import collapse, padded, zip_equal
+from toolz import identity
 from torch import Tensor, nn
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
 
-from ..predict import BasePredictor, Predictor
 from .utils import maybe_from_np, to_np
+from ..predict import BasePredictor, Predictor
 
 
 class ThunderModule(LightningModule):
@@ -18,7 +19,7 @@ class ThunderModule(LightningModule):
             architecture: nn.Module,
             criterion: Callable,
             n_targets: int = 1,
-            activation: Callable = nn.Identity(),
+            activation: Callable = identity,
             optimizer: Union[List[Optimizer], Optimizer] = None,
             lr_scheduler: Union[List[LRScheduler], LRScheduler] = None,
             predictor: BasePredictor = None,
