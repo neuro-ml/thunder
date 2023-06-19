@@ -125,7 +125,7 @@ def test_group_metrics(tmpdir):
         (["std", "max"], ["accuracy", "std/accuracy", "max/accuracy"], nullcontext()),
         (["std", "wrong_key"], [], pytest.raises(ValueError, match="wrong_key")),
         (np.sum, ["accuracy", "sum/accuracy"], nullcontext()),
-        ([np.std, np.max], ["accuracy", "std/accuracy", "amax/accuracy"], nullcontext()),
+        ([np.std, np.max], ["accuracy", "std/accuracy", "max/accuracy"], nullcontext()),
         ([np.sum, "max"], ["accuracy", "sum/accuracy", "max/accuracy"], nullcontext()),
         ([np.sum, "max", 2], [], pytest.raises(TypeError, match="int")),
         ({"sum": np.sum, "max": max}, ["accuracy", "sum/accuracy", "max/accuracy"], nullcontext()),
@@ -152,11 +152,15 @@ def test_aggregators(aggregate_fn, target, exception, tmpdir):
     )
     model = NoOptimSegm(nn.Linear(2, 1), lambda x, y: x + y, -1)
     trainer.fit(model)
-    trainer.test(model)
 
     columns = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv").columns
     columns = [c.replace("val/", "") for c in columns if "val/" in c]
-    assert sorted(columns) == sorted(target)
+    assert sorted(columns) == sorted(target), aggregate_fn
+
+    trainer.test(model)
+    columns = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv").columns
+    columns = [c.replace("test/", "") for c in columns if "test/" in c]
+    assert sorted(columns) == sorted(target), aggregate_fn
 
 
 def accuracy2(*args, **kwargs):
@@ -202,9 +206,14 @@ def test_preprocessing(single_metrics, target, exception, tmpdir):
     )
     model = NoOptimSegm(nn.Linear(2, 1), lambda x, y: x + y, -1)
     trainer.fit(model)
-    trainer.test(model)
 
     df = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
     columns = [c.replace("val/", "") for c in df.columns if "val/" in c]
     assert sorted(columns) == sorted(target.keys())
     assert all(np.allclose(df[f"val/{c}"].iloc[0], target[c]) for c in columns), (df.iloc[0], target)
+
+    trainer.test(model)
+    df = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
+    columns = [c.replace("test/", "") for c in df.columns if "test/" in c]
+    assert sorted(columns) == sorted(target.keys())
+    assert all(np.allclose(df[f"test/{c}"].iloc[-1], target[c]) for c in columns), (df.iloc[0], target)
