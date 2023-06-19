@@ -189,9 +189,9 @@ def _get_func_name(function: Callable) -> str:
     if isinstance(function, partial):
         function = function.func
 
-    if isfunction(function):
-        return function.__name__
-    elif isinstance(function, Callable):
+    if callable(function):
+        if hasattr(function, "__name__"):
+            return function.__name__
         return function.__class__.__name__
 
     raise ValueError(f"You must pass a callable object, got f{type(function)}")
