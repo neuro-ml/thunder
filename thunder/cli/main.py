@@ -7,14 +7,13 @@ import yaml
 from deli import load, save
 from lazycon import Config
 from lightning import LightningModule, Trainer
-from typer import Argument, Option, Typer
+from typer import Argument, Option, Typer, Abort
 from typing_extensions import Annotated
 
 from ..backend import Backend
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
 from ..utils import chdir
-
 
 app = Typer(name='thunder', pretty_exceptions_enable=False)
 ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment')]
@@ -95,6 +94,11 @@ def build(
         # TODO: raise
         name, value = upd.split('=', 1)
         updates[name] = yaml.safe_load(StringIO(value))
+
+    experiment = Path(experiment)
+    if experiment.exists():
+        print(f'Cannot create an experiment in the folder "{experiment}", it already exists')
+        raise Abort(1)
 
     build_exp(Config.load(config), experiment, updates)
 

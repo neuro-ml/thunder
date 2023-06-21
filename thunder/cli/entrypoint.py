@@ -14,7 +14,7 @@ from .main import app, build_run, run
 from .wandb import agent, wand_app
 
 
-def main():
+def populate():
     backend_name = detect_backend()
     local_configs = load_backend_configs()
     default_configs = {
@@ -67,6 +67,10 @@ def main():
     patch_backend(wand_app, agent, backend, backend_name, backend_params)
 
     app.add_typer(wand_app)
+
+
+def main():
+    populate()
     app()
 
 
