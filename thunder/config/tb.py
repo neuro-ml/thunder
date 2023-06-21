@@ -1,5 +1,5 @@
 from collections import defaultdict
-from functools import cache
+from functools import lru_cache
 from typing import Any
 
 from lightning.pytorch.loggers import TensorBoardLogger
@@ -35,7 +35,7 @@ def node_proto(name, inputs, op):
 
 
 def remove_identity(nodes):
-    @cache
+    @lru_cache(None)
     def _remove(node: TreeNode):
         if node.is_leaf:
             return node
