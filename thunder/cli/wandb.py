@@ -1,11 +1,16 @@
 import os
 from pathlib import Path
 
-import wandb
 import yaml
 from lazycon import Config
-from typer import Argument, Typer
+from typer import Abort, Argument, Typer
 from typing_extensions import Annotated
+
+
+try:
+    import wandb
+except ImportError:
+    wandb = None
 
 from .main import ConfArg, NamesArg, build_exp, get_nodes
 
@@ -33,6 +38,10 @@ def agent(
 
         cnf = backend.Config(**kwargs)
         backend.run(cnf, local, get_nodes(local, names), wait=True)
+
+    if wandb is None:
+        print('To use this command please install wandb: `pip install wandb`')
+        raise Abort(1)
 
     if names is not None:
         names = names.split(',')
