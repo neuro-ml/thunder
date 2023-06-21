@@ -5,6 +5,7 @@ from typer.testing import CliRunner
 
 from thunder.cli.entrypoint import app, populate
 
+
 populate()
 runner = CliRunner()
 

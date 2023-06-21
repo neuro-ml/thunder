@@ -62,8 +62,8 @@ combine_as_imports = true
 # B019: @lru_cache for static methods is fine
 # B008: calling the function as default value is just part of the typer's interface
 # C408: for identifier-like fields dict(x=y) is just more concise
-# Q000: we don't care for single vs double quotes
-ignore = ['W503', 'E203', 'B019', 'B028', 'C408', 'Q000']
+# Q000,Q001: we don't care for single vs double quotes
+ignore = ['W503', 'E203', 'B019', 'B028', 'C408', 'Q000', 'Q001']
 per-file-ignores = [
     '**/__init__.py:F401,F403',
     'tests/*:I251',
