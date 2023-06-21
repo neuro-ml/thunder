@@ -8,6 +8,12 @@ from more_itertools import windowed
 
 
 class TimeProfiler(Callback):
+    """
+    Parameters
+    ----------
+    keys : Union[str, bool]
+        Optional keys for logging. If set to `True` it will log all keys.
+    """
     def __init__(self, *keys: Union[str, bool]):
         self._default_keys = (
             "train batch",
