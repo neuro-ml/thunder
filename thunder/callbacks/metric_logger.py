@@ -1,7 +1,7 @@
 from collections import defaultdict
 from functools import partial
 from itertools import chain
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import numpy as np
 import torch
@@ -18,8 +18,19 @@ class MetricLogger(Callback):
         self,
         single_metrics: Dict = None,
         group_metrics: Dict[str, Callable] = None,
-        aggregate_fn=None,
+        aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]] = None,
     ):
+        """
+        Parameters
+        ----------
+        single_metrics: Dict
+            Metrics that are calculated on each object separately and then aggregated.
+        group_metrics: Dict[str, Callable]
+            Metrics that are calculated on entire dataset.
+        aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]]
+            How to aggregate metrics. By default computes mean value. If yoy specify somethind,
+            then the callback will compute mean and the specified values.
+        """
         _single_metrics = dict(single_metrics or {})
         group_metrics = dict(group_metrics or {})
 
