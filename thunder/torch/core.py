@@ -25,6 +25,26 @@ class ThunderModule(LightningModule):
             predictor: BasePredictor = None,
             n_val_targets: int = None
     ):
+        """
+        Parameters
+        ----------
+        architecture: nn.Module
+            Model architecture used to conduct forward pass.
+        criterion: Callable
+            Criterion to optimize.
+        n_targets: int
+            Number of target values in train and inference batches, if negative, then ...
+        activation: Callable
+            Final activation function for inference, identity by default.
+        optimizer: Union[List[Optimizer], Optimizer]
+            Optimizers.
+        lr_scheduler: Union[List[LRScheduler], LRScheduler]
+            Learning Rate policies.
+        predictor: BasePredictor.
+            Predictor for inference.
+        n_val_targets: int
+            Number of target values for inference, if set to None assumes value of `n_targets`.
+        """
         super().__init__()
         self.architecture = architecture
         self.criterion = criterion

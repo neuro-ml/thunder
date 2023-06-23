@@ -11,6 +11,9 @@ from torch.optim.lr_scheduler import LRScheduler
 
 
 class Policy(LRScheduler, metaclass=ABCMeta):
+    """
+    Policy base class.
+    """
     def __init__(self):
         pass
 
@@ -19,24 +22,60 @@ class Policy(LRScheduler, metaclass=ABCMeta):
         return self
 
     def set_optimizer(self, optimizer: Optimizer) -> None:
+        """Assigns optimizer to a scheduler"""
         super().__init__(optimizer)
 
     @abstractmethod
     def get_lr(self) -> List[float]:
+        """
+        Computes new value of learning rate.
+        Returns
+        -------
+        List[float]
+        """
         pass
 
     @abstractmethod
     def state_dict(self, *keys: str) -> Dict[str, Any]:
+        """
+        Creates state dict of scheduler, excluding optimizer.
+        Parameters
+        ----------
+        keys: str
+            Names of attributes to be excluded from state_dict
+
+        Returns
+        -------
+        Dict[str, Any]
+        """
         keys = (*keys, "optimizer")
         return {key: value for key, value in self.__dict__.items() if key not in keys}
 
     @abstractmethod
     def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
+        """
+        Loads state dict of scheduler
+        Parameters
+        ----------
+        state_dict: Dict[str, Any]
+            State dict of scheduler.
+        """
         self.__dict__.update(state_dict)
 
 
 class MappingPolicy(Policy, metaclass=ABCMeta):
     def __init__(self, mapping, lr_init: Union[List[float], float] = 1e-3):
+        """
+        Base class for policy with mapping. Mapping can be a dict or a function
+        (it should also be a list of latter types in case of multiple param groups).
+        Mapping is the binding between epoch or step number and learning rate value.
+        Parameters
+        ----------
+        mapping
+            Binding of epoch or step number and learning rate.
+        lr_init: Union[List[float], float]]
+            Initial learning rate for each group of parameters.
+        """
         self.current_mapping = None
         self.mapping = mapping
 
@@ -72,6 +111,21 @@ class MappingPolicy(Policy, metaclass=ABCMeta):
 
 
 class Multiply(MappingPolicy):
+    """
+    Multiplies learning rate value on the specified factor in `mapping`.
+    Example:
+        ```python
+            sch = Multiply({1: 0.1, 4: 0.3})
+        ```
+        if initial learning rate is 1e-3, learning rate will be: 1e-3, 1e-4, 1e-4, 1e-4, 3-e5, ...
+
+    Parameters
+    ----------
+    mapping: Union[List[Dict[int, float]], Dict[int, float]]
+        Maps epoch to factor, keeping the last value between the epochs.
+    lr_init: Union[List[float], float]]
+        Initial learning rate for each group of parameters.
+    """
     mapping: Union[List[Dict[int, float]], Dict[int, float]]
 
     def get_lr(self) -> List[float]:
@@ -88,6 +142,21 @@ class Multiply(MappingPolicy):
 
 
 class Schedule(MappingPolicy):
+    """
+    Assigns learning rate values received from callable mapping.
+    Example:
+        ```python
+        sch = Schedule(np.cos)
+        ```
+        lr will have values of np.cos(epoch_number)
+
+    Parameters
+    ----------
+    mapping: Union[List[Callable], Callable]]
+        Maps epoch to value.
+    lr_init: Union[List[float], float]]
+        Initial learning rate for each group of parameters.
+    """
     mapping: Union[List[Callable], Callable]
 
     def get_lr(self) -> List[float]:
@@ -101,6 +170,21 @@ class Schedule(MappingPolicy):
 
 
 class Switch(MappingPolicy):
+    """
+    Assigns learning rate values received from dict mapping.
+    Example:
+        ```python
+        sch = Switch({0: 1e-4, 2: 1e-10)
+        ```
+        lr: 1e-4, 1e-4, 1e-10, 1e-10, ...
+
+    Parameters
+    ----------
+    mapping: Union[List[Dict[int, float]], Dict[int, float]]
+        Maps specified epochs to specified values, preserving learning rate between epochs.
+    lr_init: Union[List[float], float]]
+        Initial learning rate for each group of parameters.
+    """
     mapping: Union[List[Dict[int, float]], Dict[int, float]]
 
     def get_lr(self) -> List[float]:

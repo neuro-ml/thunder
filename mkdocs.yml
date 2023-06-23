@@ -21,6 +21,7 @@ plugins:
             show_root_heading: true
             show_source: false
             heading_level: 3
+            separate_signature: true
       watch:
         - thunder
 
@@ -53,7 +54,7 @@ markdown_extensions:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - toc:
-      toc_depth: 3
+      toc_depth: 4
 
 extra:
   version:

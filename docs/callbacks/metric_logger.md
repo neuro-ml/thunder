@@ -1,4 +1,4 @@
-## MetricLogger
+# MetricLogger
 This callback takes on computation and aggregation of the specified metrics.  
 
 ## Usage
