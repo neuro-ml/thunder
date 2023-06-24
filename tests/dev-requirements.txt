@@ -1,0 +1,6 @@
+pytest
+pytest-cov
+pytest-subprocess
+torchvision
+scikit-learn
+pandas

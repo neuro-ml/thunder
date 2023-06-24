@@ -3,7 +3,7 @@ name = 'thunder'
 dynamic = ['version', 'dependencies']
 description = 'A small experiments runner for Pytorch Lightning'
 readme = 'README.md'
-requires-python = '>=3.7'
+requires-python = '>=3.8'
 license = { file = 'LICENSE' }
 keywords = ['deep learning', 'experiments']
 authors = [
@@ -13,7 +13,6 @@ classifiers = [
     'Development Status :: 3 - Alpha',
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
@@ -27,7 +26,7 @@ classifiers = [
 'Source' = 'https://github.com/neuro-ml/thunder'
 
 [project.scripts]
-thunder = 'thunder.cli:main'
+thunder = 'thunder.cli.entrypoint:main'
 
 [build-system]
 requires = ['setuptools>=43.0.0', 'wheel']
@@ -39,6 +38,10 @@ include = ['thunder']
 [tool.setuptools.dynamic]
 version = { attr = 'thunder.__version__.__version__' }
 dependencies = { file = 'requirements.txt' }
+
+[tool.coverage.run]
+branch = true
+source = ['thunder/']
 
 [tool.black]
 line-length = 120
@@ -54,13 +57,15 @@ combine_as_imports = true
 # W503: line break before binary operator is actually considered best-practice
 # E203: spaces around complex variables in slices are pep-right
 # F401: unused imports in __init__.py-s
+# F403: start imports in __init__.py-s
 # I251: allow absolute imports in upper files
 # B019: @lru_cache for static methods is fine
 # B008: calling the function as default value is just part of the typer's interface
 # C408: for identifier-like fields dict(x=y) is just more concise
-ignore = ['W503', 'E203', 'B019', 'B028', 'C408']
+# Q000,Q001: we don't care for single vs double quotes
+ignore = ['W503', 'E203', 'B019', 'B028', 'C408', 'Q000', 'Q001']
 per-file-ignores = [
-    '**/__init__.py:F401',
+    '**/__init__.py:F401,F403',
     'tests/*:I251',
     'docs/*:I251',
     'thunder/internals/cli.py:B008',

@@ -1,6 +1,13 @@
 lightning>=2.0.0,<3.0.0
-lazycon<1.0.0
+lazycon>=0.6.3,<1.0.0
 typer
 torch
 toolz
 numpy
+more_itertools
+pyyaml
+pydantic
+deli
+joblib
+pytimeparse
+typing-extensions
