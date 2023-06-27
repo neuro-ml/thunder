@@ -28,15 +28,25 @@ All schedulers have `lr_init` parameters, if specified, it will be used as lr va
 0th step.
 
 ## Reference
-::: thunder.policy
+::: thunder.policy.Multiply
     handler: python
     options:
-      members:
-        - Multiply
-        - Schedule
-        - Switch
       show_root_heading: true
-      show_source: false
+      show_source: true
+      show_base: true
+
+::: thunder.policy.Schedule
+    handler: python
+    options:
+      show_root_heading: true
+      show_source: true
+      show_base: true
+
+::: thunder.policy.Switch
+    handler: python
+    options:
+      show_root_heading: true
+      show_source: true
       show_base: true
 
 ### Base classes
