@@ -8,25 +8,27 @@
       
       
       
-        <link rel="canonical" href="https://neuro-ml.github.io/thunder/latest/">
+        <link rel="canonical" href="https://neuro-ml.github.io/thunder/latest/layout/">
       
       
+        <link rel="prev" href="../core/thunder_module/">
       
-        <link rel="next" href="predict/">
       
-      <link rel="icon" href="assets/images/favicon.png">
+        <link rel="next" href="splits/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
-        <title>A small experiments runner for Pytorch Lightning</title>
+        <title>Layout - A small experiments runner for Pytorch Lightning</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.26e3688c.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ecc896b0.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ecc896b0.min.css">
       
       
 
@@ -42,9 +44,9 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -73,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#thunder" class="md-skip">
+        <a href="#layout" class="md-skip">
           Skip to content
         </a>
       
@@ -93,7 +95,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="A small experiments runner for Pytorch Lightning" class="md-header__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
+    <a href=".." title="A small experiments runner for Pytorch Lightning" class="md-header__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -112,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Layout
             
           </span>
         </div>
@@ -217,7 +219,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="A small experiments runner for Pytorch Lightning" class="md-nav__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
+    <a href=".." title="A small experiments runner for Pytorch Lightning" class="md-nav__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -246,93 +248,11 @@
 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Home
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
         Home
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#core-features" class="md-nav__link">
-    Core Features
-  </a>
-  
-    <nav class="md-nav" aria-label="Core Features">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#thundermodule" class="md-nav__link">
-    ThunderModule
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#metriclogger" class="md-nav__link">
-    MetricLogger
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#experiment-configs" class="md-nav__link">
-    Experiment configs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-integrations-with-wandb" class="md-nav__link">
-    CLI &amp; Integrations with WandB
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -345,7 +265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="predict/" class="md-nav__link">
+      <a href="../predict/" class="md-nav__link">
         Predict
       </a>
     </li>
@@ -387,7 +307,7 @@
   
   
     <li class="md-nav__item">
-      <a href="callbacks/" class="md-nav__link">
+      <a href="../callbacks/" class="md-nav__link">
         Callbacks
       </a>
     </li>
@@ -401,7 +321,7 @@
   
   
     <li class="md-nav__item">
-      <a href="callbacks/metric_logger/" class="md-nav__link">
+      <a href="../callbacks/metric_logger/" class="md-nav__link">
         MetricLogger
       </a>
     </li>
@@ -415,7 +335,7 @@
   
   
     <li class="md-nav__item">
-      <a href="callbacks/time_profiler/" class="md-nav__link">
+      <a href="../callbacks/time_profiler/" class="md-nav__link">
         Time profiler
       </a>
     </li>
@@ -464,7 +384,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cli/" class="md-nav__link">
+      <a href="../cli/" class="md-nav__link">
         Command Line Interface
       </a>
     </li>
@@ -513,7 +433,7 @@
   
   
     <li class="md-nav__item">
-      <a href="configs/" class="md-nav__link">
+      <a href="../configs/" class="md-nav__link">
         Lazycon
       </a>
     </li>
@@ -562,7 +482,7 @@
   
   
     <li class="md-nav__item">
-      <a href="core/thunder_module/" class="md-nav__link">
+      <a href="../core/thunder_module/" class="md-nav__link">
         ThunderModule
       </a>
     </li>
@@ -582,14 +502,16 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
       
       
       
@@ -598,7 +520,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_7">
           <span class="md-nav__icon md-icon"></span>
           Layout
@@ -609,11 +531,92 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="layout/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Layout
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Layout
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#thunder-layouts" class="md-nav__link">
+    Thunder Layouts
+  </a>
+  
+    <nav class="md-nav" aria-label="Thunder Layouts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#thunder.layout.interface.Layout" class="md-nav__link">
+    Layout
+  </a>
+  
+    <nav class="md-nav" aria-label="Layout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#thunder.layout.interface.Layout.build" class="md-nav__link">
+    build()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#thunder.layout.interface.Layout.load" class="md-nav__link">
+    load()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#thunder.layout.interface.Layout.set" class="md-nav__link">
+    set()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -625,7 +628,7 @@
   
   
     <li class="md-nav__item">
-      <a href="layout/splits/" class="md-nav__link">
+      <a href="splits/" class="md-nav__link">
         Splits
       </a>
     </li>
@@ -674,7 +677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="policy/" class="md-nav__link">
+      <a href="../policy/" class="md-nav__link">
         Policy
       </a>
     </li>
@@ -688,7 +691,7 @@
   
   
     <li class="md-nav__item">
-      <a href="policy/lr_schedulers/" class="md-nav__link">
+      <a href="../policy/lr_schedulers/" class="md-nav__link">
         LR Schedulers
       </a>
     </li>
@@ -729,45 +732,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+  <a href="#thunder-layouts" class="md-nav__link">
+    Thunder Layouts
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#core-features" class="md-nav__link">
-    Core Features
-  </a>
-  
-    <nav class="md-nav" aria-label="Core Features">
+    <nav class="md-nav" aria-label="Thunder Layouts">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#thundermodule" class="md-nav__link">
-    ThunderModule
+  <a href="#thunder.layout.interface.Layout" class="md-nav__link">
+    Layout
+  </a>
+  
+    <nav class="md-nav" aria-label="Layout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#thunder.layout.interface.Layout.build" class="md-nav__link">
+    build()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#metriclogger" class="md-nav__link">
-    MetricLogger
+  <a href="#thunder.layout.interface.Layout.load" class="md-nav__link">
+    load()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#experiment-configs" class="md-nav__link">
-    Experiment configs
+  <a href="#thunder.layout.interface.Layout.set" class="md-nav__link">
+    set()
   </a>
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#cli-integrations-with-wandb" class="md-nav__link">
-    CLI &amp; Integrations with WandB
-  </a>
+      </ul>
+    </nav>
   
 </li>
         
@@ -794,34 +796,161 @@
   
 
 
-<blockquote>
-<p>You saw the lightning. Now it's time to hear the thunder</p>
-</blockquote>
-<h1 id="thunder">Thunder</h1>
-<p>The Deep Learning framework based on Lighnting</p>
-<h2 id="installation">Installation</h2>
-<p>You can install from pypi<br />
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>thunder
+<h1 id="layout">Layout</h1>
+<p>Layout instances are responsible for splitting your datasets managing
+which data fold is used for each experiment.
+They also check reproducibility of your data splits.</p>
+<h2 id="thunder-layouts">Thunder Layouts</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="./splits/#thunder.layout.split.Split">Split</a></td>
+<td>Layout for K fold cross-validation</td>
+</tr>
+<tr>
+<td><a href="./splits/#thunder.layout.split.SingleSplit">SingleSplit</a></td>
+<td>Layout with several sets (e.g. train + val + test)</td>
+</tr>
+</tbody>
+</table>
+<p>All Layout subclasses follow common interface
+</p>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="thunder.layout.interface.Layout" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">thunder.layout.interface.Layout</span>
+
+
+</h3>
+
+
+  <div class="doc doc-contents first">
+
+
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="thunder.layout.interface.Layout.build" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">build</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+  </span>
+
+</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">build</span><span class="p">(</span><span class="n">experiment</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span>
 </code></pre></div>
-or directly from GitHub<br />
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/neuro-ml/thunder.git
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd</span><span class="w"> </span>thunder<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-</code></pre></div></p>
-<h2 id="core-features">Core Features</h2>
-<ul>
-<li>
-<h3 id="thundermodule"><a href="./core/thunder_module">ThunderModule</a></h3>
-</li>
-<li>
-<h3 id="metriclogger"><a href="./callbacks/metric_logger">MetricLogger</a></h3>
-</li>
-<li>
-<h3 id="experiment-configs"><a href="./configs">Experiment configs</a></h3>
-</li>
-<li>
-<h3 id="cli-integrations-with-wandb"><a href="./cli">CLI &amp; Integrations with WandB</a></h3>
-</li>
-</ul>
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>thunder/layout/interface.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="nd">@abstractmethod</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a>    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="thunder.layout.interface.Layout.load" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">load</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+  </span>
+
+</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">load</span><span class="p">(</span><span class="n">experiment</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Config</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>thunder/layout/interface.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="nd">@abstractmethod</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Config</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="thunder.layout.interface.Layout.set" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">set</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+  </span>
+
+</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">set</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>thunder/layout/interface.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-30">30</a></span>
+<span class="normal"><a href="#__codelineno-0-31">31</a></span>
+<span class="normal"><a href="#__codelineno-0-32">32</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="nd">@abstractmethod</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
 
 
 
@@ -859,10 +988,10 @@ or directly from GitHub<br />
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.b425cdc4.min.js"></script>
+      <script src="../assets/javascripts/bundle.b425cdc4.min.js"></script>
       
     
   </body>

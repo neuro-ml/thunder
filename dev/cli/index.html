@@ -8,25 +8,27 @@
       
       
       
-        <link rel="canonical" href="https://neuro-ml.github.io/thunder/latest/">
+        <link rel="canonical" href="https://neuro-ml.github.io/thunder/latest/cli/">
       
       
+        <link rel="prev" href="../callbacks/time_profiler/">
       
-        <link rel="next" href="predict/">
       
-      <link rel="icon" href="assets/images/favicon.png">
+        <link rel="next" href="../configs/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
-        <title>A small experiments runner for Pytorch Lightning</title>
+        <title>Command Line Interface - A small experiments runner for Pytorch Lightning</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.26e3688c.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ecc896b0.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ecc896b0.min.css">
       
       
 
@@ -42,9 +44,9 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -73,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#thunder" class="md-skip">
+        <a href="#command-line-interface" class="md-skip">
           Skip to content
         </a>
       
@@ -93,7 +95,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="A small experiments runner for Pytorch Lightning" class="md-header__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
+    <a href=".." title="A small experiments runner for Pytorch Lightning" class="md-header__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -112,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Command Line Interface
             
           </span>
         </div>
@@ -217,7 +219,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="A small experiments runner for Pytorch Lightning" class="md-nav__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
+    <a href=".." title="A small experiments runner for Pytorch Lightning" class="md-nav__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -246,93 +248,11 @@
 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Home
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
         Home
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#core-features" class="md-nav__link">
-    Core Features
-  </a>
-  
-    <nav class="md-nav" aria-label="Core Features">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#thundermodule" class="md-nav__link">
-    ThunderModule
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#metriclogger" class="md-nav__link">
-    MetricLogger
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#experiment-configs" class="md-nav__link">
-    Experiment configs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-integrations-with-wandb" class="md-nav__link">
-    CLI &amp; Integrations with WandB
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -345,7 +265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="predict/" class="md-nav__link">
+      <a href="../predict/" class="md-nav__link">
         Predict
       </a>
     </li>
@@ -387,7 +307,7 @@
   
   
     <li class="md-nav__item">
-      <a href="callbacks/" class="md-nav__link">
+      <a href="../callbacks/" class="md-nav__link">
         Callbacks
       </a>
     </li>
@@ -401,7 +321,7 @@
   
   
     <li class="md-nav__item">
-      <a href="callbacks/metric_logger/" class="md-nav__link">
+      <a href="../callbacks/metric_logger/" class="md-nav__link">
         MetricLogger
       </a>
     </li>
@@ -415,7 +335,7 @@
   
   
     <li class="md-nav__item">
-      <a href="callbacks/time_profiler/" class="md-nav__link">
+      <a href="../callbacks/time_profiler/" class="md-nav__link">
         Time profiler
       </a>
     </li>
@@ -435,14 +355,16 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
       
       
       
@@ -451,7 +373,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
           Cli
@@ -462,11 +384,99 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="cli/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Command Line Interface
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Command Line Interface
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    Requirements:
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-an-experiment" class="md-nav__link">
+    Building an experiment
+  </a>
+  
+    <nav class="md-nav" aria-label="Building an experiment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overriding-config-entries" class="md-nav__link">
+    Overriding config entries
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-an-experiment" class="md-nav__link">
+    Running an experiment
+  </a>
+  
+    <nav class="md-nav" aria-label="Running an experiment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#predefined-run-configs" class="md-nav__link">
+    Predefined run configs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wandb-sweeps-integration" class="md-nav__link">
+    WandB Sweeps integration
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -513,7 +523,7 @@
   
   
     <li class="md-nav__item">
-      <a href="configs/" class="md-nav__link">
+      <a href="../configs/" class="md-nav__link">
         Lazycon
       </a>
     </li>
@@ -562,7 +572,7 @@
   
   
     <li class="md-nav__item">
-      <a href="core/thunder_module/" class="md-nav__link">
+      <a href="../core/thunder_module/" class="md-nav__link">
         ThunderModule
       </a>
     </li>
@@ -611,7 +621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="layout/" class="md-nav__link">
+      <a href="../layout/" class="md-nav__link">
         Layout
       </a>
     </li>
@@ -625,7 +635,7 @@
   
   
     <li class="md-nav__item">
-      <a href="layout/splits/" class="md-nav__link">
+      <a href="../layout/splits/" class="md-nav__link">
         Splits
       </a>
     </li>
@@ -674,7 +684,7 @@
   
   
     <li class="md-nav__item">
-      <a href="policy/" class="md-nav__link">
+      <a href="../policy/" class="md-nav__link">
         Policy
       </a>
     </li>
@@ -688,7 +698,7 @@
   
   
     <li class="md-nav__item">
-      <a href="policy/lr_schedulers/" class="md-nav__link">
+      <a href="../policy/lr_schedulers/" class="md-nav__link">
         LR Schedulers
       </a>
     </li>
@@ -729,50 +739,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+  <a href="#requirements" class="md-nav__link">
+    Requirements:
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#core-features" class="md-nav__link">
-    Core Features
+  <a href="#building-an-experiment" class="md-nav__link">
+    Building an experiment
   </a>
   
-    <nav class="md-nav" aria-label="Core Features">
+    <nav class="md-nav" aria-label="Building an experiment">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#thundermodule" class="md-nav__link">
-    ThunderModule
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#metriclogger" class="md-nav__link">
-    MetricLogger
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#experiment-configs" class="md-nav__link">
-    Experiment configs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-integrations-with-wandb" class="md-nav__link">
-    CLI &amp; Integrations with WandB
+  <a href="#overriding-config-entries" class="md-nav__link">
+    Overriding config entries
   </a>
   
 </li>
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-an-experiment" class="md-nav__link">
+    Running an experiment
+  </a>
+  
+    <nav class="md-nav" aria-label="Running an experiment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#predefined-run-configs" class="md-nav__link">
+    Predefined run configs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wandb-sweeps-integration" class="md-nav__link">
+    WandB Sweeps integration
+  </a>
   
 </li>
       
@@ -794,34 +810,48 @@
   
 
 
-<blockquote>
-<p>You saw the lightning. Now it's time to hear the thunder</p>
-</blockquote>
-<h1 id="thunder">Thunder</h1>
-<p>The Deep Learning framework based on Lighnting</p>
-<h2 id="installation">Installation</h2>
-<p>You can install from pypi<br />
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>thunder
+<h1 id="command-line-interface">Command Line Interface</h1>
+<p>Thunder provides its users with CLI to bring convenience and comfort into experiment
+building and execution routine.</p>
+<h4 id="requirements">Requirements:</h4>
+<p><a href="">lazycon</a></p>
+<h2 id="building-an-experiment">Building an experiment</h2>
+<p>In order to build an experiment, you can execute the follwing command:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>thunder<span class="w"> </span>build<span class="w"> </span>/path/to/config<span class="w"> </span>/path/to/experiment
 </code></pre></div>
-or directly from GitHub<br />
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/neuro-ml/thunder.git
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd</span><span class="w"> </span>thunder<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+It will create a folder with built configs in it.  </p>
+<h3 id="overriding-config-entries">Overriding config entries</h3>
+<p>While conducting experiments one can find themselves in constant need of
+changing significant number of parameters. But it is not convenient to always do
+it via IDE or any other code editor. 
+Thunder gives an ability to override the values while building an experiment.</p>
+<p>If in your config you have
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">lr</span> <span class="o">=</span> <span class="mf">0.01</span>
+</code></pre></div>
+You can override it using <code>-u</code> flag:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>thunder<span class="w"> </span>build<span class="w"> </span>/path/to/config<span class="w"> </span>/path/to/experiment<span class="w"> </span>-u<span class="w"> </span>batch_size<span class="w"> </span><span class="m">2</span><span class="w"> </span>-u<span class="w"> </span>lr<span class="w"> </span><span class="m">0</span>.001<span class="w"> </span>
+</code></pre></div>
+<code>batch_size</code> and <code>lr</code> will be assigned 2 and 0.001 respectively.</p>
+<h2 id="running-an-experiment">Running an experiment</h2>
+<p>You can run built experiment by executing the next command:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>thunder<span class="w"> </span>run<span class="w"> </span>/path/to/experiment
+</code></pre></div>
+Under the hood thunder extracts necessary entries (e.g. model and trainer)
+from your built config and executes <code>trainer.run(model, train_data, ...)</code>.</p>
+<p>You can also specify run parameters, like amount of RAM and number of CPUs. 
+...</p>
+<h3 id="predefined-run-configs">Predefined run configs</h3>
+<h2 id="wandb-sweeps-integration">WandB Sweeps integration</h2>
+<p><a href="https://www.wandb.com">WandB</a> has hyperparameters tuning system called <a href="">Sweeps</a>.
+Sweeps allow you to run multiple experiment with predefined grid of parameters and
+compare run results. However, we find default sweep execution system very inconvenient
+when it comes to running experiments on cluster.</p>
+<p>After running a few experiments with <a href="">WandB Logger</a>, you can create sweep
+configuration. WandB will give a command <code>wandb agent project/sweep_id</code>.
+You can copy it and paste it into the following command:<br />
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>thunder<span class="w"> </span>PASTE_HERE<span class="w"> </span>/path/to/config<span class="w"> </span>/path/to/experiment<span class="w"> </span>
 </code></pre></div></p>
-<h2 id="core-features">Core Features</h2>
-<ul>
-<li>
-<h3 id="thundermodule"><a href="./core/thunder_module">ThunderModule</a></h3>
-</li>
-<li>
-<h3 id="metriclogger"><a href="./callbacks/metric_logger">MetricLogger</a></h3>
-</li>
-<li>
-<h3 id="experiment-configs"><a href="./configs">Experiment configs</a></h3>
-</li>
-<li>
-<h3 id="cli-integrations-with-wandb"><a href="./cli">CLI &amp; Integrations with WandB</a></h3>
-</li>
-</ul>
 
 
 
@@ -859,10 +889,10 @@ or directly from GitHub<br />
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.b425cdc4.min.js"></script>
+      <script src="../assets/javascripts/bundle.b425cdc4.min.js"></script>
       
     
   </body>
