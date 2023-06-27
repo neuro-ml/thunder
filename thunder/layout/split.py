@@ -100,7 +100,8 @@ class Split(Layout):
 
 
 class SingleSplit(Layout):
-    def __init__(self, entries: Sequence, *, shuffle: bool = True, random_state: Union[np.random.RandomState, int, None] = 0,
+    def __init__(self, entries: Sequence, *, shuffle: bool = True,
+                 random_state: Union[np.random.RandomState, int, None] = 0,
                  **sizes: Union[int, float]):
         """
         Creates single fold experiment, with custom number of sets.
