@@ -1,16 +1,17 @@
 from collections import defaultdict
 from functools import partial
 from itertools import chain
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union, Sequence
 
 import numpy as np
 import torch
 from lightning import Callback, LightningModule, Trainer
 from lightning.pytorch.utilities.types import STEP_OUTPUT
+from more_itertools import zip_equal
 from toolz import compose, valmap
 
 from ..torch.utils import to_np
-from ..utils import squeeze_first
+from ..utils import squeeze_first, collect
 
 
 class MetricLogger(Callback):
@@ -169,10 +170,18 @@ class MetricLogger(Callback):
         batch_idx: int,
         dataloader_idx: int = 0,
     ) -> None:
-        if self.group_metrics:
-            self._all_predictions.extend(zip(*outputs))
 
-        for pred, target in zip(*outputs):
+        if len(outputs) != 2:
+            raise ValueError(f"Expected step output in form of 2 elements (x, y),"
+                             f"but received {len(outputs)}")
+        xs, ys = outputs
+        xs = recombine_batch(xs) if isinstance(xs, (list, tuple)) else xs
+        ys = recombine_batch(xs) if isinstance(ys, (list, tuple)) else ys
+
+        if self.group_metrics:
+            self._all_predictions.extend(zip(xs, ys))
+
+        for pred, target in zip(xs, ys):
             for preprocess, metrics_names in self.preprocess.items():
                 _pred, _target = preprocess(pred, target)
                 for name in metrics_names:
@@ -210,3 +219,8 @@ def _get_func_name(function: Callable) -> str:
 
 def _identity(*args):
     return squeeze_first(args)
+
+
+@collect
+def recombine_batch(xs: Sequence):
+    yield from map(squeeze_first, zip_equal(*xs))
