@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import Dict, List, Union
+from typing import Dict, List, Union, overload, Literal
 
 from lightning import Callback
 from lightning.pytorch.utilities.exceptions import MisconfigurationException
@@ -14,6 +14,14 @@ class TimeProfiler(Callback):
     keys : Union[str, bool]
         Optional keys for logging. If set to `True` it will log all keys.
     """
+    @overload
+    def __init__(self, *keys: str):
+        ...
+
+    @overload
+    def __init__(self, keys: Literal[True]):
+        ...
+
     def __init__(self, *keys: Union[str, bool]):
         self._default_keys = (
             "train batch",

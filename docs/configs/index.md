@@ -1,5 +1,6 @@
 # Lazycon
-Thunder embraces the power of [lazycon]() allowing you to build configs for your 
+Thunder embraces the power of [lazycon](https://github.com/maxme1/lazycon)
+allowing you to build configs for your 
 experiments. 
 ## Config structure
 In order for the config to be correct it should contain the following objects:  
@@ -10,10 +11,5 @@ In order for the config to be correct it should contain the following objects:
 `test_data` - test dataloader (Optional)
 
 ## Executing a config
-Configs can be run just like usual python files:
-```bash
-python /path/to/config.config
-```
-
-But Thunder has its own command line interface, 
+Thunder has its own **Command Line Interface**, 
 about which you can read [here](../cli).

@@ -28,7 +28,7 @@ class MetricLogger(Callback):
         group_metrics: Dict[str, Callable]
             Metrics that are calculated on entire dataset.
         aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]]
-            How to aggregate metrics. By default computes mean value. If yoy specify somethind,
+            How to aggregate metrics. By default it computes mean value. If yoy specify something,
             then the callback will compute mean and the specified values.
         """
         _single_metrics = dict(single_metrics or {})
