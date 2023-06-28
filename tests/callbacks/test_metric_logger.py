@@ -249,9 +249,11 @@ def test_multioutput(tmpdir):
 
     df = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
     columns = [c.replace("val/", "") for c in df.columns if "val/" in c]
-    assert all(np.allclose(df[f"val/{c}"].iloc[0], target[c]) for c in columns), (df["val/accuracy_score"].iloc[0], target)
+    assert all(np.allclose(df[f"val/{c}"].iloc[0], target[c]) for c in columns), \
+        (df["val/accuracy_score"].iloc[0], target)
 
     trainer.test(model)
     df = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
     columns = [c.replace("test/", "") for c in df.columns if "test/" in c]
-    assert all(np.allclose(df[f"test/{c}"].iloc[-1], target[c]) for c in columns), (df["test/accuracy_score"].iloc[-1], target)
+    assert all(np.allclose(df[f"test/{c}"].iloc[-1], target[c]) for c in columns), \
+        (df["test/accuracy_score"].iloc[-1], target)
