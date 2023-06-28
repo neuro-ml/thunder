@@ -1,7 +1,7 @@
 from collections import defaultdict
 from functools import partial
 from itertools import chain
-from typing import Any, Callable, Dict, List, Optional, Union, Sequence
+from typing import Any, Callable, Dict, List, Optional, Sequence, Union
 
 import numpy as np
 import torch
@@ -11,7 +11,7 @@ from more_itertools import zip_equal
 from toolz import compose, valmap
 
 from ..torch.utils import to_np
-from ..utils import squeeze_first, collect
+from ..utils import collect, squeeze_first
 
 
 class MetricLogger(Callback):
