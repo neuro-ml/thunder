@@ -16,10 +16,10 @@ from ..utils import squeeze_first, collect
 
 class MetricLogger(Callback):
     def __init__(
-        self,
-        single_metrics: Dict = None,
-        group_metrics: Dict[str, Callable] = None,
-        aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]] = None,
+            self,
+            single_metrics: Dict = None,
+            group_metrics: Dict[str, Callable] = None,
+            aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]] = None,
     ):
         """
         Parameters
@@ -45,14 +45,17 @@ class MetricLogger(Callback):
             elif callable(k) or isinstance(k, tuple) and all(map(callable, k)):
                 if isinstance(k, tuple):
                     k = compose(*k)
+
                 if isinstance(v, (list, tuple)):
                     metrics = {_get_func_name(f): f for f in v}
                 elif isinstance(v, dict):
                     metrics = v
+                elif callable(v):
+                    metrics = {_get_func_name(v): v}
                 else:
                     raise TypeError(
                         f"When passing metrics with preprocessing, metrics should be "
-                        f"List[Callable] or Dict[str, Callable], got {type(v)}"
+                        f"Callable, List[Callable] or Dict[str, Callable], got {type(v)}"
                     )
                 preprocess[k] = metrics
                 single_metrics.update(metrics)
@@ -102,7 +105,7 @@ class MetricLogger(Callback):
                 raise ValueError(f"Unknown type of aggrefate_fn: {type(aggregate_fn)}")
 
     def on_train_batch_end(
-        self, trainer: Trainer, pl_module: LightningModule, outputs: STEP_OUTPUT, batch: Any, batch_idx: int
+            self, trainer: Trainer, pl_module: LightningModule, outputs: STEP_OUTPUT, batch: Any, batch_idx: int
     ) -> None:
         if outputs is None:
             return
@@ -134,13 +137,13 @@ class MetricLogger(Callback):
         self._train_losses = []
 
     def on_validation_batch_end(
-        self,
-        trainer: Trainer,
-        pl_module: LightningModule,
-        outputs: Optional[STEP_OUTPUT],
-        batch: Any,
-        batch_idx: int,
-        dataloader_idx: int = 0,
+            self,
+            trainer: Trainer,
+            pl_module: LightningModule,
+            outputs: Optional[STEP_OUTPUT],
+            batch: Any,
+            batch_idx: int,
+            dataloader_idx: int = 0,
     ) -> None:
         self.evaluate_batch(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
 
@@ -148,13 +151,13 @@ class MetricLogger(Callback):
         self.evaluate_epoch(trainer, pl_module, "val")
 
     def on_test_batch_end(
-        self,
-        trainer: Trainer,
-        pl_module: LightningModule,
-        outputs: Optional[STEP_OUTPUT],
-        batch: Any,
-        batch_idx: int,
-        dataloader_idx: int = 0,
+            self,
+            trainer: Trainer,
+            pl_module: LightningModule,
+            outputs: Optional[STEP_OUTPUT],
+            batch: Any,
+            batch_idx: int,
+            dataloader_idx: int = 0,
     ) -> None:
         self.evaluate_batch(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
 
@@ -162,26 +165,28 @@ class MetricLogger(Callback):
         self.evaluate_epoch(trainer, pl_module, "test")
 
     def evaluate_batch(
-        self,
-        trainer: Trainer,
-        pl_module: LightningModule,
-        outputs: Optional[STEP_OUTPUT],
-        batch: Any,
-        batch_idx: int,
-        dataloader_idx: int = 0,
+            self,
+            trainer: Trainer,
+            pl_module: LightningModule,
+            outputs: Optional[STEP_OUTPUT],
+            batch: Any,
+            batch_idx: int,
+            dataloader_idx: int = 0,
     ) -> None:
 
         if len(outputs) != 2:
             raise ValueError(f"Expected step output in form of 2 elements (x, y),"
                              f"but received {len(outputs)}")
         xs, ys = outputs
-        xs = recombine_batch(xs) if isinstance(xs, (list, tuple)) else xs
-        ys = recombine_batch(xs) if isinstance(ys, (list, tuple)) else ys
+        xs = _recombine_batch(xs) if isinstance(xs, (list, tuple)) else xs
+        ys = _recombine_batch(ys) if isinstance(ys, (list, tuple)) else ys
+
+        outputs = (xs, ys)
 
         if self.group_metrics:
-            self._all_predictions.extend(zip(xs, ys))
+            self._all_predictions.extend(zip(*outputs))
 
-        for pred, target in zip(xs, ys):
+        for pred, target in zip(*outputs):
             for preprocess, metrics_names in self.preprocess.items():
                 _pred, _target = preprocess(pred, target)
                 for name in metrics_names:
@@ -222,5 +227,5 @@ def _identity(*args):
 
 
 @collect
-def recombine_batch(xs: Sequence):
+def _recombine_batch(xs: Sequence) -> List:
     yield from map(squeeze_first, zip_equal(*xs))
