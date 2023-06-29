@@ -100,7 +100,7 @@ model = ThunderModuleManual(..., optimizer=optimizers, lr_scheduler=lr_scheduler
 
 ### Thunder Policies
 As shown above, torch schedulers require optimizer(s) to be passed to them before
-they are given to ThunderModule. It is not very convenient and also they lack some basic 
+they are given to ThunderModule. It is not very convenient, and also they lack some basic 
 functionality.  
 You can use thunder policies just like torch schedulers:
 ```python
@@ -116,7 +116,7 @@ For extra information see [Thunder Policies Docs](../policy/lr_schedulers.md).
 
 ## Inference
 During inference step, ThunderModule uses Predictors in order to preprocess data and
-make inverse transformsa after passing data through the model. Default predictor
+make inverse transforms after passing data through the model. Default predictor
 is just an identity function.
 
 For more on predictors see [Thunder Predictors Docs]().
@@ -124,7 +124,7 @@ For more on predictors see [Thunder Predictors Docs]().
 ## Batch Transfer
 ThunderModule transfers training batches to device by default. However, during 
 inference batch remains on the device, on which it was received from data loader. 
-Transfering happens later in the `inference_step`, which is invoked in
+Transferring happens later in the `inference_step`, which is invoked in
 `validation_step`, `test_step` and `predict_step`.
 
 ## Reference

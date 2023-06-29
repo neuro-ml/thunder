@@ -1,6 +1,6 @@
 > You saw the lightning. Now it's time to hear the thunder
 # Thunder
-The Deep Learning framework based on Lighnting
+The Deep Learning framework based on Lightning.
 
 ## Installation
 You can install from pypi  
