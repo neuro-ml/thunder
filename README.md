@@ -1,4 +1,9 @@
-> You saw the lightning. Now it's time to hear the thunder 🌩️
+[![docs](https://img.shields.io/badge/-docs-success)](https://neuro-ml.github.io/thunder/)
+![License](https://img.shields.io/github/license/neuro-ml/thunder)
+[![codecov](https://codecov.io/gh/neuro-ml/thunder/branch/master/graph/badge.svg)](https://codecov.io/gh/neuro-ml/thunder)
+[![pypi](https://img.shields.io/pypi/v/thunder?logo=pypi&label=PyPi)](https://pypi.org/project/thunder/)
+
+> > You saw the lightning. Now it's time to hear the thunder 🌩️
 
 # Thunder
 
