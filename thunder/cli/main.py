@@ -1,3 +1,4 @@
+import os
 import shutil
 from io import StringIO
 from pathlib import Path
@@ -77,11 +78,11 @@ def start(
         if hyperparams:
             trainer.logger.log_hyperparams(hyperparams)
 
-        ckpt_path = last_checkpoint(root)
+        ckpt_path = last_checkpoint(".")
 
         trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path=ckpt_path)
         if 'test_data' in config:
-            trainer.test(module, config.test_data, ckpt_path='last')
+            trainer.test(module, config.test_data, ckpt_path=last_checkpoint(root))
 
 
 @app.command()
@@ -175,16 +176,8 @@ def get_nodes(experiment: Path, names: Optional[Sequence[str]]):
     return [nodes[x] for x in names]
 
 
-def last_checkpoint(root: Path) -> Union[Path, str]:
-    versions = list(root.glob("*/version_*/"))
-
-    if not versions:
+def last_checkpoint(root: Union[Path, str]) -> Union[Path, str]:
+    checkpoints = list(Path(root).glob("**/last.ckpt"))
+    if not checkpoints:
         return "last"
-
-    log_dirs = set(map(lambda p: p.parent.stem, versions))
-    if len(log_dirs) != 1:
-        raise ValueError(f"Several logging directories were detected: {log_dirs}")
-
-    last_version = max(versions, key=lambda p: int(p.stem.split("_")[-1]))
-
-    return last_version / "checkpoints" / "last.ckpt"
+    return max(checkpoints, key=lambda t: os.stat(t).st_mtime)

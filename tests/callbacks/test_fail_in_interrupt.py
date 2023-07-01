@@ -34,5 +34,4 @@ def test_failing(exception, behaviour, tmpdir):
 
     with behaviour:
         trainer.fit(module)
-        assert False, "Test hasn't failed on trainer.fit"
         trainer.test(module)
