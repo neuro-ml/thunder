@@ -1,7 +1,7 @@
 import shutil
 from io import StringIO
 from pathlib import Path
-from typing import List, Optional, Sequence, Type
+from typing import List, Optional, Sequence, Type, Union
 
 import yaml
 from deli import load, save
@@ -14,7 +14,6 @@ from ..backend import Backend
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
 from ..utils import chdir
-
 
 app = Typer(name='thunder', pretty_exceptions_enable=False)
 ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment')]
@@ -78,7 +77,9 @@ def start(
         if hyperparams:
             trainer.logger.log_hyperparams(hyperparams)
 
-        trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path='last')
+        ckpt_path = last_checkpoint(root)
+
+        trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path=ckpt_path)
         if 'test_data' in config:
             trainer.test(module, config.test_data, ckpt_path='last')
 
@@ -172,3 +173,18 @@ def get_nodes(experiment: Path, names: Optional[Sequence[str]]):
         return
 
     return [nodes[x] for x in names]
+
+
+def last_checkpoint(root: Path) -> Union[Path, str]:
+    versions = list(root.glob("*/version_*/"))
+
+    if not versions:
+        return "last"
+
+    log_dirs = set(map(lambda p: p.parent.stem, versions))
+    if len(log_dirs) != 1:
+        raise ValueError(f"Several logging directories were detected: {log_dirs}")
+
+    last_version = max(versions, key=lambda p: int(p.stem.split("_")[-1]))
+
+    return last_version / "checkpoints" / "last.ckpt"
