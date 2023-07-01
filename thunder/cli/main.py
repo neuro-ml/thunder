@@ -16,6 +16,7 @@ from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
 from ..utils import chdir
 
+
 app = Typer(name='thunder', pretty_exceptions_enable=False)
 ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment')]
 ConfArg = Annotated[Path, Argument(show_default=False, help='The config from which the experiment will be built')]

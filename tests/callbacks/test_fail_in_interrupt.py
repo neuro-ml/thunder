@@ -1,8 +1,8 @@
 import pytest
 from lightning import Trainer
+from lightning.pytorch.demos.boring_classes import BoringModel
 
 from thunder.callbacks import FailOnInterrupt
-from lightning.pytorch.demos.boring_classes import BoringModel
 
 
 class FailureModel(BoringModel):

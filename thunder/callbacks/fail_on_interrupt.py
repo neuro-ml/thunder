@@ -1,4 +1,4 @@
-from lightning import Trainer, LightningModule
+from lightning import LightningModule, Trainer
 from lightning.pytorch.callbacks import Callback
 
 
