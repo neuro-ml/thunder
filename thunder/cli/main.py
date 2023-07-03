@@ -83,6 +83,7 @@ def start(
 
         if "datamodule" in config:
             trainer.fit(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
+            trainer.test(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
         else:
             trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path=ckpt_path)
             if 'test_data' in config:
