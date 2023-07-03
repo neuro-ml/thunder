@@ -66,7 +66,7 @@ def start(
         trainer: Trainer = config.trainer
 
         # log hyperparams
-        names = set(config) - {'module', 'trainer', 'train_data', 'val_data', 'ExpName', 'GroupName'}
+        names = set(config) - {"module", "trainer", "train_data", "val_data", "ExpName", "GroupName", "datamodule"}
         # TODO: lazily determine the types
         hyperparams = {}
         for name in names:
@@ -81,9 +81,12 @@ def start(
 
         ckpt_path = last_checkpoint(".")
 
-        trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path=ckpt_path)
-        if 'test_data' in config:
-            trainer.test(module, config.test_data, ckpt_path=last_checkpoint(root))
+        if "datamodule" in config:
+            trainer.fit(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
+        else:
+            trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path=ckpt_path)
+            if 'test_data' in config:
+                trainer.test(module, config.test_data, ckpt_path=last_checkpoint("."))
 
 
 @app.command()
