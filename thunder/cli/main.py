@@ -20,18 +20,16 @@ from ..utils import chdir
 app = Typer(name='thunder', pretty_exceptions_enable=False)
 ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment')]
 ConfArg = Annotated[Path, Argument(show_default=False, help='The config from which the experiment will be built')]
-UpdArg = Annotated[List[str], Option(
-    ..., '--update', '-u', help='Overwrite specific config entries', show_default=False
-)]
+UpdArg = Annotated[List[str], Option(..., '--update', '-u', help='Overwrite specific config entries', show_default=False)]
 NamesArg = Annotated[Optional[str], Option(..., help='Names of sub-experiments to start')]
 
 
 @app.command()
 def start(
-        experiment_or_config: ExpArg,
-        name: Annotated[Optional[str], Argument(help='The name of the sub-experiment to start')] = None
+    experiment_or_config: ExpArg,
+    name: Annotated[Optional[str], Argument(help='The name of the sub-experiment to start')] = None,
 ):
-    """ Start a part of an experiment. Mainly used as an internal entrypoint for other commands. """
+    """Start a part of an experiment. Mainly used as an internal entrypoint for other commands."""
     experiment_or_config = Path(experiment_or_config)
     if experiment_or_config.is_dir():
         experiment, config_path = experiment_or_config, experiment_or_config / 'experiment.config'
@@ -45,7 +43,7 @@ def start(
             # TODO
             raise ValueError
         elif len(nodes) == 1:
-            node, = nodes.values()
+            (node,) = nodes.values()
         else:
             node = None
     else:
@@ -81,21 +79,29 @@ def start(
 
         ckpt_path = last_checkpoint(".")
 
-        if "datamodule" in config:
-            trainer.fit(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
-        else:
-            trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path=ckpt_path)
-            if 'test_data' in config:
-                trainer.test(module, config.test_data, ckpt_path=last_checkpoint("."))
+        trainer.fit(
+            module,
+            config.train_data,
+            config.get('val_data', None),
+            datamodule=config.get("datamodule", None),
+            ckpt_path=ckpt_path,
+        )
+        if "test_data" in config:
+            trainer.test(
+                module,
+                config.test_data,
+                datamodule=config.get("datamodule", None),
+                ckpt_path=last_checkpoint(".")
+            )
 
 
 @app.command()
 def build(
-        config: ConfArg,
-        experiment: ExpArg,
-        update: UpdArg = (),
+    config: ConfArg,
+    experiment: ExpArg,
+    update: UpdArg = (),
 ):
-    """ Build an experiment """
+    """Build an experiment"""
     updates = {}
     for upd in update:
         # TODO: raise
@@ -134,13 +140,13 @@ def build_exp(config, experiment, updates):
 
 
 def run(
-        experiment: ExpArg,
-        names: NamesArg = None,
-        *,
-        backend: Type[Backend],
-        **kwargs,
+    experiment: ExpArg,
+    names: NamesArg = None,
+    *,
+    backend: Type[Backend],
+    **kwargs,
 ):
-    """ Run a built experiment using a given backend. """
+    """Run a built experiment using a given backend."""
     if names is not None:
         names = names.split(',')
     config = backend.Config(**kwargs)
@@ -148,15 +154,15 @@ def run(
 
 
 def build_run(
-        config: ConfArg,
-        experiment: ExpArg,
-        update: UpdArg = (),
-        names: NamesArg = None,
-        *,
-        backend: Type[Backend],
-        **kwargs,
+    config: ConfArg,
+    experiment: ExpArg,
+    update: UpdArg = (),
+    names: NamesArg = None,
+    *,
+    backend: Type[Backend],
+    **kwargs,
 ):
-    """ A convenient combination of `build` and `run` commands. """
+    """A convenient combination of `build` and `run` commands."""
     build(config, experiment, update)
     run(experiment, names, backend=backend, **kwargs)
 
