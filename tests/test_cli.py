@@ -24,3 +24,13 @@ layout = Single()
     result = runner.invoke(app, ['build', str(config), str(experiment)])
     assert result.exit_code == 1
     assert re.match('Cannot create an experiment in the folder ".*", it already exists\n', result.output)
+
+
+def test_run(temp_dir, dumb_config):
+    experiment = temp_dir / "test_run_exp"
+    experiment.mkdir()
+    config = experiment / "experiment.config"
+    Config.load(dumb_config).dump(config)
+
+    result = runner.invoke(app, ["run", str(config)])
+    assert result.exit_code == 0, result.output

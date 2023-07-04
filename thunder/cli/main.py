@@ -1,7 +1,8 @@
+import os
 import shutil
 from io import StringIO
 from pathlib import Path
-from typing import List, Optional, Sequence, Type
+from typing import List, Optional, Sequence, Type, Union
 
 import yaml
 from deli import load, save
@@ -65,7 +66,7 @@ def start(
         trainer: Trainer = config.trainer
 
         # log hyperparams
-        names = set(config) - {'module', 'trainer', 'train_data', 'val_data', 'ExpName', 'GroupName'}
+        names = set(config) - {"module", "trainer", "train_data", "val_data", "ExpName", "GroupName", "datamodule"}
         # TODO: lazily determine the types
         hyperparams = {}
         for name in names:
@@ -78,9 +79,15 @@ def start(
         if hyperparams:
             trainer.logger.log_hyperparams(hyperparams)
 
-        trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path='last')
-        if 'test_data' in config:
-            trainer.test(module, config.test_data, ckpt_path='last')
+        ckpt_path = last_checkpoint(".")
+
+        if "datamodule" in config:
+            trainer.fit(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
+            trainer.test(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
+        else:
+            trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path=ckpt_path)
+            if 'test_data' in config:
+                trainer.test(module, config.test_data, ckpt_path=last_checkpoint("."))
 
 
 @app.command()
@@ -172,3 +179,10 @@ def get_nodes(experiment: Path, names: Optional[Sequence[str]]):
         return
 
     return [nodes[x] for x in names]
+
+
+def last_checkpoint(root: Union[Path, str]) -> Union[Path, str]:
+    checkpoints = list(Path(root).glob("**/last.ckpt"))
+    if not checkpoints:
+        return "last"
+    return max(checkpoints, key=lambda t: os.stat(t).st_mtime)

@@ -26,7 +26,7 @@ lr = 0.01
 ```
 You can override it using `-u` flag:
 ```bash
-thunder build /path/to/config /path/to/experiment -u batch_size 2 -u lr 0.001 
+thunder build /path/to/config /path/to/experiment -u batch_size=2 -u lr=0.001 
 ```
 `batch_size` and `lr` will be assigned 2 and 0.001 respectively.
 

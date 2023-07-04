@@ -16,10 +16,10 @@ from ..utils import collect, squeeze_first
 
 class MetricLogger(Callback):
     def __init__(
-            self,
-            single_metrics: Dict = None,
-            group_metrics: Dict[str, Callable] = None,
-            aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]] = None,
+        self,
+        single_metrics: Dict = None,
+        group_metrics: Dict[str, Callable] = None,
+        aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]] = None,
     ):
         """
         Parameters
@@ -72,8 +72,8 @@ class MetricLogger(Callback):
         self.group_metrics = group_metrics
         self.preprocess = preprocess
         self._train_losses = []
-        self._single_metric_values = {name: [] for name in single_metrics}
-        self._all_predictions = []
+        self._single_metric_values = defaultdict(lambda: {name: [] for name in single_metrics})
+        self._all_predictions = defaultdict(list)
         self._default_aggregators = {"min": np.min, "max": np.max, "median": np.median, "std": np.std}
 
         self.aggregate_fn = {"": np.mean}
@@ -105,7 +105,7 @@ class MetricLogger(Callback):
                 raise ValueError(f"Unknown type of aggrefate_fn: {type(aggregate_fn)}")
 
     def on_train_batch_end(
-            self, trainer: Trainer, pl_module: LightningModule, outputs: STEP_OUTPUT, batch: Any, batch_idx: int
+        self, trainer: Trainer, pl_module: LightningModule, outputs: STEP_OUTPUT, batch: Any, batch_idx: int
     ) -> None:
         if outputs is None:
             return
@@ -137,13 +137,13 @@ class MetricLogger(Callback):
         self._train_losses = []
 
     def on_validation_batch_end(
-            self,
-            trainer: Trainer,
-            pl_module: LightningModule,
-            outputs: Optional[STEP_OUTPUT],
-            batch: Any,
-            batch_idx: int,
-            dataloader_idx: int = 0,
+        self,
+        trainer: Trainer,
+        pl_module: LightningModule,
+        outputs: Optional[STEP_OUTPUT],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int = 0,
     ) -> None:
         self.evaluate_batch(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
 
@@ -151,13 +151,13 @@ class MetricLogger(Callback):
         self.evaluate_epoch(trainer, pl_module, "val")
 
     def on_test_batch_end(
-            self,
-            trainer: Trainer,
-            pl_module: LightningModule,
-            outputs: Optional[STEP_OUTPUT],
-            batch: Any,
-            batch_idx: int,
-            dataloader_idx: int = 0,
+        self,
+        trainer: Trainer,
+        pl_module: LightningModule,
+        outputs: Optional[STEP_OUTPUT],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int = 0,
     ) -> None:
         self.evaluate_batch(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
 
@@ -165,18 +165,16 @@ class MetricLogger(Callback):
         self.evaluate_epoch(trainer, pl_module, "test")
 
     def evaluate_batch(
-            self,
-            trainer: Trainer,
-            pl_module: LightningModule,
-            outputs: Optional[STEP_OUTPUT],
-            batch: Any,
-            batch_idx: int,
-            dataloader_idx: int = 0,
+        self,
+        trainer: Trainer,
+        pl_module: LightningModule,
+        outputs: Optional[STEP_OUTPUT],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int = 0,
     ) -> None:
-
         if len(outputs) != 2:
-            raise ValueError(f"Expected step output in form of 2 elements (x, y),"
-                             f"but received {len(outputs)}")
+            raise ValueError(f"Expected step output in form of 2 elements (x, y)," f"but received {len(outputs)}")
         xs, ys = outputs
         xs = _recombine_batch(xs) if isinstance(xs, (list, tuple)) else xs
         ys = _recombine_batch(ys) if isinstance(ys, (list, tuple)) else ys
@@ -184,27 +182,31 @@ class MetricLogger(Callback):
         outputs = (xs, ys)
 
         if self.group_metrics:
-            self._all_predictions.extend(zip(*outputs))
+            self._all_predictions[dataloader_idx].extend(zip(*outputs))
 
         for pred, target in zip(*outputs):
             for preprocess, metrics_names in self.preprocess.items():
-                _pred, _target = preprocess(pred, target)
+                preprocessed = preprocess(pred, target)
                 for name in metrics_names:
-                    self._single_metric_values[name].append(self.single_metrics[name](_pred, _target))
+                    self._single_metric_values[dataloader_idx][name].append(self.single_metrics[name](*preprocessed))
 
     def evaluate_epoch(self, trainer: Trainer, pl_module: LightningModule, key: str) -> None:
         group_metric_values = {}
-        if self.group_metrics and self._all_predictions:
-            predictions, targets = zip(*self._all_predictions)
-            group_metric_values = {name: metric(predictions, targets) for name, metric in self.group_metrics.items()}
+        for name, metric in self.group_metrics.items():
+            for dataloader_idx, all_predictions in self._all_predictions.items():
+                loader_postfix = f"/{dataloader_idx}" if len(self._all_predictions) > 1 else ""
+                predictions, targets = zip(*all_predictions)
+                group_metric_values[f"{name}{loader_postfix}"] = metric(predictions, targets)
 
         single_metric_values = {}
         for fn_name, fn in self.aggregate_fn.items():
-            prefix = f"{fn_name}/" if fn_name else ""
-            single_metric_values.update({f"{prefix}{k}": fn(v) for k, v in self._single_metric_values.items()})
+            for dataloader_idx, metrics in self._single_metric_values.items():
+                prefix = f"{fn_name}/" if fn_name else ""
+                loader_postfix = f"/{dataloader_idx}" if len(self._single_metric_values) > 1 else ""
+                single_metric_values.update({f"{prefix}{k}{loader_postfix}": fn(v) for k, v in metrics.items()})
 
-        self._single_metric_values = {name: [] for name in self.single_metrics}
-        self._all_predictions = []
+        self._single_metric_values.clear()
+        self._all_predictions.clear()
 
         for k, value in chain(single_metric_values.items(), group_metric_values.items()):
             pl_module.log(f'{key}/{k}', value)
