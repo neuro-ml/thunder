@@ -8,25 +8,27 @@
       
       
       
-        <link rel="canonical" href="https://neuro-ml.github.io/thunder/latest/">
+        <link rel="canonical" href="https://neuro-ml.github.io/thunder/latest/callbacks/fail_on_interrupt/">
       
       
+        <link rel="prev" href="../">
       
-        <link rel="next" href="callbacks/">
       
-      <link rel="icon" href="assets/images/favicon.png">
+        <link rel="next" href="../metric_logger/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
     
     
       
-        <title>A small experiments runner for Pytorch Lightning</title>
+        <title>FailOnInterrupt - A small experiments runner for Pytorch Lightning</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.26e3688c.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ecc896b0.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ecc896b0.min.css">
       
       
 
@@ -42,9 +44,9 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -73,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#thunder" class="md-skip">
+        <a href="#failoninterrupt" class="md-skip">
           Skip to content
         </a>
       
@@ -93,7 +95,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="A small experiments runner for Pytorch Lightning" class="md-header__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
+    <a href="../.." title="A small experiments runner for Pytorch Lightning" class="md-header__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -112,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              FailOnInterrupt
             
           </span>
         </div>
@@ -217,7 +219,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="A small experiments runner for Pytorch Lightning" class="md-nav__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
+    <a href="../.." title="A small experiments runner for Pytorch Lightning" class="md-nav__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -246,6 +248,64 @@
 
   
   
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Callbacks
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Callbacks
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Callbacks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
     
   
   
@@ -258,12 +318,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Home
+          FailOnInterrupt
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="." class="md-nav__link md-nav__link--active">
-        Home
+      <a href="./" class="md-nav__link md-nav__link--active">
+        FailOnInterrupt
       </a>
       
         
@@ -282,52 +342,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+  <a href="#usage" class="md-nav__link">
+    Usage
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#start-experimenting" class="md-nav__link">
-    Start experimenting
+  <a href="#reference" class="md-nav__link">
+    Reference
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#core-features" class="md-nav__link">
-    Core Features
-  </a>
-  
-    <nav class="md-nav" aria-label="Core Features">
+    <nav class="md-nav" aria-label="Reference">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#thundermodule" class="md-nav__link">
-    ThunderModule
+  <a href="#thunder.callbacks.fail_on_interrupt.FailOnInterrupt" class="md-nav__link">
+    FailOnInterrupt
+  </a>
+  
+    <nav class="md-nav" aria-label="FailOnInterrupt">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#thunder.callbacks.fail_on_interrupt.FailOnInterrupt.on_exception" class="md-nav__link">
+    on_exception()
   </a>
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#metriclogger" class="md-nav__link">
-    MetricLogger
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#experiment-configs" class="md-nav__link">
-    Experiment configs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-integrations-with-wandb" class="md-nav__link">
-    CLI &amp; Integrations with WandB
-  </a>
+      </ul>
+    </nav>
   
 </li>
         
@@ -343,48 +388,6 @@
     </li>
   
 
-    
-      
-      
-      
-
-  
-  
-  
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-      
-      
-      
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
-      
-      
-      
-        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-          Callbacks
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_2">
-          <span class="md-nav__icon md-icon"></span>
-          Callbacks
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="callbacks/" class="md-nav__link">
-        Callbacks
-      </a>
-    </li>
-  
-
             
           
             
@@ -393,21 +396,7 @@
   
   
     <li class="md-nav__item">
-      <a href="callbacks/fail_on_interrupt/" class="md-nav__link">
-        FailOnInterrupt
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="callbacks/metric_logger/" class="md-nav__link">
+      <a href="../metric_logger/" class="md-nav__link">
         MetricLogger
       </a>
     </li>
@@ -421,7 +410,7 @@
   
   
     <li class="md-nav__item">
-      <a href="callbacks/time_profiler/" class="md-nav__link">
+      <a href="../time_profiler/" class="md-nav__link">
         TimeProfiler
       </a>
     </li>
@@ -470,7 +459,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cli/" class="md-nav__link">
+      <a href="../../cli/" class="md-nav__link">
         Command Line Interface
       </a>
     </li>
@@ -519,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="configs/" class="md-nav__link">
+      <a href="../../configs/" class="md-nav__link">
         Lazycon
       </a>
     </li>
@@ -568,7 +557,7 @@
   
   
     <li class="md-nav__item">
-      <a href="core/thunder_module/" class="md-nav__link">
+      <a href="../../core/thunder_module/" class="md-nav__link">
         ThunderModule
       </a>
     </li>
@@ -617,7 +606,7 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/" class="md-nav__link">
+      <a href="../../examples/" class="md-nav__link">
         Examples
       </a>
     </li>
@@ -631,7 +620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/totalsegm_lowres/" class="md-nav__link">
+      <a href="../../examples/totalsegm_lowres/" class="md-nav__link">
         Low Resolution Liver Segmentation
       </a>
     </li>
@@ -680,7 +669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="inference/" class="md-nav__link">
+      <a href="../../inference/" class="md-nav__link">
         Inference
       </a>
     </li>
@@ -729,7 +718,7 @@
   
   
     <li class="md-nav__item">
-      <a href="layout/" class="md-nav__link">
+      <a href="../../layout/" class="md-nav__link">
         Layout
       </a>
     </li>
@@ -743,7 +732,7 @@
   
   
     <li class="md-nav__item">
-      <a href="layout/splits/" class="md-nav__link">
+      <a href="../../layout/splits/" class="md-nav__link">
         Splits
       </a>
     </li>
@@ -792,7 +781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="policy/" class="md-nav__link">
+      <a href="../../policy/" class="md-nav__link">
         Policy
       </a>
     </li>
@@ -806,7 +795,7 @@
   
   
     <li class="md-nav__item">
-      <a href="policy/lr_schedulers/" class="md-nav__link">
+      <a href="../../policy/lr_schedulers/" class="md-nav__link">
         LR Schedulers
       </a>
     </li>
@@ -847,52 +836,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+  <a href="#usage" class="md-nav__link">
+    Usage
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#start-experimenting" class="md-nav__link">
-    Start experimenting
+  <a href="#reference" class="md-nav__link">
+    Reference
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#core-features" class="md-nav__link">
-    Core Features
-  </a>
-  
-    <nav class="md-nav" aria-label="Core Features">
+    <nav class="md-nav" aria-label="Reference">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#thundermodule" class="md-nav__link">
-    ThunderModule
+  <a href="#thunder.callbacks.fail_on_interrupt.FailOnInterrupt" class="md-nav__link">
+    FailOnInterrupt
+  </a>
+  
+    <nav class="md-nav" aria-label="FailOnInterrupt">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#thunder.callbacks.fail_on_interrupt.FailOnInterrupt.on_exception" class="md-nav__link">
+    on_exception()
   </a>
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#metriclogger" class="md-nav__link">
-    MetricLogger
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#experiment-configs" class="md-nav__link">
-    Experiment configs
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#cli-integrations-with-wandb" class="md-nav__link">
-    CLI &amp; Integrations with WandB
-  </a>
+      </ul>
+    </nav>
   
 </li>
         
@@ -919,63 +893,81 @@
   
 
 
-<blockquote>
-<p>You saw the lightning. Now it's time to hear the thunder</p>
-</blockquote>
-<h1 id="thunder">Thunder</h1>
-<p>The Deep Learning framework based on Lightning.</p>
-<h2 id="installation">Installation</h2>
-<p>You can install from pypi<br />
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>thunder
+<h1 id="failoninterrupt">FailOnInterrupt</h1>
+<p>Forces lightning Trainer to fail on KeyboardInterrupt by raising RuntimeError.</p>
+<h2 id="usage">Usage</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">lightning</span> <span class="kn">import</span> <span class="n">Trainer</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">thunder.callbacks</span> <span class="kn">import</span> <span class="n">FailOnInterrupt</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">FailOnInterrupt</span><span class="p">()])</span>
 </code></pre></div>
-or directly from GitHub<br />
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/neuro-ml/thunder.git
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd</span><span class="w"> </span>thunder<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-</code></pre></div></p>
-<h2 id="start-experimenting">Start experimenting</h2>
-<p>It's as simple as 1, 2, 3:</p>
-<ol>
-<li>
-<p>Create a config (e.g. <code>base.config</code>):
-    <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">myproject</span> <span class="kn">import</span> <span class="n">MyDataset</span><span class="p">,</span> <span class="n">MyModule</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">lightning</span> <span class="kn">import</span> <span class="n">Trainer</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># these 3 fields are required</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">train_data</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">MyDataset</span><span class="p">())</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">module</span> <span class="o">=</span> <span class="n">MyModule</span><span class="p">()</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">()</span>
-</code></pre></div></p>
-</li>
-<li>
-<p>Build the experiment:
-    <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>thunder<span class="w"> </span>build<span class="w"> </span>base.config<span class="w"> </span>/path/to/some/folder
-</code></pre></div></p>
-</li>
-<li>
-<p>Run it
-    <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>thunder<span class="w"> </span>run<span class="w"> </span>/path/to/some/folder
-</code></pre></div></p>
-</li>
-</ol>
-<p>Also, 2 and 3 can be combined into a single command:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>thunder<span class="w"> </span>build-run<span class="w"> </span>base.config<span class="w"> </span>/path/to/some/folder
-</code></pre></div></p>
-<h2 id="core-features">Core Features</h2>
-<ul>
-<li>
-<h3 id="thundermodule"><a href="./core/thunder_module">ThunderModule</a></h3>
-</li>
-<li>
-<h3 id="metriclogger"><a href="./callbacks/metric_logger">MetricLogger</a></h3>
-</li>
-<li>
-<h3 id="experiment-configs"><a href="./configs">Experiment configs</a></h3>
-</li>
-<li>
-<h3 id="cli-integrations-with-wandb"><a href="./cli">CLI &amp; Integrations with WandB</a></h3>
-</li>
-</ul>
+<h2 id="reference">Reference</h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="thunder.callbacks.fail_on_interrupt.FailOnInterrupt" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">thunder.callbacks.fail_on_interrupt.FailOnInterrupt</span>
+
+
+</h3>
+
+
+  <div class="doc doc-contents first">
+
+  
+      <p>Forces RuntimeError in order for trainer to stop if KeyboardInterrupt was raised</p>
+
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="thunder.callbacks.fail_on_interrupt.FailOnInterrupt.on_exception" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">on_exception</span>
+
+
+</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">on_exception</span><span class="p">(</span><span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">:</span> <span class="n">LightningModule</span><span class="p">,</span> <span class="n">exception</span><span class="p">:</span> <span class="ne">BaseException</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>thunder/callbacks/fail_on_interrupt.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">:</span> <span class="n">LightningModule</span><span class="p">,</span> <span class="n">exception</span><span class="p">:</span> <span class="ne">BaseException</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exception</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">):</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Finished run on KeyboardInterrupt&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exception</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
 
 
 
@@ -1013,10 +1005,10 @@ or directly from GitHub<br />
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.220ee61c.min.js"></script>
+      <script src="../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
     
   </body>
