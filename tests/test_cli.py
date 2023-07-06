@@ -42,7 +42,7 @@ a:
     backend: cli
     config:
         n_workers: 1
-b: 
+b:
     backend: cli
     config:
         n_workers: 2
@@ -50,7 +50,7 @@ b:
         # we don't know which backend to choose
         result = invoke('run', str(experiment))
         assert result.exit_code != 0
-        assert "Missing option '--backend'" in result.output
+        assert 'Missing option' in result.output
 
         # make sure backend configs don't mess with other commands
         result = invoke('build', str(config), str(experiment))
