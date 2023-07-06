@@ -7,8 +7,9 @@ from pathlib import Path
 from lazycon import Config
 from typer.testing import CliRunner
 
-from thunder.cli.entrypoint import app
 from thunder.cli.backend import BACKENDS_CONFIG_PATH
+from thunder.cli.entrypoint import app
+
 
 runner = CliRunner()
 
