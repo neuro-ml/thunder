@@ -17,18 +17,23 @@ try:
     import connectome
 except ImportError:
     connectome = None
+try:
+    from sklearn.model_selection import BaseCrossValidator, BaseShuffleSplit
+
+    SplitType = Union[Callable, BaseShuffleSplit, BaseCrossValidator]
+except ImportError:
+    SplitType = Callable
 
 
-# TODO sklearn
 class Split(Layout):
-    def __init__(self, split: Callable, entries: Sequence, *args: Any, names: Optional[Sequence[str]] = None,
+    def __init__(self, split: SplitType, entries: Sequence, *args: Any, names: Optional[Sequence[str]] = None,
                  **kwargs: Any):
         """
         Splits data according to split function.
         Parameters
         ----------
         split: Callable
-            Split function.
+            Split function, or a sklearn splitter.
         entries: Sequence
             Series of ids or torch Dataset or Connectome Layer.
         args: Any
@@ -40,8 +45,7 @@ class Split(Layout):
         """
         if not callable(split):
             if not hasattr(split, 'split'):
-                # TODO
-                raise TypeError(split)
+                raise TypeError(f'Expected either a function, or a sklearn splitter, got {type(split)!r}')
             split = split.split
 
         ids = entries_to_ids(entries)

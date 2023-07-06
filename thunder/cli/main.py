@@ -119,11 +119,11 @@ def build_exp(config, experiment, updates):
     if updates:
         config = config.update(**updates)
 
+    layout: Layout = config.get('layout', Single())
     # TODO: permissions
     experiment.mkdir(parents=True)
     try:
         # build the layout
-        layout: Layout = config.get('layout', Single())
         # TODO: check name uniqueness
         nodes = list(layout.build(experiment, config))
         if nodes:

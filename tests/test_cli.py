@@ -18,21 +18,32 @@ def test_build(temp_dir):
     experiment = temp_dir / 'exp'
     config = temp_dir / 'x.config'
     # language=Python
-    Config.loads('''
+    config.write_text('''
 from thunder.layout import Single
 layout = Single()
-    ''').dump(config)
+a = 1
+b = 2
+    ''')
 
     with cleanup(experiment):
-        result = invoke('build', str(config), str(experiment))
+        result = invoke('build', config, experiment)
         assert result.exit_code == 0, result.output
         assert experiment.exists()
         assert (experiment / 'experiment.config').exists()
         # TODO: nodes.json
 
-        result = invoke('build', str(config), str(experiment))
+        result = invoke('build', config, experiment)
         assert result.exit_code != 0
         assert re.match('Cannot create an experiment in the folder ".*", it already exists\n', result.output)
+
+    with cleanup(experiment):
+        result = invoke('build', config, experiment, '-u', 'c=3')
+        assert result.exit_code != 0
+        assert 'are missing from the config' in str(result.exception)
+
+        result = invoke('build', config, experiment, '-u', 'a=10')
+        assert result.exit_code == 0
+        assert Config.load(experiment / 'experiment.config').a == 10
 
     # FIXME: this part will mess with user's local config!
     with cleanup(experiment, BACKENDS_CONFIG_PATH):
@@ -49,13 +60,23 @@ b:
         n_workers: 2
         ''')
         # we don't know which backend to choose
-        result = invoke('run', str(experiment))
+        result = invoke('run', experiment)
         assert result.exit_code != 0
         assert 'Missing option' in result.output
 
         # make sure backend configs don't mess with other commands
-        result = invoke('build', str(config), str(experiment))
+        result = invoke('build', config, experiment)
         assert result.exit_code == 0, result.output
+
+
+def test_build_cleanup(temp_dir):
+    experiment = temp_dir / 'exp'
+    config = temp_dir / 'x.config'
+    config.write_text('layout = None')
+
+    result = invoke('build', config, experiment)
+    assert result.exit_code != 0
+    assert not experiment.exists()
 
 
 def test_run(temp_dir, dumb_config):
@@ -64,7 +85,7 @@ def test_run(temp_dir, dumb_config):
     config = experiment / "experiment.config"
     Config.load(dumb_config).dump(config)
 
-    result = invoke("run", str(config))
+    result = invoke("run", config)
     assert result.exit_code == 0, result.output
 
 

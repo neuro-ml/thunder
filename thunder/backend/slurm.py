@@ -129,17 +129,12 @@ class Slurm(Backend):
 
 
 def get_unique_job_name(job_name_prefix):
-    if job_name_prefix:
-        job_name_prefix += '-'
-    else:
-        job_name_prefix = 'j-'
-
+    job_name_prefix = (job_name_prefix or 'j') + '-'
     if job_name_prefix[0].isdigit():
         job_name_prefix = 'j-' + job_name_prefix
 
     timestamp = datetime.datetime.now().strftime('%Y-%b%d-%H-%M-%S').lower()
     job_name = job_name_prefix + timestamp
-    # filter names to be able to submit jobs to kubernetes
     job_name = job_name.replace('_', '-')
     job_name = job_name.replace(' ', '-')
     job_name = job_name.replace(':', '-')
