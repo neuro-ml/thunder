@@ -1,6 +1,7 @@
 lightning>=2.0.0,<3.0.0
 lazycon>=0.6.3,<1.0.0
 typer
+click
 torch
 toolz
 numpy
