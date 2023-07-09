@@ -1,4 +1,4 @@
-## TimeProfiler
+# TimeProfiler
 Lightning Callback which allows you to measure the time each step takes and log it during the training process.
 
 

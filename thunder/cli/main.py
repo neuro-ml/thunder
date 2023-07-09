@@ -1,22 +1,23 @@
+import os
 import shutil
 from io import StringIO
 from pathlib import Path
-from typing import List, Optional, Sequence, Type
+from typing import List, Optional, Sequence, Union
 
 import yaml
 from deli import load, save
 from lazycon import Config
 from lightning import LightningModule, Trainer
-from typer import Abort, Argument, Option, Typer
+from typer import Abort, Argument, Option
 from typing_extensions import Annotated
 
-from ..backend import Backend
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
 from ..utils import chdir
+from .app import app
+from .backend import BackendCommand
 
 
-app = Typer(name='thunder', pretty_exceptions_enable=False)
 ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment')]
 ConfArg = Annotated[Path, Argument(show_default=False, help='The config from which the experiment will be built')]
 UpdArg = Annotated[List[str], Option(
@@ -65,7 +66,7 @@ def start(
         trainer: Trainer = config.trainer
 
         # log hyperparams
-        names = set(config) - {'module', 'trainer', 'train_data', 'val_data', 'ExpName', 'GroupName'}
+        names = set(config) - {"module", "trainer", "train_data", "val_data", "ExpName", "GroupName", "datamodule"}
         # TODO: lazily determine the types
         hyperparams = {}
         for name in names:
@@ -78,9 +79,15 @@ def start(
         if hyperparams:
             trainer.logger.log_hyperparams(hyperparams)
 
-        trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path='last')
-        if 'test_data' in config:
-            trainer.test(module, config.test_data, ckpt_path='last')
+        ckpt_path = last_checkpoint(".")
+
+        if "datamodule" in config:
+            trainer.fit(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
+            trainer.test(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
+        else:
+            trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path=ckpt_path)
+            if 'test_data' in config:
+                trainer.test(module, config.test_data, ckpt_path=last_checkpoint("."))
 
 
 @app.command()
@@ -112,11 +119,11 @@ def build_exp(config, experiment, updates):
     if updates:
         config = config.update(**updates)
 
+    layout: Layout = config.get('layout', Single())
     # TODO: permissions
     experiment.mkdir(parents=True)
     try:
         # build the layout
-        layout: Layout = config.get('layout', Single())
         # TODO: check name uniqueness
         nodes = list(layout.build(experiment, config))
         if nodes:
@@ -127,27 +134,29 @@ def build_exp(config, experiment, updates):
         raise
 
 
+@app.command(cls=BackendCommand)
 def run(
         experiment: ExpArg,
         names: NamesArg = None,
         *,
-        backend: Type[Backend],
+        backend,
         **kwargs,
 ):
     """ Run a built experiment using a given backend. """
     if names is not None:
         names = names.split(',')
-    config = backend.Config(**kwargs)
+    backend, config = BackendCommand.get_backend(backend, kwargs)
     backend.run(config, experiment, get_nodes(experiment, names))
 
 
+@app.command(cls=BackendCommand)
 def build_run(
         config: ConfArg,
         experiment: ExpArg,
         update: UpdArg = (),
         names: NamesArg = None,
         *,
-        backend: Type[Backend],
+        backend,
         **kwargs,
 ):
     """ A convenient combination of `build` and `run` commands. """
@@ -172,3 +181,10 @@ def get_nodes(experiment: Path, names: Optional[Sequence[str]]):
         return
 
     return [nodes[x] for x in names]
+
+
+def last_checkpoint(root: Union[Path, str]) -> Union[Path, str]:
+    checkpoints = list(Path(root).glob("**/last.ckpt"))
+    if not checkpoints:
+        return "last"
+    return max(checkpoints, key=lambda t: os.stat(t).st_mtime)

@@ -41,7 +41,7 @@ metric_logger = MetricLogger(single_metrics={"accuracy": accuracy_score},
 
 trainer = Trainer(callbacks=[metric_logger])
 ```
-The mean values appera in loggers with no additional keys. 
+The mean values appear in loggers with no additional keys. 
 MetricCallback will try to infer the name of an aggregating function
 and use it as an additional key.
 

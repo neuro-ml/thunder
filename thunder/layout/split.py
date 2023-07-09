@@ -17,16 +17,35 @@ try:
     import connectome
 except ImportError:
     connectome = None
+try:
+    from sklearn.model_selection import BaseCrossValidator, BaseShuffleSplit
+
+    SplitType = Union[Callable, BaseShuffleSplit, BaseCrossValidator]
+except ImportError:
+    SplitType = Callable
 
 
-# TODO sklearn
 class Split(Layout):
-    def __init__(self, split: Callable, entries: Sequence, *args: Any, names: Optional[Sequence[str]] = None,
+    def __init__(self, split: SplitType, entries: Sequence, *args: Any, names: Optional[Sequence[str]] = None,
                  **kwargs: Any):
+        """
+        Splits data according to split function.
+        Parameters
+        ----------
+        split: Callable
+            Split function, or a sklearn splitter.
+        entries: Sequence
+            Series of ids or torch Dataset or Connectome Layer.
+        args: Any
+            args for split.
+        names: Optional[Sequence[str]]
+            Names of folds, e.g. 'train', 'val', test'
+        kwargs: Any
+        kwargs for split.
+        """
         if not callable(split):
             if not hasattr(split, 'split'):
-                # TODO
-                raise TypeError(split)
+                raise TypeError(f'Expected either a function, or a sklearn splitter, got {type(split)!r}')
             split = split.split
 
         ids = entries_to_ids(entries)
@@ -85,8 +104,20 @@ class Split(Layout):
 
 
 class SingleSplit(Layout):
-    def __init__(self, entries, *, shuffle: bool = True, random_state: Union[np.random.RandomState, int, None] = 0,
+    def __init__(self, entries: Sequence, *, shuffle: bool = True,
+                 random_state: Union[np.random.RandomState, int, None] = 0,
                  **sizes: Union[int, float]):
+        """
+        Creates single fold experiment, with custom number of sets.
+        Parameters
+        ----------
+        entries: Sequence
+            Sequence of ids or
+        shuffle: bool
+            Whether to shuffle entries.
+        random_state : Union[np.random.RandomState, int, None]
+        sizes: Union[int, float]
+        """
         if not isinstance(random_state, np.random.RandomState):
             random_state = np.random.RandomState(random_state)
 

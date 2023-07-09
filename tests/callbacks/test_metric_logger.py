@@ -217,3 +217,97 @@ def test_preprocessing(single_metrics, target, exception, tmpdir):
     columns = [c.replace("test/", "") for c in df.columns if "test/" in c]
     assert sorted(columns) == sorted(target.keys())
     assert all(np.allclose(df[f"test/{c}"].iloc[-1], target[c]) for c in columns), (df.iloc[0], target)
+
+
+class MultiSegm(NoOptimSegm):
+    def validation_step(self, batch, batch_idx):
+        x, y = super().validation_step(batch, batch_idx)
+        return (x, x), (y, y)
+
+    def test_step(self, batch, batch_idx):
+        x, y = super().test_step(batch, batch_idx)
+        return x, (y,)
+
+
+def test_multioutput(tmpdir):
+    metric_logger = MetricLogger(
+        {
+            lambda x, y: (
+                y[0] if isinstance(y, (tuple, list)) else y,
+                x[0] if isinstance(x, (tuple, list)) else x,
+            ): accuracy
+        }
+    )
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=1,
+        limit_train_batches=4,
+        limit_val_batches=4,
+        enable_checkpointing=False,
+        enable_progress_bar=False,
+        callbacks=[metric_logger],
+        logger=CSVLogger(tmpdir),
+    )
+    model = MultiSegm(nn.Linear(2, 1), lambda x, y: x + y, -1)
+    trainer.fit(model)
+
+    target = {"accuracy_score": accuracy(np.asarray([[1, 1], [1, 0]]), np.asarray([[1, 1], [0, 0]]))}
+
+    df = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
+    columns = [c.replace("val/", "") for c in df.columns if "val/" in c]
+    assert all(np.allclose(df[f"val/{c}"].iloc[0], target[c]) for c in columns), (
+        df["val/accuracy_score"].iloc[0],
+        target,
+    )
+
+    trainer.test(model)
+    df = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
+    columns = [c.replace("test/", "") for c in df.columns if "test/" in c]
+    assert all(np.allclose(df[f"test/{c}"].iloc[-1], target[c]) for c in columns), (
+        df["test/accuracy_score"].iloc[-1],
+        target,
+    )
+
+
+class MultiLoaderModule(NoOptimModule):
+    def validation_step(self, batch, batch_idx, dataloader_idx=0):
+        if dataloader_idx == 0:
+            return np.asarray([1, 0]), np.asarray([batch_idx % 2, batch_idx % 3])
+        return np.asarray([0, 0]), np.asarray([0, 0])
+
+    def test_step(self, batch, batch_idx, dataloader_idx=0):
+        if dataloader_idx == 0:
+            return np.asarray([1, 0]), np.asarray([batch_idx % 2, batch_idx % 3])
+        return np.asarray([0, 0]), np.asarray([0, 0])
+
+    def val_dataloader(self):
+        return DataLoader(RandomDataset(32, 64), batch_size=16), DataLoader(RandomDataset(32, 64), batch_size=16)
+
+    def test_dataloader(self):
+        return DataLoader(RandomDataset(32, 64), batch_size=16), DataLoader(RandomDataset(32, 64), batch_size=16)
+
+
+def test_multiple_loaders(tmpdir):
+    metric_logger = MetricLogger(single_metrics={"accuracy": accuracy})
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=2,
+        limit_train_batches=4,
+        limit_val_batches=4,
+        enable_checkpointing=False,
+        enable_progress_bar=False,
+        callbacks=[metric_logger],
+        logger=CSVLogger(tmpdir),
+    )
+    model = MultiLoaderModule(nn.Linear(2, 1), lambda x, y: x + y, -1)
+    trainer.fit(model)
+    trainer.test(model)
+
+    df = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
+    val_columns = [c for c in df.columns if "val/accuracy" in c]
+    test_columns = [c for c in df.columns if "test/accuracy" in c]
+
+    assert len(val_columns) == 2, (val_columns, df.columns)
+    assert "val/accuracy/0" in val_columns and "val/accuracy/1" in val_columns
+    assert len(test_columns) == 2, (test_columns, df.columns)
+    assert "test/accuracy/0" in test_columns and "test/accuracy/1" in test_columns
