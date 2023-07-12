@@ -80,6 +80,8 @@ class ThunderModule(LightningModule):
     def predict(self, x) -> STEP_OUTPUT:
         # TODO: do we need super(). ...?, also consider changing maybe_to_np to smth stricter
         x = maybe_from_np(x, device=self.device)
+        if not isinstance(x, (list, tuple)):
+            x = (x,)
         return to_np(self.activation(self(*x)))
 
     def inference_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
