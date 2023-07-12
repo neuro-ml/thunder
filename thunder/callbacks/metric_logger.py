@@ -179,14 +179,14 @@ class MetricLogger(Callback):
         xs = _recombine_batch(xs) if isinstance(xs, (list, tuple)) else xs
         ys = _recombine_batch(ys) if isinstance(ys, (list, tuple)) else ys
 
-        outputs = (xs, ys)
+        outputs = (ys, xs)
 
         if self.group_metrics:
             self._all_predictions[dataloader_idx].extend(zip(*outputs))
 
-        for pred, target in zip(*outputs):
+        for target, pred in zip(*outputs):
             for preprocess, metrics_names in self.preprocess.items():
-                preprocessed = preprocess(pred, target)
+                preprocessed = preprocess(target, pred)
                 for name in metrics_names:
                     self._single_metric_values[dataloader_idx][name].append(self.single_metrics[name](*preprocessed))
 

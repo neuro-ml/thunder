@@ -172,17 +172,17 @@ def accuracy2(*args, **kwargs):
     [
         ({"accuracy": accuracy}, {"accuracy": 0.75}, nullcontext()),
         (
-            {lambda x, y: (np.zeros_like(x), y): [accuracy, accuracy2]},
-            {"accuracy_score": 0.25, "accuracy2": 0.25},
-            nullcontext(),
+                {lambda x, y: (x, np.zeros_like(y)): [accuracy, accuracy2]},
+                {"accuracy_score": 0.25, "accuracy2": 0.25},
+                nullcontext(),
         ),
         (
-            {
-                lambda x, y: (np.zeros_like(x), y): {"acc1": accuracy, "acc2": accuracy},
-                lambda x, y: (np.ones_like(x) * 2, y): {"acc3": accuracy, "acc4": accuracy},
-            },
-            {"acc1": 0.25, "acc2": 0.25, "acc3": 0, "acc4": 0},
-            nullcontext(),
+                {
+                    lambda x, y: (x, np.zeros_like(y)): {"acc1": accuracy, "acc2": accuracy},
+                    lambda x, y: (x, np.ones_like(y) * 2): {"acc3": accuracy, "acc4": accuracy},
+                },
+                {"acc1": 0.25, "acc2": 0.25, "acc3": 0, "acc4": 0},
+                nullcontext(),
         ),
         ({lambda *args: args: "std"}, {}, pytest.raises(TypeError, match="str")),
     ],
@@ -220,6 +220,10 @@ def test_preprocessing(single_metrics, target, exception, tmpdir):
 
 
 class MultiSegm(NoOptimSegm):
+    def __init__(self, batch_size: int, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.batch_size = batch_size
+
     def validation_step(self, batch, batch_idx):
         x, y = super().validation_step(batch, batch_idx)
         return (x, x), (y, y)
@@ -229,7 +233,16 @@ class MultiSegm(NoOptimSegm):
         return x, (y,)
 
 
-def test_multioutput(tmpdir):
+class MultiSegmCustomBS(MultiSegm):
+    def val_dataloader(self):
+        return DataLoader(RandomDataset(32, 64), batch_size=self.batch_size)
+
+    def test_dataloader(self):
+        return DataLoader(RandomDataset(32, 64), batch_size=self.batch_size)
+
+
+@pytest.mark.parametrize("batch_size", [1, 2, 16])
+def test_multioutput(batch_size, tmpdir):
     metric_logger = MetricLogger(
         {
             lambda x, y: (
@@ -248,7 +261,7 @@ def test_multioutput(tmpdir):
         callbacks=[metric_logger],
         logger=CSVLogger(tmpdir),
     )
-    model = MultiSegm(nn.Linear(2, 1), lambda x, y: x + y, -1)
+    model = MultiSegmCustomBS(batch_size, nn.Linear(2, 1), lambda x, y: x + y, -1)
     trainer.fit(model)
 
     target = {"accuracy_score": accuracy(np.asarray([[1, 1], [1, 0]]), np.asarray([[1, 1], [0, 0]]))}
