@@ -9,8 +9,9 @@ from torch import Tensor, nn
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
 
-from ..predict import BasePredictor, Predictor
 from .utils import maybe_from_np, to_np
+from ..predict import BasePredictor, Predictor
+from ..utils import squeeze_first
 
 
 class ThunderModule(LightningModule):
@@ -82,7 +83,7 @@ class ThunderModule(LightningModule):
         return to_np(self.activation(self(*x)))
 
     def inference_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
-        x, y = batch[:-self.n_val_targets], batch[-self.n_val_targets:]
+        x, y = map(squeeze_first, (batch[:-self.n_val_targets], batch[-self.n_val_targets:]))
         return self.predictor([x], self.predict)[0], y
 
     def configure_optimizers(self) -> Tuple[List[Optimizer], List[LRScheduler]]:
