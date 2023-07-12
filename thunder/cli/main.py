@@ -28,16 +28,16 @@ NamesArg = Annotated[Optional[str], Option(..., help='Names of sub-experiments t
 
 @app.command()
 def start(
-        experiment_or_config: ExpArg,
-        name: Annotated[Optional[str], Argument(help='The name of the sub-experiment to start')] = None
+        experiment: ExpArg,
+        name: Annotated[Optional[str], Argument(help='The name of the sub-experiment to start')] = None,
 ):
     """ Start a part of an experiment. Mainly used as an internal entrypoint for other commands. """
-    experiment_or_config = Path(experiment_or_config)
-    if experiment_or_config.is_dir():
-        experiment, config_path = experiment_or_config, experiment_or_config / 'experiment.config'
-    else:
-        experiment, config_path = experiment_or_config.parent, experiment_or_config
+    experiment = Path(experiment)
+    if not experiment.is_absolute():
+        print('The `experiment` argument must be an absolute path')
+        raise Abort(1)
 
+    config_path = experiment / 'experiment.config'
     nodes = load_nodes(experiment)
 
     if name is None:
@@ -146,7 +146,7 @@ def run(
     if names is not None:
         names = names.split(',')
     backend, config = BackendCommand.get_backend(backend, kwargs)
-    backend.run(config, experiment, get_nodes(experiment, names))
+    backend.run(config, Path(experiment).absolute(), get_nodes(experiment, names))
 
 
 @app.command(cls=BackendCommand)

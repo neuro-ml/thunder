@@ -4,11 +4,13 @@ import shutil
 from contextlib import contextmanager
 from pathlib import Path
 
+import pytest
 from lazycon import Config
 from typer.testing import CliRunner
 
 from thunder.cli.backend import BACKENDS_CONFIG_PATH
 from thunder.cli.entrypoint import app
+from thunder.utils import chdir
 
 
 runner = CliRunner()
@@ -79,14 +81,22 @@ def test_build_cleanup(temp_dir):
     assert not experiment.exists()
 
 
+@pytest.mark.timeout(30)
 def test_run(temp_dir, dumb_config):
     experiment = temp_dir / "test_run_exp"
     experiment.mkdir()
     config = experiment / "experiment.config"
-    Config.load(dumb_config).dump(config)
+    shutil.copy(dumb_config, config)
 
-    result = invoke("run", config)
+    # absolute path
+    result = invoke("run", experiment)
     assert result.exit_code == 0, result.output
+
+    # relative path
+    with chdir(experiment.parent):
+        # absolute path
+        result = invoke("run", experiment.name)
+        assert result.exit_code == 0, result.output
 
 
 def invoke(*cmd):

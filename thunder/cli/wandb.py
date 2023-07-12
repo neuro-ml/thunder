@@ -36,7 +36,7 @@ def agent(
         assert updates.pop('wandb_version') == 1
         updates = {k: v.pop('value') for k, v in updates.items()}
         build_exp(config.copy(), local, updates)
-        backend.run(cnf, local, get_nodes(local, names), wait=True)
+        backend.run(cnf, Path(local).absolute(), get_nodes(local, names), wait=True)
 
     if wandb is None:
         print('To use this command please install wandb: `pip install wandb`')
