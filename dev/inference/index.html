@@ -920,7 +920,7 @@ default inference runner.</p>
 
 
 <h3 id="thunder.predict.predict" class="doc doc-heading">
-          <span class="doc doc-object-name doc-module-name">thunder.predict.predict</span>
+            <span class="doc doc-object-name doc-module-name">thunder.predict.predict</span>
 
 
 </h3>
@@ -943,7 +943,7 @@ default inference runner.</p>
 
 
 <h4 id="thunder.predict.predict.BasePredictor" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">BasePredictor</span>
+          <span class="doc doc-object-name doc-class-name">BasePredictor</span>
 
 
 </h4>
@@ -953,7 +953,6 @@ default inference runner.</p>
 
   
       <p>Base class for all predictors.</p>
-
 
 
   
@@ -968,12 +967,13 @@ default inference runner.</p>
 
 
 
+
 <div class="doc doc-object doc-function">
 
 
 
 <h5 id="thunder.predict.predict.BasePredictor.forward" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">forward</span>
+          <span class="doc doc-object-name doc-function-name">forward</span>
 
   
   <span class="doc doc-labels">
@@ -988,9 +988,9 @@ default inference runner.</p>
   
       <p>Process stream of batches before model inference.</p>
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/predict/predict.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/predict/predict.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
 <span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
 <span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
 <span class="normal"><a href="#__codelineno-0-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="nd">@abstractmethod</span>
@@ -998,17 +998,18 @@ default inference runner.</p>
 <a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Process stream of batches before model inference.&quot;&quot;&quot;</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10"></a>    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You must implement forward method&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
 <h5 id="thunder.predict.predict.BasePredictor.backward" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">backward</span>
+          <span class="doc doc-object-name doc-function-name">backward</span>
 
   
   <span class="doc doc-labels">
@@ -1023,9 +1024,9 @@ default inference runner.</p>
   
       <p>Post-process stream of predictions.</p>
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/predict/predict.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-12">12</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/predict/predict.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-12">12</a></span>
 <span class="normal"><a href="#__codelineno-0-13">13</a></span>
 <span class="normal"><a href="#__codelineno-0-14">14</a></span>
 <span class="normal"><a href="#__codelineno-0-15">15</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="nd">@abstractmethod</span>
@@ -1033,17 +1034,18 @@ default inference runner.</p>
 <a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Post-process stream of predictions.&quot;&quot;&quot;</span>
 <a id="__codelineno-0-15" name="__codelineno-0-15"></a>    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;You must implement backward method&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
 <h5 id="thunder.predict.predict.BasePredictor.__call__" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">__call__</span>
+          <span class="doc doc-object-name doc-function-name">__call__</span>
 
 
 </h5>
@@ -1052,23 +1054,24 @@ default inference runner.</p>
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/predict/predict.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-17">17</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/predict/predict.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-17">17</a></span>
 <span class="normal"><a href="#__codelineno-0-18">18</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batches</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">predict_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">batches</span><span class="p">,</span> <span class="n">predict_fn</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
 <h5 id="thunder.predict.predict.BasePredictor.run" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">run</span>
+          <span class="doc doc-object-name doc-function-name">run</span>
 
 
 </h5>
@@ -1079,15 +1082,15 @@ default inference runner.</p>
   
       <p>Runs preprocessing, inference and postprocessing.</p>
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/predict/predict.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-20">20</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/predict/predict.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-20">20</a></span>
 <span class="normal"><a href="#__codelineno-0-21">21</a></span>
 <span class="normal"><a href="#__codelineno-0-22">22</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batches</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">predict_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
 <a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs preprocessing, inference and postprocessing.&quot;&quot;&quot;</span>
 <a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">predict_fn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">batches</span><span class="p">)))</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -1105,7 +1108,7 @@ default inference runner.</p>
 
 
 <h4 id="thunder.predict.predict.InfinitePredictor" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">InfinitePredictor</span>
+          <span class="doc doc-object-name doc-class-name">InfinitePredictor</span>
 
 
 </h4>
@@ -1115,7 +1118,6 @@ default inference runner.</p>
 
   
       <p>Useful for running inference on infinite stream of data.</p>
-
 
 
   
@@ -1130,12 +1132,13 @@ default inference runner.</p>
 
 
 
+
 <div class="doc doc-object doc-function">
 
 
 
 <h5 id="thunder.predict.predict.InfinitePredictor.forward" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">forward</span>
+          <span class="doc doc-object-name doc-function-name">forward</span>
 
 
 </h5>
@@ -1144,23 +1147,24 @@ default inference runner.</p>
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/predict/predict.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-27">27</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/predict/predict.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-27">27</a></span>
 <span class="normal"><a href="#__codelineno-0-28">28</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batches</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
 <a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="k">yield from</span> <span class="n">batches</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
 <h5 id="thunder.predict.predict.InfinitePredictor.backward" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">backward</span>
+          <span class="doc doc-object-name doc-function-name">backward</span>
 
 
 </h5>
@@ -1169,13 +1173,13 @@ default inference runner.</p>
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/predict/predict.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-30">30</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/predict/predict.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-30">30</a></span>
 <span class="normal"><a href="#__codelineno-0-31">31</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicts</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
 <a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="k">yield from</span> <span class="n">predicts</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -1193,7 +1197,7 @@ default inference runner.</p>
 
 
 <h4 id="thunder.predict.predict.Predictor" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">Predictor</span>
+          <span class="doc doc-object-name doc-class-name">Predictor</span>
 
 
 </h4>
@@ -1203,7 +1207,6 @@ default inference runner.</p>
 
   
       <p>Assumes using finite amount of data for inference to be run on.</p>
-
 
 
   
@@ -1218,12 +1221,13 @@ default inference runner.</p>
 
 
 
+
 <div class="doc doc-object doc-function">
 
 
 
 <h5 id="thunder.predict.predict.Predictor.run" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">run</span>
+          <span class="doc doc-object-name doc-function-name">run</span>
 
 
 </h5>
@@ -1232,13 +1236,13 @@ default inference runner.</p>
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/predict/predict.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-36">36</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/predict/predict.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-36">36</a></span>
 <span class="normal"><a href="#__codelineno-0-37">37</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batches</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">predict_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
 <a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">batches</span><span class="p">,</span> <span class="n">predict_fn</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
