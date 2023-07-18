@@ -364,6 +364,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#metric-computation" class="md-nav__link">
+    Metric Computation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#group-metrics" class="md-nav__link">
     Group metrics
   </a>
@@ -878,6 +885,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#metric-computation" class="md-nav__link">
+    Metric Computation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#group-metrics" class="md-nav__link">
     Group metrics
   </a>
@@ -964,6 +978,23 @@
 <h1 id="metriclogger">MetricLogger</h1>
 <p>This callback takes on computation and aggregation of the specified metrics.  </p>
 <h2 id="usage">Usage</h2>
+<h3 id="metric-computation">Metric Computation</h3>
+<p>Metrics are assumed to be received as tuple <code>(X, Y)</code>, where
+<strong>X</strong> - batch of predictions, <strong>Y</strong> - batch of targets. 
+Further process of computation depends on whether <code>Group</code> or <code>Single</code>
+metrics are used. Also, there is no difference for MetricLogger between 
+<code>(X, Y)</code> and <code>((X,), (Y,))</code>.<br />
+If your model has multiple outputs or requires multiple targets
+(e.g. neural network with 2 heads.), the output is expected to be
+<code>((X1, X2), (Y1, Y2))</code> (the most common way to represent such data in PyTorch), where <strong>X1</strong> is batch of model's first output.
+In this case outputs will be recombined, so the first object
+of the output will be <code>((x1, x2), (y1, y2))</code>, where <strong>x1</strong> is the first
+element of batch <code>X1</code>.  </p>
+<p><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" />  </p>
+<blockquote>
+<p>Inside the callback outputs are swapped, so if LightningModule returns
+(X, Y) then metrics will receive (Y, X).</p>
+</blockquote>
 <h3 id="group-metrics">Group metrics</h3>
 <p>Group metrics are computed on the entire dataset.
 For example, you want to compute classification accuracy on MNIST.
