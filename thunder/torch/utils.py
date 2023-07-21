@@ -29,7 +29,7 @@ def tensor2np(x: torch.Tensor) -> np.ndarray:
     return x.detach().cpu().numpy()
 
 
-def maybe_from_np(*x: Any, device: Union[torch.device, str]) -> Any:
+def maybe_from_np(*x: Any, device: Union[torch.device, str] = "cpu") -> Any:
     def to_tensor(x):
         if isinstance(x, torch.Tensor):
             return x.to(device)
