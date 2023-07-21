@@ -2,6 +2,24 @@
 This callback takes on computation and aggregation of the specified metrics.  
 
 ## Usage
+
+### Metric Computation
+Metrics are assumed to be received as tuple `(X, Y)`, where
+**X** - batch of predictions, **Y** - batch of targets. 
+Further process of computation depends on whether `Group` or `Single`
+metrics are used. Also, there is no difference for MetricLogger between 
+`(X, Y)` and `((X,), (Y,))`.  
+If your model has multiple outputs or requires multiple targets
+(e.g. neural network with 2 heads.), the output is expected to be
+`((X1, X2), (Y1, Y2))` (the most common way to represent such data in PyTorch), where **X1** is batch of model's first output.
+In this case outputs will be recombined, so the first object
+of the output will be `((x1, x2), (y1, y2))`, where **x1** is the first
+element of batch `X1`.  
+
+:warning:  
+> Inside the callback outputs are swapped, so if LightningModule returns
+(X, Y) then metrics will receive (Y, X).
+
 ### Group metrics
 Group metrics are computed on the entire dataset.
 For example, you want to compute classification accuracy on MNIST.
