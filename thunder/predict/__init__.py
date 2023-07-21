@@ -1,1 +1,2 @@
-from .predict import *
+from .interface import *
+from .shape import *

@@ -10,7 +10,7 @@ from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
 
 from .utils import maybe_from_np, to_np
-from ..predict import BasePredictor, Predictor
+from ..predict import Predictor
 from ..utils import squeeze_first
 
 
@@ -23,7 +23,7 @@ class ThunderModule(LightningModule):
             activation: Callable = identity,
             optimizer: Union[List[Optimizer], Optimizer] = None,
             lr_scheduler: Union[List[LRScheduler], LRScheduler] = None,
-            predictor: BasePredictor = None,
+            predictor: Predictor = None,
             n_val_targets: int = None
     ):
         """
@@ -86,7 +86,8 @@ class ThunderModule(LightningModule):
 
     def inference_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
         x, y = map(squeeze_first, (batch[:-self.n_val_targets], batch[-self.n_val_targets:]))
-        return self.predictor([x], self.predict)[0], y
+        pred, = self.predictor.run([x], self.predict)
+        return pred, y
 
     def configure_optimizers(self) -> Tuple[List[Optimizer], List[LRScheduler]]:
         if not self.optimizer and not self.lr_scheduler:
