@@ -11,6 +11,10 @@ jobs:
     strategy:
       matrix:
         python-version: [ '3.8', '3.9', '3.10', '3.11' ]
+        torch-version: [ '1.13', '2.0.1' ]
+        exclude:
+          - torch-version: '1.13'
+            python-version: '3.11'
 
     steps:
       - uses: actions/checkout@v3
@@ -28,6 +32,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e .
           python -m pip install -r tests/dev-requirements.txt
+          python -m pip install torch==${{ matrix.torch-version }}
           cd tests
           export MODULE_PARENT=$(python -c "import $MODULE_NAME, os; print(os.path.dirname($MODULE_NAME.__path__[0]))")
           export MODULE_PARENT=${MODULE_PARENT%"/"}
