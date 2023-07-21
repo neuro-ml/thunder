@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from thunder.predict import ExtraDims
+from thunder.predict import Predictor, Map, Chain
 from thunder.torch.utils import maybe_from_np, to_np
 
 
@@ -14,15 +14,16 @@ def predict(x: np.ndarray, model: nn.Module) -> np.ndarray:
 
 
 def test_predictor_single_object():
-    def predict(z):
-        assert z.ndim == 5
-        assert z.shape[1] == z.shape[3] == 1
-        return np.zeros_like(z)
+    predictor = Predictor()
+    model = reinit(torch.nn.Linear(4, 1))
+    batch = [np.random.randn(1, 4).astype(np.float32) for _ in range(8)]
 
-    predictor = ExtraDims(1, 3)
-    x = np.random.randn(2, 3, 4)
-    y, = predictor.run([x], predict)
-    assert (y == np.zeros_like(x)).all()
+    for x in batch:
+        stream = predictor(x)
+        y = stream.send(predict(next(stream), model))
+
+        assert y.shape == (1, 1)
+        assert np.allclose(y, np.zeros_like(y))
 
 
 class SplitLinear(nn.Module):
