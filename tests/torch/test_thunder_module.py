@@ -61,6 +61,14 @@ def trainer(tmpdir):
     )
 
 
+def test_steps(architecture, trainer):
+    sgd = SGD(architecture.parameters(), 1e-3)
+    model = BoringModel(architecture, loss, -1, optimizer=sgd, lr_scheduler=Schedule(np.cos))
+    trainer.fit(model)
+    trainer.test(model)
+    trainer.predict(model)
+
+
 def test_configure_optimizers(architecture, trainer):
     sgd = SGD(architecture.parameters(), 1e-3)
     model = BoringModel(architecture, loss, -1, optimizer=sgd, lr_scheduler=Schedule(np.cos))
