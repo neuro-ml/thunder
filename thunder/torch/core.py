@@ -7,7 +7,7 @@ from more_itertools import collapse, padded, zip_equal
 from toolz import identity
 from torch import Tensor, nn
 from torch.optim import Optimizer
-from torch.optim.lr_scheduler import LRScheduler
+from torch.optim.lr_scheduler import _LRScheduler as LRScheduler
 
 from ..predict import BasePredictor, Predictor
 from .utils import maybe_from_np, to_np
