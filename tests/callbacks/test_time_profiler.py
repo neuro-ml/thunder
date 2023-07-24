@@ -19,7 +19,6 @@ TESTKEYS = [
 
 @pytest.mark.parametrize("keys", TESTKEYS)
 def test_init(keys, tmpdir):
-    """Test TPU stats are logged using a logger."""
     model = BoringModel()
 
     if "wrong key" in keys:
@@ -91,3 +90,40 @@ def test_time_profiler_logs_for_different_stages(tmpdir):
     # searching for validation stage logs
     for key in filter(lambda k: "val" in k, time_profiler.keys):
         assert f"{time_profiler.__class__.__name__}/{key}" in it
+
+
+def test_with_no_validation(tmpdir):
+    class Model(BoringModel):
+        def val_dataloader(self):
+            return []
+
+    model = Model()
+    time_profiler = TimeProfiler(True)
+
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=1,
+        limit_train_batches=4,
+        limit_val_batches=4,
+        limit_test_batches=1,
+        log_every_n_steps=1,
+        callbacks=[time_profiler],
+        logger=CSVLogger(tmpdir),
+        enable_checkpointing=False,
+        enable_progress_bar=False,
+    )
+
+    # training and validation stages will run
+    trainer.fit(model)
+
+    with open(f"{tmpdir}/lightning_logs/version_0/metrics.csv") as csvfile:
+        content = csv.reader(csvfile, delimiter=",")
+        it = iter(content).__next__()
+
+    # searching for training stage logs
+    for key in filter(lambda k: "train" in k, time_profiler.keys):
+        assert f"{time_profiler.__class__.__name__}/{key}" in it
+
+    # searching for validation stage logs
+    for key in filter(lambda k: "val" in k, time_profiler.keys):
+        assert f"{time_profiler.__class__.__name__}/{key}" not in it
