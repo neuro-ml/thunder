@@ -209,17 +209,17 @@ def accuracy2(*args, **kwargs):
     [
         ({"accuracy": accuracy}, {"accuracy": 0.75}, nullcontext()),
         (
-                {lambda x, y: (x, np.zeros_like(y)): [accuracy, accuracy2]},
-                {"accuracy_score": 0.25, "accuracy2": 0.25},
-                nullcontext(),
+            {lambda x, y: (x, np.zeros_like(y)): [accuracy, accuracy2]},
+            {"accuracy_score": 0.25, "accuracy2": 0.25},
+            nullcontext(),
         ),
         (
-                {
-                    lambda x, y: (x, np.zeros_like(y)): {"acc1": accuracy, "acc2": accuracy},
-                    lambda x, y: (x, np.ones_like(y) * 2): {"acc3": accuracy, "acc4": accuracy},
-                },
-                {"acc1": 0.25, "acc2": 0.25, "acc3": 0, "acc4": 0},
-                nullcontext(),
+            {
+                lambda x, y: (x, np.zeros_like(y)): {"acc1": accuracy, "acc2": accuracy},
+                lambda x, y: (x, np.ones_like(y) * 2): {"acc3": accuracy, "acc4": accuracy},
+            },
+            {"acc1": 0.25, "acc2": 0.25, "acc3": 0, "acc4": 0},
+            nullcontext(),
         ),
         ({lambda *args: args: "std"}, {}, pytest.raises(TypeError, match="str")),
     ],

@@ -44,9 +44,11 @@ class MetricLogger(Callback):
             group_metrics[f"group/{name}"] = group_metrics.pop(name)
             names_to_replace.append(name)
 
-        single_preprocess = valmap(lambda names: list(map(lambda n: f"single/{n}" if n in names_to_replace else n, names)),
+        single_preprocess = valmap(lambda names:
+                                   [f"single/{n}" if n in names_to_replace else n for n in names],
                                    single_preprocess)
-        group_preprocess = valmap(lambda names: list(map(lambda n: f"group/{n}" if n in names_to_replace else n, names)),
+        group_preprocess = valmap(lambda names:
+                                  [f"group/{n}" if n in names_to_replace else n for n in names],
                                   group_preprocess)
 
         self.single_metrics = single_metrics
