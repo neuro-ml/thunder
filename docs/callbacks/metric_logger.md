@@ -34,6 +34,9 @@ If you use any loggers (e.g. `Tensorboard` or `WandB`), `accuracy` will appear i
 `val/accuracy` - validation metrics.  
 `test/accuracy` - test metrics.
 
+You can also use preprocessing functions as keys of the dictionary. It is 
+covered in **Preprocessing** part in **Single Metrics** paragraph.
+
 ### Single metrics
 Single metrics are computed on each object separately and only then aggregated.
 It is a common use case for tasks like segmentation or object detection.

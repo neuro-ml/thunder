@@ -1,5 +1,6 @@
 from contextlib import nullcontext
 from functools import partial, wraps
+from itertools import chain
 
 import numpy as np
 import pandas as pd
@@ -117,6 +118,42 @@ def test_group_metrics(tmpdir):
     assert all(np.allclose(acc, metrics["val/accuracy"].dropna().iloc[i]) for i in range(2))
 
 
+def test_group_metrics_with_preprocessing(tmpdir):
+    metric_logger = MetricLogger(group_metrics={lambda y, x: (y > 0.5, x): accuracy_score})
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=2,
+        limit_train_batches=4,
+        limit_val_batches=4,
+        enable_checkpointing=False,
+        enable_progress_bar=False,
+        callbacks=[metric_logger],
+        logger=CSVLogger(tmpdir),
+    )
+    model = NoOptimModule(nn.Linear(2, 1), lambda x, y: x + y, -1)
+    trainer.fit(model)
+    trainer.test(model)
+
+    metrics = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
+    assert all(np.allclose(0, metrics["train/loss"].dropna().iloc[i]) for i in range(2))
+    x = np.asarray(list(collapse([[1, 0] for i in range(4)])))
+    y = np.asarray(list(collapse([[i % 2, i % 3] for i in range(4)])))
+    acc = accuracy(x, y)
+    assert all(np.allclose(acc, metrics["val/accuracy_score"].dropna().iloc[i]) for i in range(2))
+
+
+def test_metrics_collision(tmpdir):
+    metric_logger = MetricLogger(single_metrics={"accuracy": lambda y, x: y + x,
+                                                 "recall": lambda y, x: y + x},
+                                 group_metrics={"accuracy": lambda y, x: y + x,
+                                                "precision": lambda y, x: y + x})
+
+    assert sorted(metric_logger.single_metrics.keys()) == sorted(["single/accuracy", "recall"])
+    assert sorted(metric_logger.group_metrics.keys()) == sorted(["group/accuracy", "precision"])
+    assert sorted(chain(*metric_logger.single_preprocess.values())) == sorted(["single/accuracy", "recall"])
+    assert sorted(chain(*metric_logger.group_preprocess.values())) == sorted(["group/accuracy", "precision"])
+
+
 @pytest.mark.parametrize(
     "aggregate_fn, target, exception",
     [
@@ -172,17 +209,17 @@ def accuracy2(*args, **kwargs):
     [
         ({"accuracy": accuracy}, {"accuracy": 0.75}, nullcontext()),
         (
-            {lambda x, y: (x, np.zeros_like(y)): [accuracy, accuracy2]},
-            {"accuracy_score": 0.25, "accuracy2": 0.25},
-            nullcontext(),
+                {lambda x, y: (x, np.zeros_like(y)): [accuracy, accuracy2]},
+                {"accuracy_score": 0.25, "accuracy2": 0.25},
+                nullcontext(),
         ),
         (
-            {
-                lambda x, y: (x, np.zeros_like(y)): {"acc1": accuracy, "acc2": accuracy},
-                lambda x, y: (x, np.ones_like(y) * 2): {"acc3": accuracy, "acc4": accuracy},
-            },
-            {"acc1": 0.25, "acc2": 0.25, "acc3": 0, "acc4": 0},
-            nullcontext(),
+                {
+                    lambda x, y: (x, np.zeros_like(y)): {"acc1": accuracy, "acc2": accuracy},
+                    lambda x, y: (x, np.ones_like(y) * 2): {"acc3": accuracy, "acc4": accuracy},
+                },
+                {"acc1": 0.25, "acc2": 0.25, "acc3": 0, "acc4": 0},
+                nullcontext(),
         ),
         ({lambda *args: args: "std"}, {}, pytest.raises(TypeError, match="str")),
     ],
