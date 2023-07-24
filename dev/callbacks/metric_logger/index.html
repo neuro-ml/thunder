@@ -1006,6 +1006,8 @@ For example, you want to compute classification accuracy on MNIST.
 <p>If you use any loggers (e.g. <code>Tensorboard</code> or <code>WandB</code>), <code>accuracy</code> will appear in them as follows:<br />
 <code>val/accuracy</code> - validation metrics.<br />
 <code>test/accuracy</code> - test metrics.</p>
+<p>You can also use preprocessing functions as keys of the dictionary. It is 
+covered in <strong>Preprocessing</strong> part in <strong>Single Metrics</strong> paragraph.</p>
 <h3 id="single-metrics">Single metrics</h3>
 <p>Single metrics are computed on each object separately and only then aggregated.
 It is a common use case for tasks like segmentation or object detection.</p>
@@ -1097,7 +1099,7 @@ must be callable objects.
 
 
 </h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">thunder</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">metric_logger</span><span class="o">.</span><span class="n">MetricLogger</span><span class="p">(</span><span class="n">single_metrics</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">group_metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">aggregate_fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">thunder</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">metric_logger</span><span class="o">.</span><span class="n">MetricLogger</span><span class="p">(</span><span class="n">single_metrics</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">group_metrics</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">aggregate_fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents first">
@@ -1134,7 +1136,7 @@ must be callable objects.
         <tr>
           <td><code>group_metrics</code></td>
           <td>
-                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Callable">Callable</span>]</code>
+                <code><span title="typing.Dict">Dict</span></code>
           </td>
           <td>
             <div class="doc-md-description">
