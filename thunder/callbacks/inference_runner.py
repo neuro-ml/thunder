@@ -29,7 +29,7 @@ class InferenceRunner(Callback):
 
     def on_validation_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
         for i, x, y in zip(
-            self.val_dataset.ids, map(self.load_x, self.val_dataset.ids), map(self.load_y, self.val_dataset.ids)
+            self.val_ids, map(self.load_x, self.val_ids), map(self.load_y, self.val_ids)
         ):
             self._call_callback_hooks(
                 trainer, pl_module, "on_validation_batch_start", batch=(x, y), batch_idx=i, dataloader_id=0
