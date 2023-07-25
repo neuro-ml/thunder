@@ -11,59 +11,49 @@ class InferenceRunner(Callback):
     def __init__(
         self,
         *,
-        val_load_x: Callable,
-        val_load_y: Callable,
-        test_load_x: Callable,
-        test_load_y: Callable,
+        predict_fn: Callable,
+        load_x: Callable,
+        load_y: Callable,
+        test_load_x: Optional[Callable] = None,
+        test_load_y: Optional[Callable] = None,
         val_ids: Optional[Sequence] = None,
         test_ids: Optional[Sequence] = None,
         callbacks: List[Callback] = None,
     ):
-        self.val_load_x = val_load_x
-        self.val_load_y = val_load_y
-        self.test_load_x = test_load_x
-        self.test_load_y = test_load_y
+        self.predict_fn = predict_fn
+        self.load_x = load_x
+        self.load_y = load_y
+        self.test_load_x = test_load_x or load_x
+        self.test_load_y = test_load_y or load_y
         self.val_ids = val_ids
         self.test_ids = test_ids
         self.callbacks = callbacks if callbacks else []
 
-    def on_validation_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
-        for i, x, y in zip(
-            self.val_ids, map(self.load_x, self.val_ids), map(self.load_y, self.val_ids)
-        ):
-            self._call_callback_hooks(
-                trainer, pl_module, "on_validation_batch_start", batch=(x, y), batch_idx=i, dataloader_id=0
-            )
+    def evaluate_epoch(
+        self,
+        trainer: Trainer,
+        pl_module: LightningModule,
+        stage: str,
+        ids: Sequence,
+        load_x: Callable,
+        load_y: Callable,
+    ) -> None:
+        for i, x, y in zip(ids, map(load_x, ids), map(load_y, ids)):
+            self._call_callback_hooks(trainer, pl_module, f"on_{stage}_batch_start",
+                                      batch=(x, y), batch_idx=i, dataloader_id=0)
+
             predict = self.predict_fn(x)
-            self._call_callback_hooks(
-                trainer,
-                pl_module,
-                "on_validation_batch_end",
-                outputs=(predict, y),
-                batch=(x, y),
-                batch_idx=i,
-                dataloader_id=0,
-            )
-        self._call_callback_hooks(trainer, pl_module, "on_validation_epoch_end")
+
+            self._call_callback_hooks(trainer, pl_module, f"on_{stage}_batch_end",
+                                      outputs=(predict, y), batch=(x, y), batch_idx=i, dataloader_id=0)
+
+        self._call_callback_hooks(trainer, pl_module, f"on_{stage}_epoch_end")
+
+    def on_validation_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
+        self.evaluate_epoch(trainer, pl_module, "validation", self.val_ids, self.load_x, self.load_y)
 
     def on_test_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
-        for i, x, y in zip(
-            self.val_dataset.ids, map(self.load_x, self.test_dataset.ids), map(self.load_y, self.test_dataset.ids)
-        ):
-            self._call_callback_hooks(
-                trainer, pl_module, "on_test_batch_start", batch=(x, y), batch_idx=i, dataloader_id=0
-            )
-            predict = self.predict_fn(x)
-            self._call_callback_hooks(
-                trainer,
-                pl_module,
-                "on_test_batch_end",
-                outputs=(predict, y),
-                batch=(x, y),
-                batch_idx=i,
-                dataloader_id=0,
-            )
-        self._call_callback_hooks(trainer, pl_module, "on_test_epoch_end")
+        self.evaluate_epoch(trainer, pl_module, "test", self.test_ids, self.test_load_x, self.test_load_y)
 
     def _call_callback_hooks(
         self,
