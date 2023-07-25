@@ -10,7 +10,7 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader, Dataset as _Dataset
 
 from thunder import ThunderModule
-from thunder.callbacks import InferenceRunner
+from thunder.callbacks import InferenceRunner, TimeProfiler
 
 
 class Dataset(_Dataset):
@@ -56,8 +56,22 @@ def test_no_additional_callbacks(tmpdir):
 
 
 def test_with_additional_callback(tmpdir):
-    """TODO"""
+    inference_runner = InferenceRunner(predict_fn=add_remove_dim(module.predict),
+                                       load_x=lambda i: val_data[i][0], load_y=lambda i: val_data[i][1],
+                                       val_ids=list(ascii_lowercase), test_ids=list(ascii_lowercase.upper()))
+
+    trainer = Trainer(default_root_dir=tmpdir, max_epochs=2, callbacks=[inference_runner, TimeProfiler()])
+
+    trainer.fit(module, train_loader, val_loader)
+    trainer.test(module, val_loader)
 
 
 def test_with_empty_val_loader(tmpdir):
-    """TODO"""
+    inference_runner = InferenceRunner(predict_fn=add_remove_dim(module.predict),
+                                       load_x=lambda i: val_data[i][0], load_y=lambda i: val_data[i][1],
+                                       val_ids=list(ascii_lowercase), test_ids=list(ascii_lowercase.upper()))
+
+    trainer = Trainer(default_root_dir=tmpdir, max_epochs=2, callbacks=[inference_runner])
+
+    trainer.fit(module, train_loader, [])
+    trainer.test(module, val_loader)
