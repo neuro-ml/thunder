@@ -1,12 +1,13 @@
-from typing import Callable, Sequence, Union, Tuple
+from typing import Callable, Sequence, Tuple, Union
 
-from lightning import Trainer, LightningModule
+from lightning import LightningModule, Trainer
 from lightning.pytorch.callbacks import Callback
 from lightning.pytorch.trainer.call import _call_callback_hooks
 from more_itertools import zip_equal
 from toolz import compose
 
 from ..torch.utils import maybe_from_np
+
 
 Loader = Tuple[Sequence, Callable, Callable]
 

@@ -2,7 +2,7 @@ from collections import defaultdict
 from functools import partial
 from itertools import chain
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Sequence, Union, Tuple, Hashable
+from typing import Any, Callable, Dict, Hashable, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -10,7 +10,7 @@ import torch
 from lightning import Callback, LightningModule, Trainer
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from more_itertools import zip_equal
-from toolz import compose, valmap, keymap
+from toolz import compose, keymap, valmap
 
 from ..torch.utils import to_np
 from ..utils import collect, squeeze_first
