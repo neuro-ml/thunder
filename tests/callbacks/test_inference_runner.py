@@ -7,7 +7,7 @@ from lightning import Trainer
 from lightning.pytorch.demos.boring_classes import Net
 from torch import nn
 from torch.optim import Adam
-from torch.utils.data import DataLoader, Dataset as _Dataset
+from torch.utils.data import Dataset as _Dataset
 
 from thunder import ThunderModule
 from thunder.callbacks import InferenceRunner, TimeProfiler
@@ -30,6 +30,15 @@ architecture = Net()
 train_data = Dataset(list(range(10)))
 val_data = Dataset(list(range(5)))
 
+
+def load_x(i):
+    return val_data[i][0]
+
+
+def load_y(i):
+    return val_data[i][1]
+
+
 train_loader = torch.utils.data.DataLoader(train_data, batch_size=3)
 val_loader = torch.utils.data.DataLoader(val_data, batch_size=2)
 optimizer = Adam(architecture.parameters())
@@ -41,37 +50,48 @@ def add_remove_dim(func):
     @wraps(func)
     def wrapper(x, *args, **kwargs):
         return func(x[None, ...], *args, **kwargs)[0]
+
     return wrapper
 
 
 def test_no_additional_callbacks(tmpdir):
-    inference_runner = InferenceRunner(predict_fn=add_remove_dim(module.predict),
-                                       load_x=lambda i: val_data[i][0], load_y=lambda i: val_data[i][1],
-                                       val_ids=list(ascii_lowercase), test_ids=list(ascii_lowercase.upper()))
+    inference_runner = InferenceRunner(add_remove_dim, val_loaders=(ascii_lowercase, load_x, load_y))
 
-    trainer = Trainer(default_root_dir=tmpdir, max_epochs=2, callbacks=[inference_runner])
+    trainer = Trainer(default_root_dir=tmpdir,
+                      max_epochs=2,
+                      callbacks=[inference_runner],
+                      enable_checkpointing=False,
+                      enable_progress_bar=False)
 
     trainer.fit(module, train_loader, val_loader)
     trainer.test(module, val_loader)
 
 
 def test_with_additional_callback(tmpdir):
-    inference_runner = InferenceRunner(predict_fn=add_remove_dim(module.predict),
-                                       load_x=lambda i: val_data[i][0], load_y=lambda i: val_data[i][1],
-                                       val_ids=list(ascii_lowercase), test_ids=list(ascii_lowercase.upper()))
+    inference_runner = InferenceRunner(add_remove_dim, val_loaders=(ascii_lowercase, load_x, load_y),
+                                       test_loaders=(ascii_lowercase.upper(), load_x, load_y))
 
-    trainer = Trainer(default_root_dir=tmpdir, max_epochs=2, callbacks=[inference_runner, TimeProfiler()])
+    trainer = Trainer(default_root_dir=tmpdir,
+                      max_epochs=2,
+                      callbacks=[inference_runner, TimeProfiler()],
+                      enable_checkpointing=False,
+                      enable_progress_bar=False)
 
     trainer.fit(module, train_loader, val_loader)
     trainer.test(module, val_loader)
 
 
 def test_with_empty_val_loader(tmpdir):
-    inference_runner = InferenceRunner(predict_fn=add_remove_dim(module.predict),
-                                       load_x=lambda i: val_data[i][0], load_y=lambda i: val_data[i][1],
-                                       val_ids=list(ascii_lowercase), test_ids=list(ascii_lowercase.upper()))
+    inference_runner = InferenceRunner(add_remove_dim, val_loaders=(ascii_lowercase, load_x, load_y),
+                                       test_loaders=(ascii_lowercase.upper(), load_x, load_y),
+                                       predict_loaders=[(list(range(len(ascii_lowercase))), load_x, load_y)])
 
-    trainer = Trainer(default_root_dir=tmpdir, max_epochs=2, callbacks=[inference_runner])
+    trainer = Trainer(default_root_dir=tmpdir,
+                      max_epochs=2,
+                      callbacks=[inference_runner],
+                      enable_checkpointing=False,
+                      enable_progress_bar=False)
 
     trainer.fit(module, train_loader, [])
     trainer.test(module, val_loader)
+    trainer.predict(module, [])
