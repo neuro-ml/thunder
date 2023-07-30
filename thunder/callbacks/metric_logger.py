@@ -182,14 +182,9 @@ class MetricLogger(Callback):
                     self._single_metric_values[dataloader_idx][name][object_idx] = \
                         self.single_metrics[name](*preprocessed)
 
-        for _, metrics_names in self.single_preprocess.items():
-            for name in metrics_names:
-                if all(k.rsplit("_", 1)[1] == "0" for k in
-                       self._single_metric_values[dataloader_idx][name].keys()):
-                    self._single_metric_values[dataloader_idx][name] = \
-                        keymap(lambda k: k.rsplit("_", 1)[0], self._single_metric_values[dataloader_idx][name])
-
     def evaluate_epoch(self, trainer: Trainer, pl_module: LightningModule, key: str) -> None:
+        self._squeeze_ids_in_single_metrics()
+
         group_metric_values = {}
 
         for dataloader_idx, all_predictions in self._all_predictions.items():
@@ -208,8 +203,8 @@ class MetricLogger(Callback):
 
                 if self.log_individual_metrics:
                     dataframe = pd.DataFrame(metrics)
-                    root_dir = Path(trainer.default_root_dir) / key
-                    root_dir.mkdir(exist_ok=True, parents=True)
+                    root_dir = Path(trainer.default_root_dir) / key  # trainer.log_dir / key ?
+                    root_dir.mkdir(exist_ok=True)
                     for logger in pl_module.loggers:
                         if hasattr(logger, "log_table"):
                             logger.log_table(f"{key}/dataloader_{dataloader_idx}", dataframe=dataframe)
@@ -217,13 +212,22 @@ class MetricLogger(Callback):
                     dataframe.to_csv(root_dir / f"dataloader_{dataloader_idx}.csv")
 
                 single_metric_values.update({f"{prefix}{k}{loader_postfix}":
-                                            fn(list(v.values())) for k, v in metrics.items()})
+                                                 fn(list(v.values())) for k, v in metrics.items()})
 
         self._single_metric_values.clear()
         self._all_predictions.clear()
 
         for k, value in chain(single_metric_values.items(), group_metric_values.items()):
             pl_module.log(f'{key}/{k}', value)
+
+    def _squeeze_ids_in_single_metrics(self):
+        for dataloader_idx, _ in self._all_predictions.items():
+            for _, metrics_names in self.single_preprocess.items():
+                for name in metrics_names:
+                    if all(k.rsplit("_", 1)[1] == "0" for k in
+                           self._single_metric_values[dataloader_idx][name].keys()):
+                        self._single_metric_values[dataloader_idx][name] = \
+                            keymap(lambda k: k.rsplit("_", 1)[0], self._single_metric_values[dataloader_idx][name])
 
 
 def _get_func_name(function: Callable) -> str:
