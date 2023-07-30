@@ -17,7 +17,7 @@
         <link rel="next" href="../../examples/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.16">
+      <meta name="generator" content="mkdocs-1.5.1, mkdocs-material-9.1.21">
     
     
       
@@ -25,7 +25,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.eebd395e.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ecc896b0.min.css">
@@ -823,7 +823,7 @@
   
     <li class="md-nav__item">
       <a href="../../layout/splits/" class="md-nav__link">
-        Splits
+        Splits#
       </a>
     </li>
   
@@ -1073,10 +1073,10 @@
   
 
 
-<h1 id="thundermodule">ThunderModule</h1>
+<h1 id="thundermodule">ThunderModule<a class="headerlink" href="#thundermodule" title="Permanent link">#</a></h1>
 <p>ThunderModule inherits everything from LightningModule and implements
 essential methods for most common training pipelines.</p>
-<h2 id="from-lightning-to-thunder">From Lightning to Thunder</h2>
+<h2 id="from-lightning-to-thunder">From Lightning to Thunder<a class="headerlink" href="#from-lightning-to-thunder" title="Permanent link">#</a></h2>
 <p>Most common pipelines are implemented in lightning in the following way:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">lightning</span> <span class="kn">import</span> <span class="n">LightningModule</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
@@ -1117,7 +1117,7 @@ essential methods for most common training pipelines.</p>
 <a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ThunderModule</span><span class="p">(</span><span class="n">architecture</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span>
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>                      <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">)</span>
 </code></pre></div></p>
-<h2 id="configuring-optimizers">Configuring Optimizers</h2>
+<h2 id="configuring-optimizers">Configuring Optimizers<a class="headerlink" href="#configuring-optimizers" title="Permanent link">#</a></h2>
 <p>For extra information see
 <a href="https://lightning.ai/docs/pytorch/stable/common/lightning_module.html#lightningmodule-api">this</a>.<br />
 Lightning requires optimizers and learning rate policies
@@ -1130,20 +1130,20 @@ optimizers and learning rate schedulers:</p>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">architecture</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </code></pre></div>
-<h4 id="no-scheduling">No scheduling</h4>
+<h4 id="no-scheduling">No scheduling<a class="headerlink" href="#no-scheduling" title="Permanent link">#</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">optimizer</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">architecture</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ThunderModule</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">)</span>
 </code></pre></div>
-<h4 id="defining-optimizer-and-scheduler">Defining optimizer and scheduler</h4>
+<h4 id="defining-optimizer-and-scheduler">Defining optimizer and scheduler<a class="headerlink" href="#defining-optimizer-and-scheduler" title="Permanent link">#</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">optimizer</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">architecture</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">lr_scheduler</span> <span class="o">=</span> <span class="n">LRScheduler</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ThunderModule</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="n">lr_scheduler</span><span class="p">)</span>
 </code></pre></div>
-<h4 id="defining-no-optimizer">Defining no optimizer</h4>
+<h4 id="defining-no-optimizer">Defining no optimizer<a class="headerlink" href="#defining-no-optimizer" title="Permanent link">#</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">lr_scheduler</span> <span class="o">=</span> <span class="n">LRScheduler</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ThunderModule</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="n">lr_scheduler</span><span class="p">)</span>
 </code></pre></div>
-<h3 id="multiple-optimizers">Multiple Optimizers</h3>
+<h3 id="multiple-optimizers">Multiple Optimizers<a class="headerlink" href="#multiple-optimizers" title="Permanent link">#</a></h3>
 <p>Thunder just as lightning supports configuration with more than 1 optimizer. If such configuration is to be used, manual optimization is required.<br />
 <a href="https://lightning.ai/docs/pytorch/stable/common/optimization.html#id2">Guide on manual optimization</a></p>
 <p>In thunder you can pass lists of optimizers and schedulers to ThunderModule.
@@ -1158,7 +1158,7 @@ optimizers and learning rate schedulers:</p>
 <a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
 <a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ThunderModuleManual</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizers</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="n">lr_schedulers</span><span class="p">)</span>
 </code></pre></div></p>
-<h3 id="thunder-policies">Thunder Policies</h3>
+<h3 id="thunder-policies">Thunder Policies<a class="headerlink" href="#thunder-policies" title="Permanent link">#</a></h3>
 <p>As shown above, torch schedulers require optimizer(s) to be passed to them before
 they are given to ThunderModule. It is not very convenient, and also they lack some basic 
 functionality.<br />
@@ -1171,17 +1171,17 @@ You can use thunder policies just like torch schedulers:
 <a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">model</span> <span class="o">=</span> <span class="n">ThunderModuleManual</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizers</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="o">=</span><span class="n">lr_schedulers</span><span class="p">)</span>
 </code></pre></div></p>
 <p>For extra information see <a href="../../policy/lr_schedulers/">Thunder Policies Docs</a>.</p>
-<h2 id="inference">Inference</h2>
+<h2 id="inference">Inference<a class="headerlink" href="#inference" title="Permanent link">#</a></h2>
 <p>During inference step, ThunderModule uses Predictors in order to preprocess data and
 make inverse transforms after passing data through the model. Default predictor
 is just an identity function.</p>
 <p>For more on predictors see <a href="">Thunder Predictors Docs</a>.</p>
-<h2 id="batch-transfer">Batch Transfer</h2>
+<h2 id="batch-transfer">Batch Transfer<a class="headerlink" href="#batch-transfer" title="Permanent link">#</a></h2>
 <p>ThunderModule transfers training batches to device by default. However, during 
 inference batch remains on the device, on which it was received from data loader. 
 Transferring happens later in the <code>inference_step</code>, which is invoked in
 <code>validation_step</code>, <code>test_step</code> and <code>predict_step</code>.</p>
-<h2 id="reference">Reference</h2>
+<h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">#</a></h2>
 
 
 <div class="doc doc-object doc-class">
@@ -1189,28 +1189,18 @@ Transferring happens later in the <code>inference_step</code>, which is invoked 
 
 
 <h3 id="thunder.torch.core.ThunderModule" class="doc doc-heading">
-        <span class="doc doc-object-name doc-class-name">thunder.torch.core.ThunderModule</span>
+          <span class="doc doc-object-name doc-class-name">thunder.torch.core.ThunderModule</span>
 
 
-</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">thunder</span><span class="o">.</span><span class="n">torch</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">ThunderModule</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">architecture</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">criterion</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">n_targets</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">activation</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">identity</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">optimizer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Optimizer</span><span class="p">],</span> <span class="n">Optimizer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">lr_scheduler</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">List</span><span class="p">[</span><span class="n">LRScheduler</span><span class="p">],</span> <span class="n">LRScheduler</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">predictor</span><span class="p">:</span> <span class="n">BasePredictor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">n_val_targets</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">)</span>
+<a href="#thunder.torch.core.ThunderModule" class="headerlink" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">thunder</span><span class="o">.</span><span class="n">torch</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">ThunderModule</span><span class="p">(</span><span class="n">architecture</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">criterion</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">n_targets</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">identity</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Optimizer</span><span class="p">],</span> <span class="n">Optimizer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">LRScheduler</span><span class="p">],</span> <span class="n">LRScheduler</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">predictor</span><span class="p">:</span> <span class="n">BasePredictor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n_val_targets</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents first">
 
-
   
+
+
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -1276,7 +1266,7 @@ Transferring happens later in the <code>inference_step</code>, which is invoked 
             </div>
           </td>
           <td>
-                <code>identity</code>
+                <code><span title="toolz.identity">identity</span></code>
           </td>
         </tr>
         <tr>
@@ -1338,9 +1328,9 @@ Transferring happens later in the <code>inference_step</code>, which is invoked 
     </tbody>
   </table>
 
-          <details class="quote">
-            <summary>Source code in <code>thunder/torch/core.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-18">18</a></span>
+              <details class="quote">
+                <summary>Source code in <code>thunder/torch/core.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-18">18</a></span>
 <span class="normal"><a href="#__codelineno-0-19">19</a></span>
 <span class="normal"><a href="#__codelineno-0-20">20</a></span>
 <span class="normal"><a href="#__codelineno-0-21">21</a></span>
@@ -1420,11 +1410,12 @@ Transferring happens later in the <code>inference_step</code>, which is invoked 
 <a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">lr_scheduler</span> <span class="o">=</span> <span class="n">lr_scheduler</span>
 <a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">predictor</span> <span class="o">=</span> <span class="n">predictor</span> <span class="k">if</span> <span class="n">predictor</span> <span class="k">else</span> <span class="n">Predictor</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
-          </details>
+              </details>
 
   
 
   <div class="doc doc-children">
+
 
 
 
@@ -1439,136 +1430,130 @@ Transferring happens later in the <code>inference_step</code>, which is invoked 
 
 
 <h4 id="thunder.torch.core.ThunderModule.training_step" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">training_step</span>
+          <span class="doc doc-object-name doc-function-name">training_step</span>
 
 
-</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">training_step</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span>
+<a href="#thunder.torch.core.ThunderModule.training_step" class="headerlink" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">training_step</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/torch/core.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-67">67</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/torch/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-67">67</a></span>
 <span class="normal"><a href="#__codelineno-0-68">68</a></span>
 <span class="normal"><a href="#__codelineno-0-69">69</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span><span class="p">:</span>
 <a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[:</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">n_targets</span><span class="p">],</span> <span class="n">batch</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">n_targets</span><span class="p">:]</span>
 <a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">),</span> <span class="o">*</span><span class="n">y</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
 <h4 id="thunder.torch.core.ThunderModule.validation_step" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">validation_step</span>
+          <span class="doc doc-object-name doc-function-name">validation_step</span>
 
 
-</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">validation_step</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span>
+<a href="#thunder.torch.core.ThunderModule.validation_step" class="headerlink" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">validation_step</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/torch/core.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-71">71</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/torch/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-71">71</a></span>
 <span class="normal"><a href="#__codelineno-0-72">72</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span><span class="p">:</span>
 <a id="__codelineno-0-72" name="__codelineno-0-72"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inference_step</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
 <h4 id="thunder.torch.core.ThunderModule.test_step" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">test_step</span>
+          <span class="doc doc-object-name doc-function-name">test_step</span>
 
 
-</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">test_step</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span>
+<a href="#thunder.torch.core.ThunderModule.test_step" class="headerlink" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">test_step</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/torch/core.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-74">74</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/torch/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-74">74</a></span>
 <span class="normal"><a href="#__codelineno-0-75">75</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span><span class="p">:</span>
 <a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inference_step</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
 <h4 id="thunder.torch.core.ThunderModule.predict_step" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">predict_step</span>
+          <span class="doc doc-object-name doc-function-name">predict_step</span>
 
 
-</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">predict_step</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
+<a href="#thunder.torch.core.ThunderModule.predict_step" class="headerlink" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">predict_step</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/torch/core.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-77">77</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/torch/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-77">77</a></span>
 <span class="normal"><a href="#__codelineno-0-78">78</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="k">def</span> <span class="nf">predict_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <a id="__codelineno-0-78" name="__codelineno-0-78"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inference_step</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
 
 
 <h4 id="thunder.torch.core.ThunderModule.inference_step" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">inference_step</span>
+          <span class="doc doc-object-name doc-function-name">inference_step</span>
 
 
-</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">inference_step</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
+<a href="#thunder.torch.core.ThunderModule.inference_step" class="headerlink" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">inference_step</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>thunder/torch/core.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-87">87</a></span>
+          <details class="quote">
+            <summary>Source code in <code>thunder/torch/core.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-87">87</a></span>
 <span class="normal"><a href="#__codelineno-0-88">88</a></span>
 <span class="normal"><a href="#__codelineno-0-89">89</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="k">def</span> <span class="nf">inference_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <a id="__codelineno-0-88" name="__codelineno-0-88"></a>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">squeeze_first</span><span class="p">,</span> <span class="p">(</span><span class="n">batch</span><span class="p">[:</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">n_val_targets</span><span class="p">],</span> <span class="n">batch</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">n_val_targets</span><span class="p">:]))</span>
 <a id="__codelineno-0-89" name="__codelineno-0-89"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictor</span><span class="p">([</span><span class="n">x</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -1617,10 +1602,10 @@ Transferring happens later in the <code>inference_step</code>, which is invoked 
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a51614de.min.js"></script>
+      <script src="../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
     
   </body>
