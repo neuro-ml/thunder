@@ -212,7 +212,7 @@ class MetricLogger(Callback):
                     dataframe.to_csv(root_dir / f"dataloader_{dataloader_idx}.csv")
 
                 single_metric_values.update({f"{prefix}{k}{loader_postfix}":
-                                                 fn(list(v.values())) for k, v in metrics.items()})
+                                            fn(list(v.values())) for k, v in metrics.items()})
 
         self._single_metric_values.clear()
         self._all_predictions.clear()
