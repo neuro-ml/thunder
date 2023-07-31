@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://neuro-ml.github.io/thunder/latest/examples/totalsegm_lowres/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../mnist/">
       
       
         <link rel="next" href="../../inference/">
@@ -544,6 +544,20 @@
               
   
   
+  
+    <li class="md-nav__item">
+      <a href="../mnist/" class="md-nav__link">
+        Mnist
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
     
   
   
@@ -943,7 +957,7 @@
 <a id="__codelineno-0-82" name="__codelineno-0-82" href="#__codelineno-0-82"></a>
 <a id="__codelineno-0-83" name="__codelineno-0-83" href="#__codelineno-0-83"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
 <a id="__codelineno-0-84" name="__codelineno-0-84" href="#__codelineno-0-84"></a>    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85" href="#__codelineno-0-85"></a>        <span class="n">MetricLogger</span><span class="p">({</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">):</span> <span class="p">[</span><span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">dice_score</span><span class="p">]},</span> <span class="n">aggregate_fn</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">]),</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85" href="#__codelineno-0-85"></a>        <span class="n">MetricLogger</span><span class="p">({</span><span class="k">lambda</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">):</span> <span class="p">[</span><span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">dice_score</span><span class="p">]},</span> <span class="n">aggregate_fn</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">]),</span>
 <a id="__codelineno-0-86" name="__codelineno-0-86" href="#__codelineno-0-86"></a>        <span class="n">TimeProfiler</span><span class="p">(),</span>
 <a id="__codelineno-0-87" name="__codelineno-0-87" href="#__codelineno-0-87"></a>        <span class="n">LearningRateMonitor</span><span class="p">(</span><span class="s2">&quot;epoch&quot;</span><span class="p">),</span>
 <a id="__codelineno-0-88" name="__codelineno-0-88" href="#__codelineno-0-88"></a>        <span class="n">ModelCheckpoint</span><span class="p">(</span><span class="n">save_last</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
@@ -970,7 +984,7 @@
 <a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">[</span><span class="n">item</span><span class="p">])</span>
 </code></pre></div></p>
 <h2 id="source">Source<a class="headerlink" href="#source" title="Permanent link">#</a></h2>
-<p>Full source code is available at <a href="https://github.com/arseniybelkov/thunder-examples/tree/master">thunder-examples</a></p>
+<p>Full source code is available at <a href="https://github.com/arseniybelkov/thunder-examples/blob/master/configs/dumb.config">thunder-examples</a></p>
 
 
 
