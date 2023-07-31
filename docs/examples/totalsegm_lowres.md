@@ -88,7 +88,7 @@ module = ThunderModule(architecture, criterion, activation=nn.Sigmoid(),
 
 trainer = Trainer(
     callbacks=[
-        MetricLogger({lambda x, y: (y > 0.5, x > 0.5): [precision, recall, dice_score]}, aggregate_fn=["std", "max", "min"]),
+        MetricLogger({lambda y, x: (y > 0.5, x > 0.5): [precision, recall, dice_score]}, aggregate_fn=["std", "max", "min"]),
         TimeProfiler(),
         LearningRateMonitor("epoch"),
         ModelCheckpoint(save_last=True),
@@ -117,4 +117,4 @@ class ConToTorch(Dataset):
 ```
 
 ## Source
-Full source code is available at [thunder-examples](https://github.com/arseniybelkov/thunder-examples/tree/master)
+Full source code is available at [thunder-examples](https://github.com/arseniybelkov/thunder-examples/blob/master/configs/dumb.config)

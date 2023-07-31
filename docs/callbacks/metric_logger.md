@@ -96,7 +96,7 @@ must be callable objects.
 ```python
 from sklearn.metrics import accuracy_score, recall_score
 
-threshold = lambda x, y: (x > 0.5, y)
+threshold = lambda y, x: (y > 0.5, x)
 
 single_metrics = {threshold: [accuracy_score, recall_score()]} 
 # or
