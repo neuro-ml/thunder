@@ -175,7 +175,7 @@ class MetricLogger(Callback):
             self._all_predictions[dataloader_idx].extend(zip(*outputs))
 
         for i, (target, pred) in enumerate(zip(*outputs)):
-            object_idx = str(batch_idx) + f"_{i}"
+            object_idx = f"{batch_idx}_{i}"
             for preprocess, metrics_names in self.single_preprocess.items():
                 preprocessed = preprocess(target, pred)
                 for name in metrics_names:
