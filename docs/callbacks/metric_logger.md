@@ -3,6 +3,18 @@ This callback takes on computation and aggregation of the specified metrics.
 
 ## Usage
 
+### Loss
+Despite the word `Metric` in the name, this callback also takes on logging of train
+loss(es). It casts them by the following rules:  
+- If `loss` is of type `torch.Tensor` - `{"loss": loss}` is logged.  
+- If `loss` is a list or tuple, then it is logged as `{"i": loss_i}`.  
+- If `loss` is a dict, then it is logged as is.  
+
+:warning:  
+> All Tensors are cast to numpy arrays.
+
+At the end of epoch they are averaged and sent to logger.
+
 ### Metric Computation
 Metrics are assumed to be received as tuple `(X, Y)`, where
 **X** - batch of predictions, **Y** - batch of targets. 
@@ -33,6 +45,9 @@ trainer = Trainer(callbacks=[MetricLogger(group_metrics={"accuracy": accuracy_sc
 If you use any loggers (e.g. `Tensorboard` or `WandB`), `accuracy` will appear in them as follows:  
 `val/accuracy` - validation metrics.  
 `test/accuracy` - test metrics.
+
+You can also use preprocessing functions as keys of the dictionary. It is 
+covered in **Preprocessing** part in **Single Metrics** paragraph.
 
 ### Single metrics
 Single metrics are computed on each object separately and only then aggregated.
@@ -93,7 +108,7 @@ must be callable objects.
 ```python
 from sklearn.metrics import accuracy_score, recall_score
 
-threshold = lambda x, y: (x > 0.5, y)
+threshold = lambda y, x: (y > 0.5, x)
 
 single_metrics = {threshold: [accuracy_score, recall_score()]} 
 # or
@@ -102,6 +117,38 @@ single_metrics = {threshold: {"acc": accuracy_score, "rec": recall_score}}
 single_metrics = {threshold: recall_score}
 ...
 ```
+#### Individual Metrics
+While computing `single_metrics`, one may appear in need of knowledge of metrics on each case.
+For this particular problem, the callback provides its users with `log_individual_metrics`
+flag. Being set to `True` it forces the callback to store table of metrics in the following format:
+
+| Name         | metric1    | metric2     |  
+|--------------|------------|-------------|
+| batch_idx0_0 |     some_value      | some_value |  
+| batch_idx0_1 | some_value          | some_value    |  
+| ...          | ...        | ...         |
+| batch_idxn_m | some_value | some_value  |
+
+For each set (e.g. `val`, `test`) and each `dataloader_idx`, MetricLogger stores separate table.  
+By default aforementioned tables are saved to `default_root_dir` of lightning's Trainer, in the format of
+`set_name/dataloader_idx.csv` (e.g. `val/dataloader_0.csv`).  
+If loggers you use have method `log_table` (e.g. `WandbLogger`), 
+then this method will receive key and each table in the format of `pd.DataFrame`.  
+Code from `metric_logger.py`:
+```python
+logger.log_table(f"{key}/dataloader_{dataloader_idx}", dataframe=dataframe)
+```
+where key is the current state of trainer (`val` or `test`).  
+
+Since lightning allows to use `batch_idx`, these indexes are used for metrics dataframes.
+But there can be more than one object in batch. To overcome this issue we iterate over batch
+and mark each object with the next index: 
+```python
+for i, object in enumerate(batch):
+    object_idx = f"{batch_idx}_{i}"
+```
+If all batches consist of single object, then `"_{i}"` is removed.
+
 
 ## Reference
 ::: thunder.callbacks.metric_logger.MetricLogger

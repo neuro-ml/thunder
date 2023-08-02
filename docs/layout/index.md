@@ -1,6 +1,6 @@
 # Layout
 
-Layout instances are responsible for splitting your datasets managing
+Layout instances are responsible for splitting your datasets and managing
 which data fold is used for each experiment.
 They also check reproducibility of your data splits.
 

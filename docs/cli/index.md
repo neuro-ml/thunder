@@ -73,6 +73,20 @@ thunder run /path/to/experiment/ --backend run_config_name -c 8
 ```
 
 
+## Placeholders
+Some loggers and other tools in your experiment may require name 
+of the experiment. We find it convenient to use name of the folder you 
+build your experiment into as the name of the experiment for loggers.   
+Example with `WandbLogger`:
+```python
+from lightning.pytorch.loggers import WandbLogger
+from thunder.placeholders import ExpName, GroupName
+
+logger = WandbLogger(name=ExpName, group=GroupName)
+```
+In this case `GroupName` - name of the folder with built experiment and
+`ExpName` - name of the split.
+
 ## WandB Sweeps integration
 [WandB](https://www.wandb.com) has hyperparameters tuning system called [Sweeps](https://docs.wandb.ai/guides/sweeps).
 Sweeps allow you to run multiple experiment with predefined grid of parameters and

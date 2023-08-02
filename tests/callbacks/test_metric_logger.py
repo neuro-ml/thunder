@@ -1,5 +1,7 @@
 from contextlib import nullcontext
 from functools import partial, wraps
+from itertools import chain
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -115,6 +117,42 @@ def test_group_metrics(tmpdir):
     y = np.asarray(list(collapse([[i % 2, i % 3] for i in range(4)])))
     acc = accuracy(x, y)
     assert all(np.allclose(acc, metrics["val/accuracy"].dropna().iloc[i]) for i in range(2))
+
+
+def test_group_metrics_with_preprocessing(tmpdir):
+    metric_logger = MetricLogger(group_metrics={lambda y, x: (y > 0.5, x): accuracy_score})
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=2,
+        limit_train_batches=4,
+        limit_val_batches=4,
+        enable_checkpointing=False,
+        enable_progress_bar=False,
+        callbacks=[metric_logger],
+        logger=CSVLogger(tmpdir),
+    )
+    model = NoOptimModule(nn.Linear(2, 1), lambda x, y: x + y, -1)
+    trainer.fit(model)
+    trainer.test(model)
+
+    metrics = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
+    assert all(np.allclose(0, metrics["train/loss"].dropna().iloc[i]) for i in range(2))
+    x = np.asarray(list(collapse([[1, 0] for i in range(4)])))
+    y = np.asarray(list(collapse([[i % 2, i % 3] for i in range(4)])))
+    acc = accuracy(x, y)
+    assert all(np.allclose(acc, metrics["val/accuracy_score"].dropna().iloc[i]) for i in range(2))
+
+
+def test_metrics_collision(tmpdir):
+    metric_logger = MetricLogger(single_metrics={"accuracy": lambda y, x: y + x,
+                                                 "recall": lambda y, x: y + x},
+                                 group_metrics={"accuracy": lambda y, x: y + x,
+                                                "precision": lambda y, x: y + x})
+
+    assert sorted(metric_logger.single_metrics.keys()) == sorted(["single/accuracy", "recall"])
+    assert sorted(metric_logger.group_metrics.keys()) == sorted(["group/accuracy", "precision"])
+    assert sorted(chain(*metric_logger.single_preprocess.values())) == sorted(["single/accuracy", "recall"])
+    assert sorted(chain(*metric_logger.group_preprocess.values())) == sorted(["group/accuracy", "precision"])
 
 
 @pytest.mark.parametrize(
@@ -324,3 +362,25 @@ def test_multiple_loaders(tmpdir):
     assert "val/accuracy/0" in val_columns and "val/accuracy/1" in val_columns
     assert len(test_columns) == 2, (test_columns, df.columns)
     assert "test/accuracy/0" in test_columns and "test/accuracy/1" in test_columns
+
+
+def test_log_table(tmpdir):
+    metric_logger = MetricLogger(single_metrics={"accuracy": accuracy}, log_individual_metrics=True)
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=2,
+        limit_train_batches=4,
+        limit_val_batches=4,
+        enable_checkpointing=False,
+        enable_progress_bar=False,
+        callbacks=[metric_logger],
+        logger=CSVLogger(tmpdir),
+    )
+    model = MultiLoaderModule(nn.Linear(2, 1), lambda x, y: x + y, -1)
+    trainer.fit(model)
+    trainer.test(model)
+
+    root_dir = trainer.default_root_dir
+    for p in Path(root_dir).glob("*/dataloader_*"):
+        assert str(p.relative_to(root_dir)) not in ["val/dataloader_0", "val/dataloader_1",
+                                                    "test/dataloader_0", "test/dataloader_1"]

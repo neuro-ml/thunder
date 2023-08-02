@@ -37,4 +37,4 @@ jobs:
       - name: Deploy the docs
         if: ${{ github.ref == 'refs/heads/dev' }}
         run: |
-          PYTHONPATH=$PYTHONPATH:./docs mike deploy dev --push
+          PYTHONPATH=$PYTHONPATH:./docs mike deploy dev latest --push --update-aliases
