@@ -1023,8 +1023,8 @@
 <h3 id="loss">Loss<a class="headerlink" href="#loss" title="Permanent link">#</a></h3>
 <p>Despite the word <code>Metric</code> in the name, this callback also takes on logging of train
 loss(es). It casts them by the following rules:<br />
-- If <code>loss</code> is of type <code>torch.Tensor</code> - <code>{"loss": loss}</code> is logged.
-- If <code>loss</code> is a list or tuple, then it is logged as <code>{"i": loss_i}</code>.
+- If <code>loss</code> is of type <code>torch.Tensor</code> - <code>{"loss": loss}</code> is logged.<br />
+- If <code>loss</code> is a list or tuple, then it is logged as <code>{"i": loss_i}</code>.<br />
 - If <code>loss</code> is a dict, then it is logged as is.  </p>
 <p><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" />  </p>
 <blockquote>
