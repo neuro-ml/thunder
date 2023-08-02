@@ -101,7 +101,7 @@ class MetricLogger(Callback):
             return
 
         if isinstance(outputs, torch.Tensor):
-            outputs = {'loss': outputs}
+            outputs = {'loss': to_np(outputs)}
         if isinstance(outputs, dict):
             outputs = valmap(to_np, outputs)
         elif isinstance(outputs, (list, tuple)):
