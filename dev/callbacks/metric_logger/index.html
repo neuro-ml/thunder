@@ -364,6 +364,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#loss" class="md-nav__link">
+    Loss
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#metric-computation" class="md-nav__link">
     Metric Computation
   </a>
@@ -906,6 +913,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#loss" class="md-nav__link">
+    Loss
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#metric-computation" class="md-nav__link">
     Metric Computation
   </a>
@@ -1006,6 +1020,17 @@
 <h1 id="metriclogger">MetricLogger<a class="headerlink" href="#metriclogger" title="Permanent link">#</a></h1>
 <p>This callback takes on computation and aggregation of the specified metrics.  </p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">#</a></h2>
+<h3 id="loss">Loss<a class="headerlink" href="#loss" title="Permanent link">#</a></h3>
+<p>Despite the word <code>Metric</code> in the name, this callback also takes on logging of train
+loss(es). It casts them by the following rules:<br />
+- If <code>loss</code> is of type <code>torch.Tensor</code> - <code>{"loss": loss}</code> is logged.
+- If <code>loss</code> is a list or tuple, then it is logged as <code>{"i": loss_i}</code>.
+- If <code>loss</code> is a dict, then it is logged as is.  </p>
+<p><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" />  </p>
+<blockquote>
+<p>All Tensors are cast to numpy arrays.</p>
+</blockquote>
+<p>At the end of epoch they are averaged and sent to logger.</p>
 <h3 id="metric-computation">Metric Computation<a class="headerlink" href="#metric-computation" title="Permanent link">#</a></h3>
 <p>Metrics are assumed to be received as tuple <code>(X, Y)</code>, where
 <strong>X</strong> - batch of predictions, <strong>Y</strong> - batch of targets. 
