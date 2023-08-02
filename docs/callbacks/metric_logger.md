@@ -6,8 +6,8 @@ This callback takes on computation and aggregation of the specified metrics.
 ### Loss
 Despite the word `Metric` in the name, this callback also takes on logging of train
 loss(es). It casts them by the following rules:  
-- If `loss` is of type `torch.Tensor` - `{"loss": loss}` is logged.
-- If `loss` is a list or tuple, then it is logged as `{"i": loss_i}`.
+- If `loss` is of type `torch.Tensor` - `{"loss": loss}` is logged.  
+- If `loss` is a list or tuple, then it is logged as `{"i": loss_i}`.  
 - If `loss` is a dict, then it is logged as is.  
 
 :warning:  
