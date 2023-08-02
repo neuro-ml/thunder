@@ -406,6 +406,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#individual-metrics" class="md-nav__link">
+    Individual Metrics
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -941,6 +948,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#individual-metrics" class="md-nav__link">
+    Individual Metrics
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1101,6 +1115,57 @@ must be callable objects.
 <a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">single_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">threshold</span><span class="p">:</span> <span class="n">recall_score</span><span class="p">}</span>
 <a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="o">...</span>
 </code></pre></div></p>
+<h4 id="individual-metrics">Individual Metrics<a class="headerlink" href="#individual-metrics" title="Permanent link">#</a></h4>
+<p>While computing <code>single_metrics</code>, one may appear in need of knowledge of metrics on each case.
+For this particular problem, the callback provides its users with <code>log_individual_metrics</code>
+flag. Being set to <code>True</code> it forces the callback to store table of metrics in the following format:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>metric1</th>
+<th>metric2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>batch_idx0_0</td>
+<td>some_value</td>
+<td>some_value</td>
+</tr>
+<tr>
+<td>batch_idx0_1</td>
+<td>some_value</td>
+<td>some_value</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>batch_idxn_m</td>
+<td>some_value</td>
+<td>some_value</td>
+</tr>
+</tbody>
+</table>
+<p>For each set (e.g. <code>val</code>, <code>test</code>) and each <code>dataloader_idx</code>, MetricLogger stores separate table.<br />
+By default aforementioned tables are saved to <code>default_root_dir</code> of lightning's Trainer, in the format of
+<code>set_name/dataloader_idx.csv</code> (e.g. <code>val/dataloader_0.csv</code>).<br />
+If loggers you use have method <code>log_table</code> (e.g. <code>WandbLogger</code>), 
+then this method will receive key and each table in the format of <code>pd.DataFrame</code>.<br />
+Code from <code>metric_logger.py</code>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">logger</span><span class="o">.</span><span class="n">log_table</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">/dataloader_</span><span class="si">{</span><span class="n">dataloader_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">dataframe</span><span class="o">=</span><span class="n">dataframe</span><span class="p">)</span>
+</code></pre></div>
+where key is the current state of trainer (<code>val</code> or <code>test</code>).  </p>
+<p>Since lightning allows to use <code>batch_idx</code>, these indexes are used for metrics dataframes.
+But there can be more than one object in batch. To overcome this issue we iterate over batch
+and mark each object with the next index: 
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="nb">object</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="n">object_idx</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">batch_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+If all batches consist of single object, then <code>"_{i}"</code> is removed.</p>
 <h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">#</a></h2>
 
 
@@ -1113,7 +1178,7 @@ must be callable objects.
 
 
 <a href="#thunder.callbacks.metric_logger.MetricLogger" class="headerlink" title="Permanent link">#</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">thunder</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">metric_logger</span><span class="o">.</span><span class="n">MetricLogger</span><span class="p">(</span><span class="n">single_metrics</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">group_metrics</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">aggregate_fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">thunder</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">metric_logger</span><span class="o">.</span><span class="n">MetricLogger</span><span class="p">(</span><span class="n">single_metrics</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">group_metrics</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">aggregate_fn</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">log_individual_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents first">
@@ -1174,6 +1239,20 @@ then the callback will compute mean and the specified values.</p>
           </td>
           <td>
                 <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>log_individual_metrics</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>If True, logs table for case-wise metrics (if logger has <code>log_table</code> method) and saves table to csv file.</p>
+            </div>
+          </td>
+          <td>
+                <code>False</code>
           </td>
         </tr>
     </tbody>
