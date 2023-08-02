@@ -1,14 +1,16 @@
 from collections import defaultdict
 from functools import partial
 from itertools import chain
-from typing import Any, Callable, Dict, List, Optional, Sequence, Union, Tuple
+from pathlib import Path
+from typing import Any, Callable, Dict, Hashable, List, Optional, Sequence, Tuple, Union
 
 import numpy as np
+import pandas as pd
 import torch
 from lightning import Callback, LightningModule, Trainer
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from more_itertools import zip_equal
-from toolz import compose, valmap
+from toolz import compose, keymap, valmap
 
 from ..torch.utils import to_np
 from ..utils import collect, squeeze_first
@@ -20,17 +22,20 @@ class MetricLogger(Callback):
             single_metrics: Dict = None,
             group_metrics: Dict = None,
             aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]] = None,
+            log_individual_metrics: bool = False
     ):
         """
         Parameters
         ----------
         single_metrics: Dict
             Metrics that are calculated on each object separately and then aggregated.
-        group_metrics: Dict[str, Callable]
+        group_metrics: Dict
             Metrics that are calculated on entire dataset.
         aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]]
             How to aggregate metrics. By default it computes mean value. If yoy specify something,
             then the callback will compute mean and the specified values.
+        log_individual_metrics: bool
+            If True, logs table for case-wise metrics (if logger has `log_table` method) and saves table to csv file.
         """
         _single_metrics = dict(single_metrics or {})
         _group_metrics = dict(group_metrics or {})
@@ -56,11 +61,12 @@ class MetricLogger(Callback):
         self.single_preprocess = single_preprocess
         self.group_preprocess = group_preprocess
         self._train_losses = []
-        self._single_metric_values = defaultdict(lambda: {name: [] for name in single_metrics})
+        self._single_metric_values = defaultdict(lambda: {name: {} for name in single_metrics})
         self._all_predictions = defaultdict(list)
         self._default_aggregators = {"min": np.min, "max": np.max, "median": np.median, "std": np.std}
 
         self.aggregate_fn = {"": np.mean}
+        self.log_individual_metrics = log_individual_metrics
 
         if isinstance(aggregate_fn, (str, Callable)):
             aggregate_fn = [aggregate_fn]
@@ -140,7 +146,7 @@ class MetricLogger(Callback):
             pl_module: LightningModule,
             outputs: Optional[STEP_OUTPUT],
             batch: Any,
-            batch_idx: int,
+            batch_idx: Hashable,
             dataloader_idx: int = 0,
     ) -> None:
         self.evaluate_batch(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
@@ -154,7 +160,7 @@ class MetricLogger(Callback):
             pl_module: LightningModule,
             outputs: Optional[STEP_OUTPUT],
             batch: Any,
-            batch_idx: int,
+            batch_idx: Hashable,
             dataloader_idx: int = 0,
     ) -> None:
         if len(outputs) != 2:
@@ -168,13 +174,17 @@ class MetricLogger(Callback):
         if self.group_metrics:
             self._all_predictions[dataloader_idx].extend(zip(*outputs))
 
-        for target, pred in zip(*outputs):
+        for i, (target, pred) in enumerate(zip(*outputs)):
+            object_idx = f"{batch_idx}_{i}"
             for preprocess, metrics_names in self.single_preprocess.items():
                 preprocessed = preprocess(target, pred)
                 for name in metrics_names:
-                    self._single_metric_values[dataloader_idx][name].append(self.single_metrics[name](*preprocessed))
+                    self._single_metric_values[dataloader_idx][name][object_idx] = \
+                        self.single_metrics[name](*preprocessed)
 
     def evaluate_epoch(self, trainer: Trainer, pl_module: LightningModule, key: str) -> None:
+        self._squeeze_ids_in_single_metrics()
+
         group_metric_values = {}
 
         for dataloader_idx, all_predictions in self._all_predictions.items():
@@ -190,13 +200,34 @@ class MetricLogger(Callback):
             for dataloader_idx, metrics in self._single_metric_values.items():
                 prefix = f"{fn_name}/" if fn_name else ""
                 loader_postfix = f"/{dataloader_idx}" if len(self._single_metric_values) > 1 else ""
-                single_metric_values.update({f"{prefix}{k}{loader_postfix}": fn(v) for k, v in metrics.items()})
+
+                if self.log_individual_metrics:
+                    dataframe = pd.DataFrame(metrics)
+                    root_dir = Path(trainer.default_root_dir) / key  # trainer.log_dir / key ?
+                    root_dir.mkdir(exist_ok=True)
+                    for logger in pl_module.loggers:
+                        if hasattr(logger, "log_table"):
+                            logger.log_table(f"{key}/dataloader_{dataloader_idx}", dataframe=dataframe)
+
+                    dataframe.to_csv(root_dir / f"dataloader_{dataloader_idx}.csv")
+
+                single_metric_values.update({f"{prefix}{k}{loader_postfix}":
+                                            fn(list(v.values())) for k, v in metrics.items()})
 
         self._single_metric_values.clear()
         self._all_predictions.clear()
 
         for k, value in chain(single_metric_values.items(), group_metric_values.items()):
             pl_module.log(f'{key}/{k}', value)
+
+    def _squeeze_ids_in_single_metrics(self):
+        for dataloader_idx, _ in self._all_predictions.items():
+            for _, metrics_names in self.single_preprocess.items():
+                for name in metrics_names:
+                    if all(k.rsplit("_", 1)[1] == "0" for k in
+                           self._single_metric_values[dataloader_idx][name].keys()):
+                        self._single_metric_values[dataloader_idx][name] = \
+                            keymap(lambda k: k.rsplit("_", 1)[0], self._single_metric_values[dataloader_idx][name])
 
 
 def _get_func_name(function: Callable) -> str:
