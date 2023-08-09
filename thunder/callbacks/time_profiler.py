@@ -47,9 +47,15 @@ class TimeProfiler(Callback):
 
         self.keys = sorted(set(keys).union(self._default_keys))
         self.time_stamps: Dict[str, List[datetime]] = defaultdict(list)
+        self.batch_sizes: Dict[str, List[int]] = defaultdict(list)
 
     def log_time(self, key: str) -> None:
         self.time_stamps[key].append(datetime.now())
+
+    def log_batch_size(self, batch, key: str) -> None:
+        if isinstance(batch, (list, tuple)):
+            batch = batch[0]
+        self.batch_sizes[key].append(len(batch))
 
     def compute_time_delta(self) -> Dict[str, float]:
         def delta(t1, t2=None):
@@ -62,24 +68,20 @@ class TimeProfiler(Callback):
             if len(time_stamps) % 2 == 1:
                 continue
             deltas[key] = list(map(delta, windowed(time_stamps, 2, step=2)))
-
-            if key == "train batch":
-                n_train_batches = len(deltas[key])
-            elif key == "validation batch":
-                n_val_batches = len(deltas[key])
-
             deltas[key] = sum(deltas[key]) / len(deltas[key])
 
         if "train epoch" in deltas:
             if "validation epoch" in deltas:
                 deltas["train epoch"] -= deltas["validation epoch"]
 
+            n_train_batches = len(self.batch_sizes["train batch"])
             deltas["total train downtime"] = deltas["train epoch"] - n_train_batches * deltas["train batch"]
-            deltas["avg train downtime"] = deltas["total train downtime"] / n_train_batches
+            deltas["avg train downtime"] = deltas["total train downtime"] / sum(self.batch_sizes["train batch"])
 
             if "validation epoch" in deltas:
+                n_val_batches = len(self.batch_sizes["validation batch"])
                 deltas["total val downtime"] = deltas["validation epoch"] - n_val_batches * deltas["validation batch"]
-                deltas["avg val downtime"] = deltas["total val downtime"] / n_val_batches
+                deltas["avg val downtime"] = deltas["total val downtime"] / sum(self.batch_sizes["validation batch"])
 
         return deltas
 
@@ -96,6 +98,7 @@ class TimeProfiler(Callback):
 
     def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
         self.log_time("train batch")
+        self.log_batch_size(batch, "train batch")
 
     def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
         self.log_time("train batch")
@@ -111,6 +114,7 @@ class TimeProfiler(Callback):
 
     def on_validation_batch_start(self, trainer, pl_module, batch, batch_idx, dataloader_idx=0):
         self.log_time("validation batch")
+        self.log_batch_size(batch, "validation batch")
 
     def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=0):
         self.log_time("validation batch")
@@ -137,7 +141,9 @@ class TimeProfiler(Callback):
             raise MisconfigurationException(f"Cannot use {self.__class__.__name__} callback with no logger")
         if stage == "fit":
             self.time_stamps.clear()
+            self.batch_sizes.clear()
 
     def teardown(self, trainer, pl_module, stage: str):
         if stage == "fit":
             self.time_stamps.clear()
+            self.batch_sizes.clear()
