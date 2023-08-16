@@ -1,3 +1,4 @@
+import copy
 from pathlib import Path
 from typing import Optional
 
@@ -100,7 +101,9 @@ def populate(backend_name):
 
         # TODO
         default, = annotation.__metadata__
+        default = copy.deepcopy(default)
         default.default = getattr(entry.config, field.name)
+        default.help = f'[{backend_name} backend] {default.help}'
         backend_params.append(ParamMeta(
             name=field.name, default=default, annotation=annotation.__origin__,
         ))
