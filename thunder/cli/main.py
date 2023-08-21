@@ -23,6 +23,7 @@ ConfArg = Annotated[Path, Argument(show_default=False, help='The config from whi
 UpdArg = Annotated[List[str], Option(
     ..., '--update', '-u', help='Overwrite specific config entries', show_default=False
 )]
+OverwriteArg = Annotated[bool, Option("--overwrite", "-o", help="If specified, overwrites target directory")]
 NamesArg = Annotated[Optional[str], Option(..., help='Names of sub-experiments to start')]
 
 
@@ -94,6 +95,7 @@ def start(
 def build(
         config: ConfArg,
         experiment: ExpArg,
+        overwrite: OverwriteArg = False,
         update: UpdArg = (),
 ):
     """ Build an experiment """
@@ -105,8 +107,11 @@ def build(
 
     experiment = Path(experiment)
     if experiment.exists():
-        print(f'Cannot create an experiment in the folder "{experiment}", it already exists')
-        raise Abort(1)
+        if overwrite:
+            shutil.rmtree(experiment)
+        else:
+            print(f'Cannot create an experiment in the folder "{experiment}", it already exists')
+            raise Abort(1)
 
     build_exp(Config.load(config), experiment, updates)
 

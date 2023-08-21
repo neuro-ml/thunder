@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
-from lazycon import Config
+from lazycon import Config, load as read_config
 from typer.testing import CliRunner
 
 from thunder.cli.backend import BACKENDS_CONFIG_PATH
@@ -79,6 +79,20 @@ def test_build_cleanup(temp_dir):
     result = invoke('build', config, experiment)
     assert result.exit_code != 0
     assert not experiment.exists()
+
+
+def test_build_overwrite(temp_dir):
+    experiment = temp_dir / 'exp'
+    experiment.mkdir()
+    (experiment / 'experiment.config').write_text('a = 1')
+
+    config = temp_dir / 'new.config'
+    config.write_text('b = 2')
+
+    result = invoke('build', config, experiment, "--overwrite")
+    assert result.exit_code == 0
+    assert not hasattr(read_config(experiment / "experiment.config"), "a")
+    assert read_config(experiment / "experiment.config").b == 2
 
 
 @pytest.mark.timeout(30)
