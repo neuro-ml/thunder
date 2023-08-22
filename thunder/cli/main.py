@@ -8,23 +8,33 @@ import yaml
 from deli import load, save
 from lazycon import Config
 from lightning import LightningModule, Trainer
+from pydantic_yaml import to_yaml_str
+from toolz import valmap
 from typer import Abort, Argument, Option
 from typing_extensions import Annotated
 
+from .app import app
+from .backend import BackendCommand, load_backend_configs, BACKENDS_CONFIG_PATH
+from ..backend import BackendEntryConfig
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
 from ..utils import chdir
-from .app import app
-from .backend import BackendCommand
 
-
-ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment')]
-ConfArg = Annotated[Path, Argument(show_default=False, help='The config from which the experiment will be built')]
+ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment.')]
+ConfArg = Annotated[Path, Argument(show_default=False, help='The config from which the experiment will be built.')]
 UpdArg = Annotated[List[str], Option(
-    ..., '--update', '-u', help='Overwrite specific config entries', show_default=False
+    ..., '--update', '-u', help='Overwrite specific config entries.', show_default=False
 )]
-OverwriteArg = Annotated[bool, Option("--overwrite", "-o", help="If specified, overwrites target directory")]
-NamesArg = Annotated[Optional[str], Option(..., help='Names of sub-experiments to start')]
+BackendNameArg = Annotated[str, Argument(
+    show_default=False, help="Name of the config from your list of backends."
+)]
+BackendParamsArg = Annotated[List[str], Argument(
+    show_default=False, help="Parameters of added run config.")]
+ForceAddArg = Annotated[bool, Option(
+    "--force", "-f", help="Forces overwriting of the same backend in .yml file."
+)]
+OverwriteArg = Annotated[bool, Option("--overwrite", "-o", help="If specified, overwrites target directory.")]
+NamesArg = Annotated[Optional[str], Option(..., help='Names of sub-experiments to start.')]
 
 
 @app.command()
@@ -35,7 +45,7 @@ def start(
     """ Start a part of an experiment. Mainly used as an internal entrypoint for other commands. """
     experiment = Path(experiment)
     if not experiment.is_absolute():
-        print('The `experiment` argument must be an absolute path')
+        print('The `experiment` argument must be an absolute.')
         raise Abort(1)
 
     config_path = experiment / 'experiment.config'
@@ -167,6 +177,52 @@ def build_run(
     """ A convenient combination of `build` and `run` commands. """
     build(config, experiment, update)
     run(experiment, names, backend=backend, **kwargs)
+
+
+@app.command(name="set")
+def _set(name: BackendNameArg):
+    """ Set specified backend from list of available backends as default. """
+    local = load_backend_configs()
+    if name not in local:
+        raise KeyError(f"Default backend `{name} is not among "
+                       f"available configs: {sorted(local)}`")
+
+    local["_default"] = local[name]
+    with BACKENDS_CONFIG_PATH.open("w") as stream:
+        yaml.safe_dump({k: v.dict() for k, v in local.items()}, stream)
+
+
+@app.command()
+def add(name: BackendNameArg, params: BackendParamsArg, force: ForceAddArg = False):
+    """ Add run config to the list of available configs. """
+    local = load_backend_configs()
+    if name in local and not force:
+        raise KeyError(f"Backend `{name}` is already present in {str(BACKENDS_CONFIG_PATH)}. "
+                       f"If you want it to be overwritten, add --force flag.")
+
+    kwargs = dict(map(lambda p: p.split("="), params))
+    config = {"backend": kwargs.pop("backend", "cli"), "config": kwargs}
+
+    local.update({name: BackendEntryConfig.parse_obj(config)})
+    with BACKENDS_CONFIG_PATH.open("w") as stream:
+        yaml.safe_dump({k: v.dict() for k, v in local.items()}, stream)
+
+
+@app.command()
+def show(names: List[BackendNameArg] = None):
+    """ Show parameters of specified backend(s). """
+    local = load_backend_configs()
+    print(f"Configs at {str(BACKENDS_CONFIG_PATH.resolve())}:\n", flush=True)
+
+    for name in (names if names else local):
+        if name == "_default":
+            continue
+        if name not in local:
+            print(f"{name} is not present among your configs.", flush=True)
+        print(f"{name}:", local[name], flush=True)
+
+    if "_default" in local:
+        print(f"Default config:", local["_default"], flush=True)
 
 
 def load_nodes(experiment: Path):

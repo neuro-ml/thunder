@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Sequence, Type
+from typing import Optional, Sequence, Type, Dict, Union
 
 from pydantic import BaseModel, Extra, validator
 
@@ -36,4 +36,4 @@ class BackendEntryConfig(BaseModel):
         extra = Extra.ignore
 
 
-backends = {}
+backends: Dict[str, Backend] = {}

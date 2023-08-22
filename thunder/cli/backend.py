@@ -9,9 +9,8 @@ from typer.core import TyperCommand
 from typer.main import get_click_param
 from typer.models import ParamMeta
 
-from ..backend import BackendEntryConfig, backends
 from .app import app
-
+from ..backend import BackendEntryConfig, backends
 
 BACKENDS_CONFIG_PATH = Path(typer.get_app_dir(app.info.name)) / 'backends.yml'
 
@@ -51,29 +50,32 @@ class BackendCommand(TyperCommand):
 
 def populate(backend_name):
     local_configs = load_backend_configs()
-    default_configs = {
+    builtin_configs = {
         'cli': BackendEntryConfig(backend='cli', config={}),
         'slurm': BackendEntryConfig(backend='slurm', config={}),
     }
 
     if backend_name is None:
-        if len(local_configs) == 1:
+        if "_default" in local_configs:
+            entry = local_configs["_default"]
+
+        elif len(local_configs) == 1:
             entry, = local_configs.values()
 
         elif len(local_configs) > 1:
             entry = None
 
         else:
-            entry = default_configs['cli']
+            entry = builtin_configs['cli']
 
     else:
         if backend_name in local_configs:
             entry = local_configs[backend_name]
         else:
             # TODO: exception
-            entry = default_configs[backend_name]
+            entry = builtin_configs[backend_name]
 
-    backend_choices = ','.join(set(local_configs) | set(default_configs))
+    backend_choices = ', '.join(set(local_configs) | set(builtin_configs) - {"_default", }).rstrip()
     if entry is None:
         return [ParamMeta(
             name='backend', annotation=Optional[str],
@@ -88,7 +90,8 @@ def populate(backend_name):
         name='backend', annotation=Optional[str],
         default=Option(
             backend_name,
-            help=f'The runner backend to use. Choices: {backend_choices}. Currently using {backend_name}.',
+            help=f'The runner backend to use. Choices: {backend_choices}. Currently using {backend_name}. '
+                 f'List of backends can be found at {str(BACKENDS_CONFIG_PATH.resolve())}',
             show_default=False,
         ),
     )]
@@ -107,7 +110,7 @@ def populate(backend_name):
     return backend_params
 
 
-def load_backend_configs():
+def load_backend_configs() -> dict:
     path = BACKENDS_CONFIG_PATH
     if not path.exists():
         return {}
