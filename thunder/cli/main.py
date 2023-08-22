@@ -8,8 +8,6 @@ import yaml
 from deli import load, save
 from lazycon import Config
 from lightning import LightningModule, Trainer
-from pydantic_yaml import to_yaml_str
-from toolz import valmap
 from typer import Abort, Argument, Option
 from typing_extensions import Annotated
 
@@ -222,7 +220,7 @@ def show(names: List[BackendNameArg] = None):
         print(f"{name}:", local[name], flush=True)
 
     if "_default" in local:
-        print(f"Default config:", local["_default"], flush=True)
+        print("Default config:", local["_default"], flush=True)
 
 
 def load_nodes(experiment: Path):

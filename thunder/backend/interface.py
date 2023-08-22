@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Sequence, Type, Dict, Union
+from typing import Optional, Sequence, Type, Dict
 
 from pydantic import BaseModel, Extra, validator
 
