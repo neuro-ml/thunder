@@ -1,9 +1,10 @@
-from typing import Annotated, List
+from typing import List
 
 import yaml
 from rich.console import Console
 from rich.table import Table
 from typer import Abort, Argument, Option, Typer
+from typing_extensions import Annotated
 
 from ..backend import MetaEntry
 from .backend import BACKENDS_CONFIG_PATH, BackendEntryConfig, load_backend_configs
