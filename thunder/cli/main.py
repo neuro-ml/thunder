@@ -8,15 +8,18 @@ import yaml
 from deli import load, save
 from lazycon import Config
 from lightning import LightningModule, Trainer
+from rich.console import Console
+from rich.table import Table
 from typer import Abort, Argument, Option
 from typing_extensions import Annotated
 
-from .app import app
-from .backend import BackendCommand, load_backend_configs, BACKENDS_CONFIG_PATH
 from ..backend import BackendEntryConfig
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
 from ..utils import chdir
+from .app import app
+from .backend import BACKENDS_CONFIG_PATH, BackendCommand, load_backend_configs
+
 
 ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment.')]
 ConfArg = Annotated[Path, Argument(show_default=False, help='The config from which the experiment will be built.')]
@@ -25,6 +28,9 @@ UpdArg = Annotated[List[str], Option(
 )]
 BackendNameArg = Annotated[str, Argument(
     show_default=False, help="Name of the config from your list of backends."
+)]
+BackendNamesArg = Annotated[List[str], Argument(
+    show_default=False, help="Names of the configs from your list of backends."
 )]
 BackendParamsArg = Annotated[List[str], Argument(
     show_default=False, help="Parameters of added run config.")]
@@ -106,7 +112,7 @@ def build(
         overwrite: OverwriteArg = False,
         update: UpdArg = (),
 ):
-    """ Build an experiment """
+    """ Build an experiment. """
     updates = {}
     for upd in update:
         # TODO: raise
@@ -182,8 +188,9 @@ def _set(name: BackendNameArg):
     """ Set specified backend from list of available backends as default. """
     local = load_backend_configs()
     if name not in local:
-        raise KeyError(f"Default backend `{name} is not among "
-                       f"available configs: {sorted(local)}`")
+        print(f"Default backend `{name} is not among "
+              f"available configs: {sorted(local)}`", flush=True)
+        raise Abort(1)
 
     local["_default"] = local[name]
     with BACKENDS_CONFIG_PATH.open("w") as stream:
@@ -195,8 +202,9 @@ def add(name: BackendNameArg, params: BackendParamsArg, force: ForceAddArg = Fal
     """ Add run config to the list of available configs. """
     local = load_backend_configs()
     if name in local and not force:
-        raise KeyError(f"Backend `{name}` is already present in {str(BACKENDS_CONFIG_PATH)}. "
-                       f"If you want it to be overwritten, add --force flag.")
+        print(f"Backend `{name}` is already present in {str(BACKENDS_CONFIG_PATH)}. "
+              f"If you want it to be overwritten, add --force flag.", flush=True)
+        raise Abort(1)
 
     kwargs = dict(map(lambda p: p.split("="), params))
     config = {"backend": kwargs.pop("backend", "cli"), "config": kwargs}
@@ -207,20 +215,27 @@ def add(name: BackendNameArg, params: BackendParamsArg, force: ForceAddArg = Fal
 
 
 @app.command()
-def show(names: List[BackendNameArg] = None):
+def show(names: BackendNamesArg = None):
     """ Show parameters of specified backend(s). """
     local = load_backend_configs()
-    print(f"Configs at {str(BACKENDS_CONFIG_PATH.resolve())}:\n", flush=True)
 
-    for name in (names if names else local):
-        if name == "_default":
-            continue
-        if name not in local:
-            print(f"{name} is not present among your configs.", flush=True)
-        print(f"{name}:", local[name], flush=True)
+    table = Table("Name", "Backend", "Parameters",
+                  title=f"Configs at {str(BACKENDS_CONFIG_PATH.resolve())}")
+    console = Console()
+
+    extra = set(names) - set(local)
+    if extra:
+        console.print("These names are not among your configs:", extra)
+
+    for name in sorted(set(names if names else local) - extra.union({"_default"})):
+        entry = local[name].dict()
+        table.add_row(*map(str, [name, entry.get("backend", None), entry.get("config", None)]))
 
     if "_default" in local:
-        print("Default config:", local["_default"], flush=True)
+        default = local["_default"].dict()
+        table.add_row("Default", *map(str, [default.get("backend", None), default.get("config", None)]))
+
+    console.print(table)
 
 
 def load_nodes(experiment: Path):
