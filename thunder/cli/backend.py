@@ -9,8 +9,9 @@ from typer.core import TyperCommand
 from typer.main import get_click_param
 from typer.models import ParamMeta
 
-from .app import app
 from ..backend import BackendEntryConfig, backends
+from .app import app
+
 
 BACKENDS_CONFIG_PATH = Path(typer.get_app_dir(app.info.name)) / 'backends.yml'
 
@@ -113,6 +114,7 @@ def populate(backend_name):
 def load_backend_configs() -> dict:
     path = BACKENDS_CONFIG_PATH
     if not path.exists():
+        # print(path, flush=True)
         return {}
 
     with path.open('r') as file:

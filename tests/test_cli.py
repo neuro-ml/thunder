@@ -2,18 +2,31 @@ import os
 import re
 import shutil
 from contextlib import contextmanager
+from functools import wraps
 from pathlib import Path
 
 import pytest
 from lazycon import Config, load as read_config
 from typer.testing import CliRunner
 
-from thunder.cli.backend import BACKENDS_CONFIG_PATH
+import thunder.cli.backend
+from thunder.cli.backend import BACKENDS_CONFIG_PATH, load_backend_configs
 from thunder.cli.entrypoint import app
 from thunder.utils import chdir
 
 
 runner = CliRunner()
+
+
+def mock_backend(folder: Path) -> Path:
+    backends_yml = folder / "backends.yml"
+    thunder.cli.backend.BACKENDS_CONFIG_PATH = backends_yml
+    thunder.cli.entrypoint._main.BACKENDS_CONFIG_PATH = backends_yml
+
+    if backends_yml.exists():
+        os.remove(backends_yml)
+
+    return backends_yml
 
 
 def test_build(temp_dir):
@@ -111,6 +124,58 @@ def test_run(temp_dir, dumb_config):
         # absolute path
         result = invoke("run", experiment.name)
         assert result.exit_code == 0, result.output
+
+
+def test_add(temp_dir):
+    # mocking cock
+    mock_backend(temp_dir)
+
+    result = invoke("add", "new_config", "backend=slurm", "ram=100")
+    assert result.exit_code == 0 and "new_config" in load_backend_configs()
+
+    result = invoke("add", "new_config", "backend=slurm", "ram=100")
+    assert result.exit_code != 0 and "new_config" in load_backend_configs()
+
+    result = invoke("add", "new_config", "backend=slurm", "ram=200", "--force")
+    assert result.exit_code == 0 and "new_config" in load_backend_configs()
+    assert load_backend_configs()["new_config"].config.ram == "200G"
+
+    invoke("add", "new_config_2", "backend=slurm", "ram=200", "--force")
+    local = load_backend_configs()
+    assert "new_config" in local and "new_config_2" in local
+
+
+def test_show(temp_dir):
+    backends_yml = mock_backend(temp_dir)
+
+    # language=yaml
+    backends_yml.write_text('''
+    a:
+        backend: cli
+        config:
+            n_workers: 1
+    b:
+        backend: cli
+        config:
+            n_workers: 2
+    _default:
+        backend: cli
+        config:
+            n_workers: 1
+    ''')
+
+    assert invoke("show", "a", "b").exit_code == 0
+    assert invoke("show", "c").exit_code == 0
+
+
+def test_set(temp_dir):
+    mock_backend(temp_dir)
+
+    invoke("add", "config", "backend=slurm", "ram=100", "--force")
+    result = invoke("set", "config")
+
+    assert result.exit_code == 0
+    assert load_backend_configs()["_default"].config.ram == "100G"
 
 
 def invoke(*cmd):
