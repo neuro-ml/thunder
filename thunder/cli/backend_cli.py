@@ -5,8 +5,9 @@ from rich.console import Console
 from rich.table import Table
 from typer import Abort, Argument, Option, Typer
 
-from .backend import BACKENDS_CONFIG_PATH, BackendEntryConfig, load_backend_configs
 from ..backend import MetaEntry
+from .backend import BACKENDS_CONFIG_PATH, BackendEntryConfig, load_backend_configs
+
 
 BackendNameArg = Annotated[str, Argument(
     show_default=False, help="Name of the config from your list of backends."
