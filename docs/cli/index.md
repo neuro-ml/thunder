@@ -13,6 +13,9 @@ In order to build an experiment, you can execute the follwing command:
 thunder build /path/to/config /path/to/experiment
 ```
 It will create a folder with built configs in it.  
+If `/path/to/experiment` already exists, thunder raises error. 
+In order to overwrite existing directory use `--overwrite` / `-o` flags.
+
 ### Overriding config entries
 While conducting experiments one can find themselves in constant need of
 changing significant number of parameters. But it is not convenient to always do
@@ -29,7 +32,6 @@ You can override it using `-u` flag:
 thunder build /path/to/config /path/to/experiment -u batch_size=2 -u lr=0.001 
 ```
 `batch_size` and `lr` will be assigned 2 and 0.001 respectively.
-
 ## Running an experiment
 You can run built experiment by executing the next command:
 ```bash
@@ -51,7 +53,8 @@ The command shown above will run SLURM job with 4 CPUs and 100G of RAM.
 
 ### Predefined run configs
 You can predefine run configs to avoid reentering the same flags.
-Create `.config/thunder/backends.yml` in you home directory. 
+Create `~/.config/thunder/backends.yml` (you can run `thunder show` in your terminal, 
+required path will be at the title of the table) in you home directory. 
 Now you can specify config name and its parameters:
 ```yaml
 run_config_name:
@@ -64,12 +67,51 @@ run_config_name:
 ```
 In order to run an experiment with predefined parameters, 
 use `--backend` flag as in previous section:
+
 ```bash
 thunder run /path/to/experiment/ --backend run_config_name
 ```
 You can overwrite parameters if you want to (e.g. 8 CPUs instead of 4):
 ```bash
 thunder run /path/to/experiment/ --backend run_config_name -c 8
+```
+
+### Add, Set, List, Remove 
+`thunder` CLI provides its users with built-in tools for managing their [backends](./#backend).
+
+| Command                  | Description                                                       |
+|--------------------------|-------------------------------------------------------------------|
+| `thunder backend add`    | Add run config to the list of available configs.                  |
+| `thunder backend list`   | Show parameters of specified backend(s).                          |
+| `thunder backend remove` | Delete backend from list.                                         |
+| `thunder backend set`     | Set specified backend from list of available backends as default. |
+
+#### Examples
+##### add
+
+```bash
+thunder backend add run_config_name backend=slurm ram=100 cpu=4 gpu=1 partition=partition_name
+```
+If specified name already exists, you can use `--force` flag in order to overwrite it.  
+
+##### set
+```bash
+thunder backend set SOMENAME
+thunder backend list
+```
+
+##### list 
+```bash
+thunder backend list NAME1 NAME2
+*shows backends with specified names*
+
+thunder backend list
+*shows all backends*
+```
+
+##### remove
+```bash
+thunder backend remove SOMENAME
 ```
 
 
