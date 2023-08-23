@@ -8,34 +8,20 @@ import yaml
 from deli import load, save
 from lazycon import Config
 from lightning import LightningModule, Trainer
-from rich.console import Console
-from rich.table import Table
 from typer import Abort, Argument, Option
 from typing_extensions import Annotated
 
-from ..backend import BackendEntryConfig
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
 from ..utils import chdir
 from .app import app
-from .backend import BACKENDS_CONFIG_PATH, BackendCommand, load_backend_configs
+from .backend import BackendCommand
 
 
 ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment.')]
 ConfArg = Annotated[Path, Argument(show_default=False, help='The config from which the experiment will be built.')]
 UpdArg = Annotated[List[str], Option(
     ..., '--update', '-u', help='Overwrite specific config entries.', show_default=False
-)]
-BackendNameArg = Annotated[str, Argument(
-    show_default=False, help="Name of the config from your list of backends."
-)]
-BackendNamesArg = Annotated[List[str], Argument(
-    show_default=False, help="Names of the configs from your list of backends."
-)]
-BackendParamsArg = Annotated[List[str], Argument(
-    show_default=False, help="Parameters of added run config.")]
-ForceAddArg = Annotated[bool, Option(
-    "--force", "-f", help="Forces overwriting of the same backend in .yml file."
 )]
 OverwriteArg = Annotated[bool, Option("--overwrite", "-o", help="If specified, overwrites target directory.")]
 NamesArg = Annotated[Optional[str], Option(..., help='Names of sub-experiments to start.')]
@@ -124,7 +110,8 @@ def build(
         if overwrite:
             shutil.rmtree(experiment)
         else:
-            print(f'Cannot create an experiment in the folder "{experiment}", it already exists')
+            print(f'Cannot create an experiment in the folder "{experiment}", it already exists. '
+                  'If you want to overwrite it, use --overwrite / -o flag.')
             raise Abort(1)
 
     build_exp(Config.load(config), experiment, updates)
@@ -181,61 +168,6 @@ def build_run(
     """ A convenient combination of `build` and `run` commands. """
     build(config, experiment, update)
     run(experiment, names, backend=backend, **kwargs)
-
-
-@app.command(name="set")
-def _set(name: BackendNameArg):
-    """ Set specified backend from list of available backends as default. """
-    local = load_backend_configs()
-    if name not in local:
-        print(f"Default backend `{name} is not among "
-              f"available configs: {sorted(local)}`", flush=True)
-        raise Abort(1)
-
-    local["_default"] = local[name]
-    with BACKENDS_CONFIG_PATH.open("w") as stream:
-        yaml.safe_dump({k: v.dict() for k, v in local.items()}, stream)
-
-
-@app.command()
-def add(name: BackendNameArg, params: BackendParamsArg, force: ForceAddArg = False):
-    """ Add run config to the list of available configs. """
-    local = load_backend_configs()
-    if name in local and not force:
-        print(f"Backend `{name}` is already present in {str(BACKENDS_CONFIG_PATH)}. "
-              f"If you want it to be overwritten, add --force flag.", flush=True)
-        raise Abort(1)
-
-    kwargs = dict(map(lambda p: p.split("="), params))
-    config = {"backend": kwargs.pop("backend", "cli"), "config": kwargs}
-
-    local.update({name: BackendEntryConfig.parse_obj(config)})
-    with BACKENDS_CONFIG_PATH.open("w") as stream:
-        yaml.safe_dump({k: v.dict() for k, v in local.items()}, stream)
-
-
-@app.command()
-def show(names: BackendNamesArg = None):
-    """ Show parameters of specified backend(s). """
-    local = load_backend_configs()
-
-    table = Table("Name", "Backend", "Parameters",
-                  title=f"Configs at {str(BACKENDS_CONFIG_PATH.resolve())}")
-    console = Console()
-
-    extra = set(names) - set(local)
-    if extra:
-        console.print("These names are not among your configs:", extra)
-
-    for name in sorted(set(names if names else local) - extra.union({"_default"})):
-        entry = local[name].dict()
-        table.add_row(*map(str, [name, entry.get("backend", None), entry.get("config", None)]))
-
-    if "_default" in local:
-        default = local["_default"].dict()
-        table.add_row("Default", *map(str, [default.get("backend", None), default.get("config", None)]))
-
-    console.print(table)
 
 
 def load_nodes(experiment: Path):

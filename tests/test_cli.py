@@ -9,7 +9,8 @@ from lazycon import Config, load as read_config
 from typer.testing import CliRunner
 
 import thunder.cli.backend
-from thunder.cli.backend import BACKENDS_CONFIG_PATH, load_backend_configs
+import thunder.cli.backend_cli
+from thunder.cli.backend import load_backend_configs
 from thunder.cli.entrypoint import app
 from thunder.utils import chdir
 
@@ -22,6 +23,7 @@ def mock_backend(temp_dir):
     backends_yml = temp_dir / "backends.yml"
     thunder.cli.backend.BACKENDS_CONFIG_PATH = backends_yml
     thunder.cli.entrypoint._main.BACKENDS_CONFIG_PATH = backends_yml
+    thunder.cli.backend_cli.BACKENDS_CONFIG_PATH = backends_yml
 
     if backends_yml.exists():
         os.remove(backends_yml)
@@ -64,7 +66,6 @@ b = 2
         assert result.exit_code == 0
         assert Config.load(experiment / 'experiment.config').a == 10
 
-    # FIXME: this part will mess with user's local config!
     with cleanup(experiment):
         # language=yaml
         mock_backend.write_text('''
@@ -129,25 +130,23 @@ def test_run(temp_dir, dumb_config):
         assert result.exit_code == 0, result.output
 
 
-def test_add(temp_dir, mock_backend):
-    # mocking cock
-
-    result = invoke("add", "new_config", "backend=slurm", "ram=100")
+def test_backend_add(temp_dir, mock_backend):
+    result = invoke("backend", "add", "new_config", "backend=slurm", "ram=100")
     assert result.exit_code == 0 and "new_config" in load_backend_configs()
 
-    result = invoke("add", "new_config", "backend=slurm", "ram=100")
+    result = invoke("backend", "add", "new_config", "backend=slurm", "ram=100")
     assert result.exit_code != 0 and "new_config" in load_backend_configs()
 
-    result = invoke("add", "new_config", "backend=slurm", "ram=200", "--force")
+    result = invoke("backend", "add", "new_config", "backend=slurm", "ram=200", "--force")
     assert result.exit_code == 0 and "new_config" in load_backend_configs()
     assert load_backend_configs()["new_config"].config.ram == "200G"
 
-    invoke("add", "new_config_2", "backend=slurm", "ram=200", "--force")
+    invoke("backend", "add", "new_config_2", "backend=slurm", "ram=200", "--force")
     local = load_backend_configs()
     assert "new_config" in local and "new_config_2" in local
 
 
-def test_show(temp_dir, mock_backend):
+def test_backend_list(temp_dir, mock_backend):
     # language=yaml
     mock_backend.write_text('''
     a:
@@ -164,16 +163,25 @@ def test_show(temp_dir, mock_backend):
             n_workers: 1
     ''')
 
-    assert invoke("show", "a", "b").exit_code == 0
-    assert invoke("show", "c").exit_code == 0
+    assert invoke("backend", "list", "a", "b").exit_code == 0
+    assert invoke("backend", "list", "c").exit_code == 0
 
 
-def test_set(temp_dir, mock_backend):
-    invoke("add", "config", "backend=slurm", "ram=100", "--force")
-    result = invoke("set", "config")
+def test_backend_set(temp_dir, mock_backend):
+    assert invoke("backend", "add", "config", "backend=slurm", "ram=100", "--force").exit_code == 0
+    result = invoke("backend", "set", "config")
 
     assert result.exit_code == 0
-    assert load_backend_configs()["_default"].config.ram == "100G"
+    local = load_backend_configs()
+    assert local[local["meta"].default].config.ram == "100G"
+
+
+def test_backend_remove(temp_dir, mock_backend):
+    assert invoke("backend", "add", "config", "backend=slurm", "ram=100", "--force").exit_code == 0
+    result = invoke("backend", "remove", "config")
+
+    assert result.exit_code == 0
+    assert not load_backend_configs().keys()
 
 
 def invoke(*cmd):

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional, Union
 
 import typer
 import yaml
@@ -9,7 +9,7 @@ from typer.core import TyperCommand
 from typer.main import get_click_param
 from typer.models import ParamMeta
 
-from ..backend import BackendEntryConfig, backends
+from ..backend import BackendEntryConfig, MetaEntry, backends
 from .app import app
 
 
@@ -57,8 +57,8 @@ def populate(backend_name):
     }
 
     if backend_name is None:
-        if "_default" in local_configs:
-            entry = local_configs["_default"]
+        if "meta" in local_configs:
+            entry = local_configs[local_configs["meta"].default]
 
         elif len(local_configs) == 1:
             entry, = local_configs.values()
@@ -76,7 +76,7 @@ def populate(backend_name):
             # TODO: exception
             entry = builtin_configs[backend_name]
 
-    backend_choices = ', '.join(set(local_configs) | set(builtin_configs) - {"_default", }).rstrip()
+    backend_choices = ', '.join(set(local_configs) | set(builtin_configs) - {"meta"}).rstrip()
     if entry is None:
         return [ParamMeta(
             name='backend', annotation=Optional[str],
@@ -111,7 +111,7 @@ def populate(backend_name):
     return backend_params
 
 
-def load_backend_configs() -> dict:
+def load_backend_configs() -> Dict[str, Union[BackendEntryConfig, MetaEntry]]:
     path = BACKENDS_CONFIG_PATH
     if not path.exists():
         # print(path, flush=True)
@@ -123,4 +123,5 @@ def load_backend_configs() -> dict:
         return {}
     # FIXME
     assert isinstance(local, dict), type(local)
-    return {k: BackendEntryConfig.parse_obj(v) for k, v in local.items()}
+    return {k: BackendEntryConfig.parse_obj(v)
+            if k != "meta" else MetaEntry.parse_obj(v) for k, v in local.items()}

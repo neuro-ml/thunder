@@ -36,4 +36,8 @@ class BackendEntryConfig(BaseModel):
         extra = Extra.ignore
 
 
+class MetaEntry(BaseModel):
+    default: str
+
+
 backends: Dict[str, Backend] = {}
