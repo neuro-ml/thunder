@@ -17,18 +17,22 @@ from thunder.utils import chdir
 runner = CliRunner()
 
 
-def mock_backend(folder: Path) -> Path:
-    backends_yml = folder / "backends.yml"
+@pytest.fixture()
+def mock_backend(temp_dir):
+    backends_yml = temp_dir / "backends.yml"
     thunder.cli.backend.BACKENDS_CONFIG_PATH = backends_yml
     thunder.cli.entrypoint._main.BACKENDS_CONFIG_PATH = backends_yml
 
     if backends_yml.exists():
         os.remove(backends_yml)
 
-    return backends_yml
+    yield backends_yml
+
+    if backends_yml.exists():
+        os.remove(backends_yml)
 
 
-def test_build(temp_dir):
+def test_build(temp_dir, mock_backend):
     experiment = temp_dir / 'exp'
     config = temp_dir / 'x.config'
     # language=Python
@@ -48,7 +52,8 @@ b = 2
 
         result = invoke('build', config, experiment)
         assert result.exit_code != 0
-        assert re.match('Cannot create an experiment in the folder ".*", it already exists\n', result.output)
+        assert re.match('Cannot create an experiment in the folder ".*", it already exists. '
+                        'If you want to overwrite it, use --overwrite / -o flag.\n', result.output)
 
     with cleanup(experiment):
         result = invoke('build', config, experiment, '-u', 'c=3')
@@ -60,10 +65,9 @@ b = 2
         assert Config.load(experiment / 'experiment.config').a == 10
 
     # FIXME: this part will mess with user's local config!
-    with cleanup(experiment, BACKENDS_CONFIG_PATH):
-        BACKENDS_CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with cleanup(experiment):
         # language=yaml
-        BACKENDS_CONFIG_PATH.write_text('''
+        mock_backend.write_text('''
 a:
     backend: cli
     config:
@@ -125,9 +129,8 @@ def test_run(temp_dir, dumb_config):
         assert result.exit_code == 0, result.output
 
 
-def test_add(temp_dir):
+def test_add(temp_dir, mock_backend):
     # mocking cock
-    mock_backend(temp_dir)
 
     result = invoke("add", "new_config", "backend=slurm", "ram=100")
     assert result.exit_code == 0 and "new_config" in load_backend_configs()
@@ -144,11 +147,9 @@ def test_add(temp_dir):
     assert "new_config" in local and "new_config_2" in local
 
 
-def test_show(temp_dir):
-    backends_yml = mock_backend(temp_dir)
-
+def test_show(temp_dir, mock_backend):
     # language=yaml
-    backends_yml.write_text('''
+    mock_backend.write_text('''
     a:
         backend: cli
         config:
@@ -167,9 +168,7 @@ def test_show(temp_dir):
     assert invoke("show", "c").exit_code == 0
 
 
-def test_set(temp_dir):
-    mock_backend(temp_dir)
-
+def test_set(temp_dir, mock_backend):
     invoke("add", "config", "backend=slurm", "ram=100", "--force")
     result = invoke("set", "config")
 
