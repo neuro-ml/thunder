@@ -1,3 +1,5 @@
+from typing import Union
+
 import wandb
 from lightning.pytorch.loggers import WandbLogger as _WandbLogger
 
@@ -11,8 +13,14 @@ class WandbLogger(_WandbLogger):
                          log_model, experiment, prefix, checkpoint_name, **kwargs)
 
         if remove_dead_duplicates:
-            api = wandb.Api()
-            for run in api.runs(path=f"{self.experiment.entity}/{self.experiment.project}"):
+            api, exp = wandb.Api(), self.experiment
+            for run in api.runs(path=f"{exp.entity}/{exp.project}"):
                 if run.state != "running":
-                    if run.group == self.experiment.group or run.name == self.experiment.name:
-                        run.delete()
+                    if _same_group(run.group, exp.group) and run.name == exp.name:
+                        run.delete()  # wait_until_finished()
+
+
+def _same_group(run_group: Union[str, None], exp_group: str) -> bool:
+    if run_group is None:
+        return not exp_group
+    return run_group == exp_group
