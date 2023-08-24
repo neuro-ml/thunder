@@ -8,22 +8,28 @@
       
       
       
+        <link rel="canonical" href="https://neuro-ml.github.io/thunder/latest/loggers/wandb/">
       
       
+        <link rel="prev" href="../">
       
-      <link rel="icon" href="/thunder/latest/assets/images/favicon.png">
+      
+        <link rel="next" href="../../policy/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.3">
     
     
       
-        <title>A small experiments runner for Pytorch Lightning</title>
+        <title>WandbLogger - A small experiments runner for Pytorch Lightning</title>
       
     
     
-      <link rel="stylesheet" href="/thunder/latest/assets/stylesheets/main.0e669242.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.0e669242.min.css">
       
         
-        <link rel="stylesheet" href="/thunder/latest/assets/stylesheets/palette.85d0ee34.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.85d0ee34.min.css">
       
       
 
@@ -42,9 +48,9 @@
       
     
     
-      <link rel="stylesheet" href="/thunder/latest/assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("/thunder/latest",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -72,6 +78,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#wandblogger" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -88,7 +99,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/thunder/latest/." title="A small experiments runner for Pytorch Lightning" class="md-header__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
+    <a href="../.." title="A small experiments runner for Pytorch Lightning" class="md-header__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -108,7 +119,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              WandbLogger
             
           </span>
         </div>
@@ -218,7 +229,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/thunder/latest/." title="A small experiments runner for Pytorch Lightning" class="md-nav__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
+    <a href="../.." title="A small experiments runner for Pytorch Lightning" class="md-nav__button md-logo" aria-label="A small experiments runner for Pytorch Lightning" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -247,7 +258,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -300,7 +311,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/callbacks/" class="md-nav__link">
+      <a href="../../callbacks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -320,7 +331,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/callbacks/fail_on_interrupt/" class="md-nav__link">
+      <a href="../../callbacks/fail_on_interrupt/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -340,7 +351,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/callbacks/metric_logger/" class="md-nav__link">
+      <a href="../../callbacks/metric_logger/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -360,7 +371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/callbacks/time_profiler/" class="md-nav__link">
+      <a href="../../callbacks/time_profiler/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -421,7 +432,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/cli/" class="md-nav__link">
+      <a href="../../cli/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -482,7 +493,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/configs/" class="md-nav__link">
+      <a href="../../configs/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -543,7 +554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/core/thunder_module/" class="md-nav__link">
+      <a href="../../core/thunder_module/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -604,7 +615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/examples/" class="md-nav__link">
+      <a href="../../examples/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -624,7 +635,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/examples/mnist/" class="md-nav__link">
+      <a href="../../examples/mnist/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -644,7 +655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/examples/totalsegm_lowres/" class="md-nav__link">
+      <a href="../../examples/totalsegm_lowres/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -705,7 +716,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/inference/" class="md-nav__link">
+      <a href="../../inference/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -766,7 +777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/layout/" class="md-nav__link">
+      <a href="../../layout/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -786,7 +797,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/layout/splits/" class="md-nav__link">
+      <a href="../../layout/splits/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -811,17 +822,19 @@
       
   
   
+    
+  
   
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
         
           <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
@@ -834,7 +847,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Loggers
@@ -847,7 +860,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/loggers/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -865,9 +878,18 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="/thunder/latest/loggers/wandb/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -876,6 +898,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -928,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/policy/" class="md-nav__link">
+      <a href="../../policy/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -948,7 +971,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/thunder/latest/policy/lr_schedulers/" class="md-nav__link">
+      <a href="../../policy/lr_schedulers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -986,6 +1009,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -997,8 +1022,26 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+  
+  
+
+
+<h1 id="wandblogger">WandbLogger<a class="headerlink" href="#wandblogger" title="Permanent link">#</a></h1>
+<p>Slightly modified <a href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.loggers.wandb.html#module-lightning.pytorch.loggers.wandb">WandbLogger</a>.<br />
+<code>thunder</code> version has additional parameter <code>remove_dead_duplicates</code> 
+that if being set to <code>True</code> (<code>False</code> by default), deletes all crashed or failed runs 
+with the same name and group within your project.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">thunder.torch.loggers</span> <span class="kn">import</span> <span class="n">WandbLogger</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">logger</span> <span class="o">=</span> <span class="n">WandbLogger</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">remove_dead_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div></p>
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -1030,10 +1073,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "/thunder/latest", "features": [], "search": "/thunder/latest/assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="/thunder/latest/assets/javascripts/bundle.78eede0e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.78eede0e.min.js"></script>
       
     
   </body>
