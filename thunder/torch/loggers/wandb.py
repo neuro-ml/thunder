@@ -15,9 +15,9 @@ class WandbLogger(_WandbLogger):
         if remove_dead_duplicates:
             api, exp = wandb.Api(), self.experiment
             for run in api.runs(path=f"{exp.entity}/{exp.project}"):
-                if run.state != "running":
+                if run.state in ["crashed", "failed"]:
                     if _same_group(run.group, exp.group) and run.name == exp.name:
-                        run.delete()  # wait_until_finished()
+                        run.delete()
 
 
 def _same_group(run_group: Union[str, None], exp_group: str) -> bool:
