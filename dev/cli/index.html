@@ -528,6 +528,26 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#add-set-list-remove" class="md-nav__link">
+    Add, Set, List, Remove
+  </a>
+  
+    <nav class="md-nav" aria-label="Add, Set, List, Remove">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1165,6 +1185,26 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#add-set-list-remove" class="md-nav__link">
+    Add, Set, List, Remove
+  </a>
+  
+    <nav class="md-nav" aria-label="Add, Set, List, Remove">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1213,7 +1253,9 @@ building and execution routine.</p>
 <p>In order to build an experiment, you can execute the follwing command:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>thunder<span class="w"> </span>build<span class="w"> </span>/path/to/config<span class="w"> </span>/path/to/experiment
 </code></pre></div>
-It will create a folder with built configs in it.  </p>
+It will create a folder with built configs in it.<br />
+If <code>/path/to/experiment</code> already exists, thunder raises error. 
+In order to overwrite existing directory use <code>--overwrite</code> / <code>-o</code> flags.</p>
 <h3 id="overriding-config-entries">Overriding config entries<a class="headerlink" href="#overriding-config-entries" title="Permanent link">#</a></h3>
 <p>While conducting experiments one can find themselves in constant need of
 changing significant number of parameters. But it is not convenient to always do
@@ -1243,7 +1285,8 @@ from your built config and executes <code>trainer.run(model, train_data, ...)</c
 The command shown above will run SLURM job with 4 CPUs and 100G of RAM.</p>
 <h3 id="predefined-run-configs">Predefined run configs<a class="headerlink" href="#predefined-run-configs" title="Permanent link">#</a></h3>
 <p>You can predefine run configs to avoid reentering the same flags.
-Create <code>.config/thunder/backends.yml</code> in you home directory. 
+Create <code>~/.config/thunder/backends.yml</code> (you can run <code>thunder show</code> in your terminal, 
+required path will be at the title of the table) in you home directory. 
 Now you can specify config name and its parameters:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">run_config_name</span><span class="p">:</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">backend</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">slurm</span>
@@ -1254,21 +1297,68 @@ Now you can specify config name and its parameters:
 <a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="nt">partition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">partition_name</span>
 </code></pre></div>
 In order to run an experiment with predefined parameters, 
-use <code>--backend</code> flag as in previous section:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>thunder<span class="w"> </span>run<span class="w"> </span>/path/to/experiment/<span class="w"> </span>--backend<span class="w"> </span>run_config_name
+use <code>--backend</code> flag as in previous section:</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>thunder<span class="w"> </span>run<span class="w"> </span>/path/to/experiment/<span class="w"> </span>--backend<span class="w"> </span>run_config_name
 </code></pre></div>
 You can overwrite parameters if you want to (e.g. 8 CPUs instead of 4):
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>thunder<span class="w"> </span>run<span class="w"> </span>/path/to/experiment/<span class="w"> </span>--backend<span class="w"> </span>run_config_name<span class="w"> </span>-c<span class="w"> </span><span class="m">8</span>
 </code></pre></div></p>
+<h3 id="add-set-list-remove">Add, Set, List, Remove<a class="headerlink" href="#add-set-list-remove" title="Permanent link">#</a></h3>
+<p><code>thunder</code> CLI provides its users with built-in tools for managing their <a href="./#backend">backends</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>thunder backend add</code></td>
+<td>Add run config to the list of available configs.</td>
+</tr>
+<tr>
+<td><code>thunder backend list</code></td>
+<td>Show parameters of specified backend(s).</td>
+</tr>
+<tr>
+<td><code>thunder backend remove</code></td>
+<td>Delete backend from list.</td>
+</tr>
+<tr>
+<td><code>thunder backend set</code></td>
+<td>Set specified backend from list of available backends as default.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h4>
+<h5 id="add">add<a class="headerlink" href="#add" title="Permanent link">#</a></h5>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>thunder<span class="w"> </span>backend<span class="w"> </span>add<span class="w"> </span>run_config_name<span class="w"> </span><span class="nv">backend</span><span class="o">=</span>slurm<span class="w"> </span><span class="nv">ram</span><span class="o">=</span><span class="m">100</span><span class="w"> </span><span class="nv">cpu</span><span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="nv">gpu</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">partition</span><span class="o">=</span>partition_name
+</code></pre></div>
+If specified name already exists, you can use <code>--force</code> flag in order to overwrite it.  </p>
+<h5 id="set">set<a class="headerlink" href="#set" title="Permanent link">#</a></h5>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>thunder<span class="w"> </span>backend<span class="w"> </span><span class="nb">set</span><span class="w"> </span>SOMENAME
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>thunder<span class="w"> </span>backend<span class="w"> </span>list
+</code></pre></div>
+<h5 id="list">list<a class="headerlink" href="#list" title="Permanent link">#</a></h5>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>thunder<span class="w"> </span>backend<span class="w"> </span>list<span class="w"> </span>NAME1<span class="w"> </span>NAME2
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>*shows<span class="w"> </span>backends<span class="w"> </span>with<span class="w"> </span>specified<span class="w"> </span>names*
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>thunder<span class="w"> </span>backend<span class="w"> </span>list
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>*shows<span class="w"> </span>all<span class="w"> </span>backends*
+</code></pre></div>
+<h5 id="remove">remove<a class="headerlink" href="#remove" title="Permanent link">#</a></h5>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>thunder<span class="w"> </span>backend<span class="w"> </span>remove<span class="w"> </span>SOMENAME
+</code></pre></div>
 <h2 id="placeholders">Placeholders<a class="headerlink" href="#placeholders" title="Permanent link">#</a></h2>
 <p>Some loggers and other tools in your experiment may require name 
 of the experiment. We find it convenient to use name of the folder you 
 build your experiment into as the name of the experiment for loggers. <br />
 Example with <code>WandbLogger</code>:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">lightning.pytorch.loggers</span> <span class="kn">import</span> <span class="n">WandbLogger</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span> <span class="nn">thunder.placeholders</span> <span class="kn">import</span> <span class="n">ExpName</span><span class="p">,</span> <span class="n">GroupName</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">logger</span> <span class="o">=</span> <span class="n">WandbLogger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">ExpName</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">GroupName</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span> <span class="nn">lightning.pytorch.loggers</span> <span class="kn">import</span> <span class="n">WandbLogger</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kn">from</span> <span class="nn">thunder.placeholders</span> <span class="kn">import</span> <span class="n">ExpName</span><span class="p">,</span> <span class="n">GroupName</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">logger</span> <span class="o">=</span> <span class="n">WandbLogger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">ExpName</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">GroupName</span><span class="p">)</span>
 </code></pre></div>
 In this case <code>GroupName</code> - name of the folder with built experiment and
 <code>ExpName</code> - name of the split.</p>
@@ -1282,7 +1372,7 @@ when it comes to running experiments on cluster.</p>
 you can create sweep configuration. 
 WandB will give a command <code>wandb agent project/sweep_id</code>.
 You can copy it and paste it into the following command:<br />
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>thunder<span class="w"> </span>PASTE_HERE<span class="w"> </span>/path/to/config<span class="w"> </span>/path/to/experiment<span class="w"> </span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>thunder<span class="w"> </span>PASTE_HERE<span class="w"> </span>/path/to/config<span class="w"> </span>/path/to/experiment<span class="w"> </span>
 </code></pre></div></p>
 
 
