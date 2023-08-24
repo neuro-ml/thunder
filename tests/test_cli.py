@@ -137,7 +137,7 @@ def test_backend_add(temp_dir, mock_backend):
     result = invoke("backend", "add", "new_config", "backend=slurm", "ram=100")
     assert result.exit_code != 0 and "new_config" in load_backend_configs()
 
-    result = invoke("backend", "add", "new_config", "backend=slurm", "ram=200", "--force")
+    result = invoke("backend", "add", "new_config", "backend=slurm", "ram=200G", "--force")
     assert result.exit_code == 0 and "new_config" in load_backend_configs()
     assert load_backend_configs()["new_config"].config.ram == "200G"
 
@@ -168,7 +168,7 @@ def test_backend_list(temp_dir, mock_backend):
 
 
 def test_backend_set(temp_dir, mock_backend):
-    assert invoke("backend", "add", "config", "backend=slurm", "ram=100", "--force").exit_code == 0
+    assert invoke("backend", "add", "config", "backend=slurm", "ram=100G", "--force").exit_code == 0
     result = invoke("backend", "set", "config")
 
     assert result.exit_code == 0
