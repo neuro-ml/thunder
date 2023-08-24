@@ -1,5 +1,6 @@
+import copy
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional, Union
 
 import typer
 import yaml
@@ -9,7 +10,7 @@ from typer.core import TyperCommand
 from typer.main import get_click_param
 from typer.models import ParamMeta
 
-from ..backend import BackendEntryConfig, backends
+from ..backend import BackendEntryConfig, MetaEntry, backends
 from .app import app
 
 
@@ -51,29 +52,32 @@ class BackendCommand(TyperCommand):
 
 def populate(backend_name):
     local_configs = load_backend_configs()
-    default_configs = {
+    builtin_configs = {
         'cli': BackendEntryConfig(backend='cli', config={}),
         'slurm': BackendEntryConfig(backend='slurm', config={}),
     }
 
     if backend_name is None:
-        if len(local_configs) == 1:
+        if "meta" in local_configs:
+            entry = local_configs[local_configs["meta"].default]
+
+        elif len(local_configs) == 1:
             entry, = local_configs.values()
 
         elif len(local_configs) > 1:
             entry = None
 
         else:
-            entry = default_configs['cli']
+            entry = builtin_configs['cli']
 
     else:
         if backend_name in local_configs:
             entry = local_configs[backend_name]
         else:
             # TODO: exception
-            entry = default_configs[backend_name]
+            entry = builtin_configs[backend_name]
 
-    backend_choices = ','.join(set(local_configs) | set(default_configs))
+    backend_choices = ', '.join(set(local_configs) | set(builtin_configs) - {"meta"}).rstrip()
     if entry is None:
         return [ParamMeta(
             name='backend', annotation=Optional[str],
@@ -88,7 +92,8 @@ def populate(backend_name):
         name='backend', annotation=Optional[str],
         default=Option(
             backend_name,
-            help=f'The runner backend to use. Choices: {backend_choices}. Currently using {backend_name}.',
+            help=f'The runner backend to use. Choices: {backend_choices}. Currently using {backend_name}. '
+                 f'List of backends can be found at {str(BACKENDS_CONFIG_PATH.resolve())}',
             show_default=False,
         ),
     )]
@@ -100,16 +105,19 @@ def populate(backend_name):
 
         # TODO
         default, = annotation.__metadata__
+        default = copy.deepcopy(default)
         default.default = getattr(entry.config, field.name)
+        default.help = f'[{backend_name} backend] {default.help}'
         backend_params.append(ParamMeta(
             name=field.name, default=default, annotation=annotation.__origin__,
         ))
     return backend_params
 
 
-def load_backend_configs():
+def load_backend_configs() -> Dict[str, Union[BackendEntryConfig, MetaEntry]]:
     path = BACKENDS_CONFIG_PATH
     if not path.exists():
+        # print(path, flush=True)
         return {}
 
     with path.open('r') as file:
@@ -118,4 +126,5 @@ def load_backend_configs():
         return {}
     # FIXME
     assert isinstance(local, dict), type(local)
-    return {k: BackendEntryConfig.parse_obj(v) for k, v in local.items()}
+    return {k: BackendEntryConfig.parse_obj(v)
+            if k != "meta" else MetaEntry.parse_obj(v) for k, v in local.items()}

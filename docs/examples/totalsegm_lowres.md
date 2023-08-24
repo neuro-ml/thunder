@@ -94,7 +94,7 @@ trainer = Trainer(
         ModelCheckpoint(save_last=True),
     ],
     limit_train_batches=batches_per_epoch,
-    accelerator='cuda', precision=16,
+    accelerator='gpu', precision=16,
     max_epochs=max_epochs,
     logger=WandbLogger(name=ExpName, group=GroupName, project='thunder-examples', entity='arseniybelkov'))
 ```

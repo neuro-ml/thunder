@@ -15,6 +15,9 @@
 pip install thunder
 ```
 
+:warning:  
+> Currently thunder is not published on pypi. Install it via git clone.  
+
 ## Start experimenting
 
 It's as simple as 1, 2, 3:

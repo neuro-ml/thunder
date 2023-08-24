@@ -18,12 +18,13 @@ from .app import app
 from .backend import BackendCommand
 
 
-ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment')]
-ConfArg = Annotated[Path, Argument(show_default=False, help='The config from which the experiment will be built')]
+ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment.')]
+ConfArg = Annotated[Path, Argument(show_default=False, help='The config from which the experiment will be built.')]
 UpdArg = Annotated[List[str], Option(
-    ..., '--update', '-u', help='Overwrite specific config entries', show_default=False
+    ..., '--update', '-u', help='Overwrite specific config entries.', show_default=False
 )]
-NamesArg = Annotated[Optional[str], Option(..., help='Names of sub-experiments to start')]
+OverwriteArg = Annotated[bool, Option("--overwrite", "-o", help="If specified, overwrites target directory.")]
+NamesArg = Annotated[Optional[str], Option(..., help='Names of sub-experiments to start.')]
 
 
 @app.command()
@@ -34,7 +35,7 @@ def start(
     """ Start a part of an experiment. Mainly used as an internal entrypoint for other commands. """
     experiment = Path(experiment)
     if not experiment.is_absolute():
-        print('The `experiment` argument must be an absolute path')
+        print('The `experiment` argument must be an absolute.')
         raise Abort(1)
 
     config_path = experiment / 'experiment.config'
@@ -94,9 +95,10 @@ def start(
 def build(
         config: ConfArg,
         experiment: ExpArg,
+        overwrite: OverwriteArg = False,
         update: UpdArg = (),
 ):
-    """ Build an experiment """
+    """ Build an experiment. """
     updates = {}
     for upd in update:
         # TODO: raise
@@ -105,8 +107,12 @@ def build(
 
     experiment = Path(experiment)
     if experiment.exists():
-        print(f'Cannot create an experiment in the folder "{experiment}", it already exists')
-        raise Abort(1)
+        if overwrite:
+            shutil.rmtree(experiment)
+        else:
+            print(f'Cannot create an experiment in the folder "{experiment}", it already exists. '
+                  'If you want to overwrite it, use --overwrite / -o flag.')
+            raise Abort(1)
 
     build_exp(Config.load(config), experiment, updates)
 
