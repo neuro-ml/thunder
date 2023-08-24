@@ -58,12 +58,6 @@ class Slurm(Backend):
             help='Limit the number of jobs that are simultaneously running during the experiment',
         )] = None
 
-        @validator("ram")
-        def val_ram(cls, v):
-            if v is None:
-                return
-            return v if v[-1].isalpha() else f"{v}G"
-
         @validator('time')
         def val_time(cls, v):
             if v is None:
