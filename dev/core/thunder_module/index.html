@@ -683,47 +683,6 @@
     ThunderModule
   </a>
   
-    <nav class="md-nav" aria-label="ThunderModule">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#thunder.torch.core.ThunderModule.training_step" class="md-nav__link">
-    training_step()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#thunder.torch.core.ThunderModule.validation_step" class="md-nav__link">
-    validation_step()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#thunder.torch.core.ThunderModule.test_step" class="md-nav__link">
-    test_step()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#thunder.torch.core.ThunderModule.predict_step" class="md-nav__link">
-    predict_step()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#thunder.torch.core.ThunderModule.inference_step" class="md-nav__link">
-    inference_step()
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -1260,47 +1219,6 @@
     ThunderModule
   </a>
   
-    <nav class="md-nav" aria-label="ThunderModule">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#thunder.torch.core.ThunderModule.training_step" class="md-nav__link">
-    training_step()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#thunder.torch.core.ThunderModule.validation_step" class="md-nav__link">
-    validation_step()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#thunder.torch.core.ThunderModule.test_step" class="md-nav__link">
-    test_step()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#thunder.torch.core.ThunderModule.predict_step" class="md-nav__link">
-    predict_step()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#thunder.torch.core.ThunderModule.inference_step" class="md-nav__link">
-    inference_step()
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -1446,7 +1364,7 @@ Transferring happens later in the <code>inference_step</code>, which is invoked 
 
 
 <a href="#thunder.torch.core.ThunderModule" class="headerlink" title="Permanent link">#</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">thunder</span><span class="o">.</span><span class="n">torch</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">ThunderModule</span><span class="p">(</span><span class="n">architecture</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">criterion</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">n_targets</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">identity</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Optimizer</span><span class="p">],</span> <span class="n">Optimizer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">LRScheduler</span><span class="p">],</span> <span class="n">LRScheduler</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">predictor</span><span class="p">:</span> <span class="n">BasePredictor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n_val_targets</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ThunderModule</span><span class="p">(</span><span class="n">architecture</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">criterion</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">n_targets</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">activation</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">identity</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Optimizer</span><span class="p">],</span> <span class="n">Optimizer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lr_scheduler</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">LRScheduler</span><span class="p">],</span> <span class="n">LRScheduler</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">predictor</span><span class="p">:</span> <span class="n">BasePredictor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n_val_targets</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents first">
@@ -1676,140 +1594,6 @@ Transferring happens later in the <code>inference_step</code>, which is invoked 
 
 
 
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h4 id="thunder.torch.core.ThunderModule.training_step" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">training_step</span>
-
-
-<a href="#thunder.torch.core.ThunderModule.training_step" class="headerlink" title="Permanent link">#</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">training_step</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-
-          <details class="quote">
-            <summary>Source code in <code>thunder/torch/core.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-67">67</a></span>
-<span class="normal"><a href="#__codelineno-0-68">68</a></span>
-<span class="normal"><a href="#__codelineno-0-69">69</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span><span class="p">:</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[:</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">n_targets</span><span class="p">],</span> <span class="n">batch</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">n_targets</span><span class="p">:]</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">),</span> <span class="o">*</span><span class="n">y</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-          </details>
-  </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h4 id="thunder.torch.core.ThunderModule.validation_step" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">validation_step</span>
-
-
-<a href="#thunder.torch.core.ThunderModule.validation_step" class="headerlink" title="Permanent link">#</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">validation_step</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-
-          <details class="quote">
-            <summary>Source code in <code>thunder/torch/core.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-71">71</a></span>
-<span class="normal"><a href="#__codelineno-0-72">72</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span><span class="p">:</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inference_step</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-          </details>
-  </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h4 id="thunder.torch.core.ThunderModule.test_step" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">test_step</span>
-
-
-<a href="#thunder.torch.core.ThunderModule.test_step" class="headerlink" title="Permanent link">#</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">test_step</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-
-          <details class="quote">
-            <summary>Source code in <code>thunder/torch/core.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-74">74</a></span>
-<span class="normal"><a href="#__codelineno-0-75">75</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">STEP_OUTPUT</span><span class="p">:</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inference_step</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-          </details>
-  </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h4 id="thunder.torch.core.ThunderModule.predict_step" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">predict_step</span>
-
-
-<a href="#thunder.torch.core.ThunderModule.predict_step" class="headerlink" title="Permanent link">#</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">predict_step</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-
-          <details class="quote">
-            <summary>Source code in <code>thunder/torch/core.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-77">77</a></span>
-<span class="normal"><a href="#__codelineno-0-78">78</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="k">def</span> <span class="nf">predict_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inference_step</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-          </details>
-  </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-<h4 id="thunder.torch.core.ThunderModule.inference_step" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">inference_step</span>
-
-
-<a href="#thunder.torch.core.ThunderModule.inference_step" class="headerlink" title="Permanent link">#</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">inference_step</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-
-          <details class="quote">
-            <summary>Source code in <code>thunder/torch/core.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-87">87</a></span>
-<span class="normal"><a href="#__codelineno-0-88">88</a></span>
-<span class="normal"><a href="#__codelineno-0-89">89</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="k">def</span> <span class="nf">inference_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dataloader_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">squeeze_first</span><span class="p">,</span> <span class="p">(</span><span class="n">batch</span><span class="p">[:</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">n_val_targets</span><span class="p">],</span> <span class="n">batch</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">n_val_targets</span><span class="p">:]))</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predictor</span><span class="p">([</span><span class="n">x</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span>
-</code></pre></div></td></tr></table></div>
-          </details>
-  </div>
-
-</div>
 
 
 
