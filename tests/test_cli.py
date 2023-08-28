@@ -129,6 +129,11 @@ def test_run(temp_dir, dumb_config):
         result = invoke("run", experiment.name)
         assert result.exit_code == 0, result.output
 
+    # custom callback
+    invoke("backend", "add", "cli_for_test_run", "backend=cli")
+    result = invoke("run", "--backend", "cli_for_test_run", experiment)
+    assert result.exit_code == 0, result.output
+
 
 def test_backend_add(temp_dir, mock_backend):
     result = invoke("backend", "add", "new_config", "backend=slurm", "ram=100")
