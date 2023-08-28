@@ -159,6 +159,7 @@ def run(
 def build_run(
         config: ConfArg,
         experiment: ExpArg,
+        overwrite: OverwriteArg = False,
         update: UpdArg = (),
         names: NamesArg = None,
         *,
@@ -166,7 +167,7 @@ def build_run(
         **kwargs,
 ):
     """ A convenient combination of `build` and `run` commands. """
-    build(config, experiment, update)
+    build(config, experiment, overwrite, update)
     run(experiment, names, backend=backend, **kwargs)
 
 
