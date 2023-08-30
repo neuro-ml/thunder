@@ -111,7 +111,7 @@ def collect_backends() -> Dict[str, Backend]:
     return {**backends, **local_backends}
 
 
-@functools.cache
+@functools.lru_cache()
 def collect_configs() -> Tuple[Dict[str, BackendEntryConfig], Union[MetaEntry, None]]:
     local_configs = load_backend_configs()
     builtin_configs = {
