@@ -10,9 +10,10 @@ from typer.testing import CliRunner
 
 import thunder.cli.backend
 import thunder.cli.backend_cli
-from thunder.cli.backend import load_backend_configs, collect_configs
+from thunder.cli.backend import collect_configs, load_backend_configs
 from thunder.cli.entrypoint import app
 from thunder.utils import chdir
+
 
 runner = CliRunner()
 
