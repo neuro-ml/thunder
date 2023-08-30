@@ -10,10 +10,9 @@ from typer.testing import CliRunner
 
 import thunder.cli.backend
 import thunder.cli.backend_cli
-from thunder.cli.backend import load_backend_configs
+from thunder.cli.backend import load_backend_configs, collect_configs
 from thunder.cli.entrypoint import app
 from thunder.utils import chdir
-
 
 runner = CliRunner()
 
@@ -25,11 +24,13 @@ def mock_backend(temp_dir):
     thunder.cli.entrypoint._main.BACKENDS_CONFIG_PATH = backends_yml
     thunder.cli.backend_cli.BACKENDS_CONFIG_PATH = backends_yml
 
+    collect_configs.cache_clear()
     if backends_yml.exists():
         os.remove(backends_yml)
 
     yield backends_yml
 
+    collect_configs.cache_clear()
     if backends_yml.exists():
         os.remove(backends_yml)
 
@@ -81,7 +82,7 @@ b:
         # we don't know which backend to choose
         result = invoke('run', experiment)
         assert result.exit_code != 0
-        assert 'Missing option' in result.output
+        assert 'Missing option' in result.output, result.output
 
         # make sure backend configs don't mess with other commands
         result = invoke('build', config, experiment)
@@ -130,6 +131,7 @@ def test_run(temp_dir, dumb_config):
         assert result.exit_code == 0, result.output
 
     # custom callback
+    collect_configs.cache_clear()
     invoke("backend", "add", "cli_for_test_run", "backend=cli")
     result = invoke("run", "--backend", "cli_for_test_run", experiment)
     assert result.exit_code == 0, result.output
@@ -162,10 +164,8 @@ def test_backend_list(temp_dir, mock_backend):
         backend: cli
         config:
             n_workers: 2
-    _default:
-        backend: cli
-        config:
-            n_workers: 1
+    meta:
+        default: b
     ''')
 
     assert invoke("backend", "list", "a", "b").exit_code == 0

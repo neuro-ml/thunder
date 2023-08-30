@@ -53,13 +53,16 @@ class BackendCommand(TyperCommand):
 
 def populate(backend_name):
     configs, meta = collect_configs()
-
+    local_configs = sorted(set(configs) - set(backends))
     if backend_name is None:
         if meta is not None:
             entry = configs[meta.default]
-
+        elif len(local_configs) == 1:
+            entry = configs[local_configs[0]]
+        elif len(local_configs) > 1:
+            entry = None
         else:
-            entry = configs['cli']
+            entry = configs["cli"]
 
     else:
         if backend_name in configs:
