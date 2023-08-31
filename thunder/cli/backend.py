@@ -12,7 +12,7 @@ from typer.core import TyperCommand
 from typer.main import get_click_param
 from typer.models import ParamMeta
 
-from ..backend import Backend, BackendEntryConfig, MetaEntry, backends
+from ..backend import BackendEntryConfig, MetaEntry, backends
 from .app import app
 
 
