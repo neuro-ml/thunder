@@ -109,14 +109,29 @@ def populate(backend_name):
     return backend_params
 
 
-def collect_backends() -> ChainMap[str, Backend]:
+def collect_backends() -> ChainMap:
+    """
+    Collects backend for each config.
+    Returns
+    -------
+    ChainMap[str, Backend]
+    mapping config_name : backend
+    """
     configs, _ = collect_configs()
     local_backends = {name: backends[config.backend] for name, config in configs.items()}
     return ChainMap(backends, local_backends)
 
 
 @functools.lru_cache()
-def collect_configs() -> Tuple[ChainMap[str, BackendEntryConfig], Union[MetaEntry, None]]:
+def collect_configs() -> Tuple[ChainMap, Union[MetaEntry, None]]:
+    """
+    Collects configs for `thunder run` command.
+    Returns
+    -------
+    (mapping, meta) : Tuple[ChainMap[str, BackendEntryConfig], Union[MetaEntry, None]]
+    mapping - mapping config_name : BackendEntryConfig
+    meta - meta info (e.g. default backend), if no meta data found, returns None
+    """
     local_configs = load_backend_configs()
     builtin_configs = {
         name: BackendEntryConfig(backend=name, config={})
