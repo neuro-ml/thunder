@@ -1,5 +1,6 @@
 import copy
 import functools
+from collections import ChainMap
 from pathlib import Path
 from typing import Dict, Optional, Tuple, Union
 
@@ -108,21 +109,21 @@ def populate(backend_name):
     return backend_params
 
 
-def collect_backends() -> Dict[str, Backend]:
+def collect_backends() -> ChainMap[str, Backend]:
     configs, _ = collect_configs()
     local_backends = {name: backends[config.backend] for name, config in configs.items()}
-    return {**backends, **local_backends}
+    return ChainMap(backends, local_backends)
 
 
 @functools.lru_cache()
-def collect_configs() -> Tuple[Dict[str, BackendEntryConfig], Union[MetaEntry, None]]:
+def collect_configs() -> Tuple[ChainMap[str, BackendEntryConfig], Union[MetaEntry, None]]:
     local_configs = load_backend_configs()
     builtin_configs = {
-        "cli": BackendEntryConfig(backend="cli", config={}),
-        "slurm": BackendEntryConfig(backend="slurm", config={})
+        name: BackendEntryConfig(backend=name, config={})
+        for name in backends.keys()
     }
     meta = local_configs.pop("meta", None)
-    return {**builtin_configs, **local_configs}, meta
+    return ChainMap(builtin_configs, local_configs), meta
 
 
 def load_backend_configs() -> Dict[str, Union[BackendEntryConfig, MetaEntry]]:
