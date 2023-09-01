@@ -1,6 +1,8 @@
 import copy
+import functools
+from collections import ChainMap
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Tuple, Union
 
 import typer
 import yaml
@@ -25,7 +27,7 @@ class BackendCommand(TyperCommand):
         kwargs = kwargs.copy()
         duplicate = kwargs.pop('kwargs', None)
         assert duplicate is None, duplicate
-        backend = backends[backend]
+        backend = collect_backends()[backend]
         return backend, backend.Config(**kwargs)
 
     def parse_args(self, ctx: Context, args):
@@ -51,33 +53,26 @@ class BackendCommand(TyperCommand):
 
 
 def populate(backend_name):
-    local_configs = load_backend_configs()
-    builtin_configs = {
-        'cli': BackendEntryConfig(backend='cli', config={}),
-        'slurm': BackendEntryConfig(backend='slurm', config={}),
-    }
-
+    configs, meta = collect_configs()
+    local_configs = sorted(set(configs) - set(backends))
     if backend_name is None:
-        if "meta" in local_configs:
-            entry = local_configs[local_configs["meta"].default]
-
+        if meta is not None:
+            entry = configs[meta.default]
         elif len(local_configs) == 1:
-            entry, = local_configs.values()
-
+            entry = configs[local_configs[0]]
         elif len(local_configs) > 1:
             entry = None
-
         else:
-            entry = builtin_configs['cli']
+            entry = configs["cli"]
 
     else:
-        if backend_name in local_configs:
-            entry = local_configs[backend_name]
+        if backend_name in configs:
+            entry = configs[backend_name]
         else:
-            # TODO: exception
-            entry = builtin_configs[backend_name]
+            raise ValueError(f"Specified backend `{backend_name} is not among "
+                             f"available configs: {sorted(configs)}`")
 
-    backend_choices = ', '.join(set(local_configs) | set(builtin_configs) - {"meta"}).rstrip()
+    backend_choices = ", ".join(sorted(configs)).rstrip(", ")
     if entry is None:
         return [ParamMeta(
             name='backend', annotation=Optional[str],
@@ -112,6 +107,38 @@ def populate(backend_name):
             name=field.name, default=default, annotation=annotation.__origin__,
         ))
     return backend_params
+
+
+def collect_backends() -> ChainMap:
+    """
+    Collects backend for each config.
+    Returns
+    -------
+    ChainMap[str, Backend]
+    mapping config_name : backend
+    """
+    configs, _ = collect_configs()
+    local_backends = {name: backends[config.backend] for name, config in configs.items()}
+    return ChainMap(backends, local_backends)
+
+
+@functools.lru_cache()
+def collect_configs() -> Tuple[ChainMap, Union[MetaEntry, None]]:
+    """
+    Collects configs for `thunder run` command.
+    Returns
+    -------
+    (mapping, meta) : Tuple[ChainMap[str, BackendEntryConfig], Union[MetaEntry, None]]
+    mapping - mapping config_name : BackendEntryConfig
+    meta - meta info (e.g. default backend), if no meta data found, returns None
+    """
+    local_configs = load_backend_configs()
+    builtin_configs = {
+        name: BackendEntryConfig(backend=name, config={})
+        for name in backends.keys()
+    }
+    meta = local_configs.pop("meta", None)
+    return ChainMap(builtin_configs, local_configs), meta
 
 
 def load_backend_configs() -> Dict[str, Union[BackendEntryConfig, MetaEntry]]:

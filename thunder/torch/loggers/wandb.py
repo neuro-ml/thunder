@@ -19,6 +19,9 @@ class WandbLogger(_WandbLogger):
                     if _same_group(run.group, exp.group) and run.name == exp.name:
                         run.delete()
 
+    def __del__(self) -> None:
+        wandb.finish()
+
 
 def _same_group(run_group: Union[str, None], exp_group: str) -> bool:
     if run_group is None:
