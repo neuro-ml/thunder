@@ -46,9 +46,9 @@ thunder build-run base.config /path/to/some/folder
 ```
 
 <div class="termy">
-   
+
 ```console
-thunder build base.config /path/to/some/folder
+$ thunder build base.config /path/to/some/folder
 ```
 
 </div>
