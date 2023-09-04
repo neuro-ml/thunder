@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.6">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.7">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.0e669242.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.046329b4.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.85d0ee34.min.css">
@@ -49,6 +49,10 @@
     
     
       <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../style/css/termynal.css">
+    
+      <link rel="stylesheet" href="../style/css/custom.css">
     
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -338,8 +342,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#thunder.torch.utils.to_np" class="md-nav__link">
-    to_np()
+  <a href="#thunder.torch.utils.maybe_from_np" class="md-nav__link">
+    maybe_from_np()
   </a>
   
 </li>
@@ -352,8 +356,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#thunder.torch.utils.maybe_from_np" class="md-nav__link">
-    maybe_from_np()
+  <a href="#thunder.torch.utils.to_np" class="md-nav__link">
+    to_np()
   </a>
   
 </li>
@@ -415,7 +419,7 @@
         
   
   <span class="md-ellipsis">
-    Callbacks
+    Overview
   </span>
   
 
@@ -719,7 +723,7 @@
         
   
   <span class="md-ellipsis">
-    Examples
+    Overview
   </span>
   
 
@@ -1122,8 +1126,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#thunder.torch.utils.to_np" class="md-nav__link">
-    to_np()
+  <a href="#thunder.torch.utils.maybe_from_np" class="md-nav__link">
+    maybe_from_np()
   </a>
   
 </li>
@@ -1136,8 +1140,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#thunder.torch.utils.maybe_from_np" class="md-nav__link">
-    maybe_from_np()
+  <a href="#thunder.torch.utils.to_np" class="md-nav__link">
+    to_np()
   </a>
   
 </li>
@@ -1175,11 +1179,11 @@
 
 
 
-<h3 id="thunder.torch.utils" class="doc doc-heading">
-          <span class="doc doc-object-name doc-module-name">thunder.torch.utils</span>
+<h2 id="thunder.torch.utils" class="doc doc-heading">
+          <code>thunder.torch.utils</code>
 
 
-<a href="#thunder.torch.utils" class="headerlink" title="Permanent link">#</a></h3>
+<a href="#thunder.torch.utils" class="headerlink" title="Permanent link">#</a></h2>
 
   <div class="doc doc-contents first">
 
@@ -1201,71 +1205,21 @@
 
 
 
-<h4 id="thunder.torch.utils.get_device" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">get_device</span>
+<h3 id="thunder.torch.utils.get_device" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_device</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></code>
 
+<a href="#thunder.torch.utils.get_device" class="headerlink" title="Permanent link">#</a></h3>
 
-<a href="#thunder.torch.utils.get_device" class="headerlink" title="Permanent link">#</a></h4>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">get_device</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span>
-</code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>Infer device of torch.Tensor or nn.Module instance.</p>
-
-
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>x</code></td>
-          <td>
-                <code><span title="typing.Union">Union</span>[<span title="torch.Tensor">Tensor</span>, <span title="torch.nn.Module">Module</span>]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              
-            </div>
-          </td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-<th>Name</th>        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-<td><code>device</code></td>          <td>
-                <code><span title="torch.device">device</span></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+      <p>Infer device of torch.Tensor or nn.Module instance.
+Parameters</p>
+<hr />
+<p>x: Union[torch.Tensor, nn.Module]
+Returns</p>
+<hr />
+<p>device: torch.device</p>
 
           <details class="quote">
             <summary>Source code in <code>thunder/torch/utils.py</code></summary>
@@ -1318,321 +1272,36 @@
 
 
 
-<h4 id="thunder.torch.utils.to_np" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">to_np</span>
+<h3 id="thunder.torch.utils.maybe_from_np" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">maybe_from_np</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span></code>
 
+<a href="#thunder.torch.utils.maybe_from_np" class="headerlink" title="Permanent link">#</a></h3>
 
-<a href="#thunder.torch.utils.to_np" class="headerlink" title="Permanent link">#</a></h4>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">to_np</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
-</code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>Converts collection of tensors into numpy arrays.</p>
-
-
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>*x</code></td>
-          <td>
-                <code><span title="typing.Any">Any</span></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              
-            </div>
-          </td>
-          <td>
-                <code>()</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>Collection of numpy arrays</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-<p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span>  <span class="c1"># torch.Tensor</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">to_np</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># convert to numpy array</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">to_np</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="c1"># x and y are now numpy arrays</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">to_np</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> <span class="c1"># to_np converts only tensors and does not affect other types</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">dict_of_np</span> <span class="o">=</span> <span class="n">to_np</span><span class="p">(</span><span class="n">dict_of_tensors</span><span class="p">)</span> <span class="c1"># to_np converts any collection</span>
-</code></pre></div>
-
-          <details class="quote">
-            <summary>Source code in <code>thunder/torch/utils.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span>
-<span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span>
-<span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span>
-<span class="normal"><a href="#__codelineno-0-49">49</a></span>
-<span class="normal"><a href="#__codelineno-0-50">50</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="k">def</span> <span class="nf">to_np</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">    Converts collection of tensors into numpy arrays.</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">    Parameters</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    *x: Any</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">    Returns</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">    Collection of numpy arrays</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">    Examples</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    --------</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    &gt;&gt;&gt; x, y  # torch.Tensor</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    &gt;&gt;&gt; z = to_np(x) # convert to numpy array</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    &gt;&gt;&gt; x, y = to_np(x, y) # x and y are now numpy arrays</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    &gt;&gt;&gt; x, y, z = to_np(x, y, z) # to_np converts only tensors and does not affect other types</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">    &gt;&gt;&gt; dict_of_np = to_np(dict_of_tensors) # to_np converts any collection</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="k">return</span> <span class="n">squeeze_first</span><span class="p">(</span><span class="n">apply_to_collection</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">tensor2np</span><span class="p">))</span>
-</code></pre></div></td></tr></table></div>
-          </details>
-  </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-<h4 id="thunder.torch.utils.tensor2np" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">tensor2np</span>
-
-
-<a href="#thunder.torch.utils.tensor2np" class="headerlink" title="Permanent link">#</a></h4>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">tensor2np</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Detaches, moves torch.Tensor to CPU and converts into numpy array.</p>
-
-
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>x</code></td>
-          <td>
-                <code><span title="torch.Tensor">Tensor</span></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              
-            </div>
-          </td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><span title="numpy.ndarray">ndarray</span></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>thunder/torch/utils.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-53">53</a></span>
-<span class="normal"><a href="#__codelineno-0-54">54</a></span>
-<span class="normal"><a href="#__codelineno-0-55">55</a></span>
-<span class="normal"><a href="#__codelineno-0-56">56</a></span>
-<span class="normal"><a href="#__codelineno-0-57">57</a></span>
-<span class="normal"><a href="#__codelineno-0-58">58</a></span>
-<span class="normal"><a href="#__codelineno-0-59">59</a></span>
-<span class="normal"><a href="#__codelineno-0-60">60</a></span>
-<span class="normal"><a href="#__codelineno-0-61">61</a></span>
-<span class="normal"><a href="#__codelineno-0-62">62</a></span>
-<span class="normal"><a href="#__codelineno-0-63">63</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="k">def</span> <span class="nf">tensor2np</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">    Detaches, moves torch.Tensor to CPU and converts into numpy array.</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">    Parameters</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">    ----------</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="sd">    x: torch.Tensor</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">    Returns</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">    -------</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">    np.ndarray</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-</code></pre></div></td></tr></table></div>
-          </details>
-  </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-
-
-<h4 id="thunder.torch.utils.maybe_from_np" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">maybe_from_np</span>
-
-
-<a href="#thunder.torch.utils.maybe_from_np" class="headerlink" title="Permanent link">#</a></h4>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">maybe_from_np</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Recursively converts numpy arrays to torch.Tensor.</p>
-
-
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>*x</code></td>
-          <td>
-                <code><span title="typing.Any">Any</span></code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              
-            </div>
-          </td>
-          <td>
-                <code>()</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>device</code></td>
-          <td>
-                <code><span title="typing.Union">Union</span>[<span title="torch.device">device</span>, str]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Device to move to, default is CPU.</p>
-            </div>
-          </td>
-          <td>
-                <code>&#39;cpu&#39;</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>Collection of tensors.</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-
-
-<p><strong>Examples:</strong></p>
-    <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span>  <span class="c1"># np.ndarray</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">maybe_from_np</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># convert to torch.Tensor</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">maybe_from_np</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="c1"># x and y are now tensors</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">maybe_from_np</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> <span class="c1"># maybe_from_np converts np arrays and tensors and does not affect other types</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="gp">&gt;&gt;&gt; </span><span class="n">dict_of_tensors</span> <span class="o">=</span> <span class="n">to_np</span><span class="p">(</span><span class="n">dict_of_np</span><span class="p">)</span> <span class="c1"># maybe_from_np converts any collection</span>
-</code></pre></div>
+      <p>Recursively converts numpy arrays to torch.Tensor.
+Parameters</p>
+<hr />
+<p>*x: Any
+device: Union[torch.device, str]
+    Device to move to, default is CPU.
+Returns</p>
+<hr />
+<p>Collection of tensors.
+Examples</p>
+<hr />
+<blockquote>
+<blockquote>
+<blockquote>
+<p>x, y  # np.ndarray
+z = maybe_from_np(x) # convert to torch.Tensor
+x, y = maybe_from_np(x, y) # x and y are now tensors
+x, y, z = maybe_from_np(x, y, z) # maybe_from_np converts np arrays and tensors and does not affect other types
+dict_of_tensors = to_np(dict_of_np) # maybe_from_np converts any collection</p>
+</blockquote>
+</blockquote>
+</blockquote>
 
           <details class="quote">
             <summary>Source code in <code>thunder/torch/utils.py</code></summary>
@@ -1690,6 +1359,135 @@
 </div>
 
 
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="thunder.torch.utils.tensor2np" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">tensor2np</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></code>
+
+<a href="#thunder.torch.utils.tensor2np" class="headerlink" title="Permanent link">#</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Detaches, moves torch.Tensor to CPU and converts into numpy array.
+Parameters</p>
+<hr />
+<p>x: torch.Tensor
+Returns</p>
+<hr />
+<p>np.ndarray</p>
+
+          <details class="quote">
+            <summary>Source code in <code>thunder/torch/utils.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#__codelineno-0-56">56</a></span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="k">def</span> <span class="nf">tensor2np</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">    Detaches, moves torch.Tensor to CPU and converts into numpy array.</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">    ----------</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="sd">    x: torch.Tensor</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">    Returns</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">    -------</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">    np.ndarray</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h3 id="thunder.torch.utils.to_np" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">to_np</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">)</span></code>
+
+<a href="#thunder.torch.utils.to_np" class="headerlink" title="Permanent link">#</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Converts collection of tensors into numpy arrays.
+Parameters</p>
+<hr />
+<p>*x: Any
+Returns</p>
+<hr />
+<p>Collection of numpy arrays
+Examples</p>
+<hr />
+<blockquote>
+<blockquote>
+<blockquote>
+<p>x, y  # torch.Tensor
+z = to_np(x) # convert to numpy array
+x, y = to_np(x, y) # x and y are now numpy arrays
+x, y, z = to_np(x, y, z) # to_np converts only tensors and does not affect other types
+dict_of_np = to_np(dict_of_tensors) # to_np converts any collection</p>
+</blockquote>
+</blockquote>
+</blockquote>
+
+          <details class="quote">
+            <summary>Source code in <code>thunder/torch/utils.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-33">33</a></span>
+<span class="normal"><a href="#__codelineno-0-34">34</a></span>
+<span class="normal"><a href="#__codelineno-0-35">35</a></span>
+<span class="normal"><a href="#__codelineno-0-36">36</a></span>
+<span class="normal"><a href="#__codelineno-0-37">37</a></span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="k">def</span> <span class="nf">to_np</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">    Converts collection of tensors into numpy arrays.</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">    ----------</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    *x: Any</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">    Returns</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    ----------</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">    Collection of numpy arrays</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">    Examples</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    --------</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    &gt;&gt;&gt; x, y  # torch.Tensor</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    &gt;&gt;&gt; z = to_np(x) # convert to numpy array</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    &gt;&gt;&gt; x, y = to_np(x, y) # x and y are now numpy arrays</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    &gt;&gt;&gt; x, y, z = to_np(x, y, z) # to_np converts only tensors and does not affect other types</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">    &gt;&gt;&gt; dict_of_np = to_np(dict_of_tensors) # to_np converts any collection</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="k">return</span> <span class="n">squeeze_first</span><span class="p">(</span><span class="n">apply_to_collection</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">tensor2np</span><span class="p">))</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
 
   </div>
 
@@ -1736,7 +1534,13 @@
     <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.78eede0e.min.js"></script>
+      <script src="../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
+      
+        <script src="../style/js/termynal.js"></script>
+      
+        <script src="../style/js/custom.js"></script>
       
     
   </body>

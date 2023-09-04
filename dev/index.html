@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.6">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.7">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.0e669242.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.046329b4.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.85d0ee34.min.css">
@@ -47,6 +47,10 @@
     
     
       <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="style/css/termynal.css">
+    
+      <link rel="stylesheet" href="style/css/custom.css">
     
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -302,8 +306,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+  <a href="#install" class="md-nav__link">
+    Install
   </a>
   
 </li>
@@ -427,7 +431,7 @@
         
   
   <span class="md-ellipsis">
-    Callbacks
+    Overview
   </span>
   
 
@@ -731,7 +735,7 @@
         
   
   <span class="md-ellipsis">
-    Examples
+    Overview
   </span>
   
 
@@ -1119,8 +1123,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
+  <a href="#install" class="md-nav__link">
+    Install
   </a>
   
 </li>
@@ -1192,47 +1196,53 @@
 
 
 <blockquote>
-<p>You saw the lightning. Now it's time to hear the thunder</p>
+<p>You saw the lightning. Now it's time to hear the thunder 🌩️</p>
 </blockquote>
 <h1 id="thunder">Thunder<a class="headerlink" href="#thunder" title="Permanent link">#</a></h1>
-<p>The Deep Learning framework based on Lightning.</p>
-<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">#</a></h2>
-<p>You can install from pypi<br />
+<p>🌩️ The Deep Learning framework based on <a href="https://lightning.ai/">Lightning</a></p>
+<h2 id="install">Install<a class="headerlink" href="#install" title="Permanent link">#</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>thunder
 </code></pre></div>
-or directly from GitHub<br />
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/neuro-ml/thunder.git
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd</span><span class="w"> </span>thunder<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-</code></pre></div></p>
+<p><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" />  </p>
+<blockquote>
+<p>Currently thunder is not published on pypi. Install it via git clone.  </p>
+</blockquote>
 <h2 id="start-experimenting">Start experimenting<a class="headerlink" href="#start-experimenting" title="Permanent link">#</a></h2>
-<p>It's as simple as 1, 2, 3:</p>
+<p>Many frameworks provide you with interfaces for your models and training pipelines, but we 
+have yet to see any tools for creating whole experiment.</p>
+<p>With :thunder: it's as simple as 1, 2, 3:</p>
 <ol>
 <li>
 <p>Create a config (e.g. <code>base.config</code>):
-    <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">myproject</span> <span class="kn">import</span> <span class="n">MyDataset</span><span class="p">,</span> <span class="n">MyModule</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">lightning</span> <span class="kn">import</span> <span class="n">Trainer</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># these 3 fields are required</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">train_data</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">MyDataset</span><span class="p">())</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">module</span> <span class="o">=</span> <span class="n">MyModule</span><span class="p">()</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">()</span>
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">myproject</span> <span class="kn">import</span> <span class="n">MyDataset</span><span class="p">,</span> <span class="n">MyModule</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span> <span class="nn">lightning</span> <span class="kn">import</span> <span class="n">Trainer</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># these 3 fields are required</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">train_data</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">MyDataset</span><span class="p">())</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">module</span> <span class="o">=</span> <span class="n">MyModule</span><span class="p">()</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">()</span>
 </code></pre></div></p>
 </li>
 <li>
 <p>Build the experiment:
-    <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>thunder<span class="w"> </span>build<span class="w"> </span>base.config<span class="w"> </span>/path/to/some/folder
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>thunder<span class="w"> </span>build<span class="w"> </span>base.config<span class="w"> </span>/path/to/some/folder
 </code></pre></div></p>
 </li>
-<li>
-<p>Run it
-    <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>thunder<span class="w"> </span>run<span class="w"> </span>/path/to/some/folder
-</code></pre></div></p>
-</li>
+<li>Run it
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>thunder<span class="w"> </span>run<span class="w"> </span>/path/to/some/folder
+</code></pre></div></li>
 </ol>
 <p>Also, 2 and 3 can be combined into a single command:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>thunder<span class="w"> </span>build-run<span class="w"> </span>base.config<span class="w"> </span>/path/to/some/folder
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>thunder<span class="w"> </span>build-run<span class="w"> </span>base.config<span class="w"> </span>/path/to/some/folder
 </code></pre></div></p>
+<div class="termy">
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="gp">$ </span>thunder<span class="w"> </span>build<span class="w"> </span>base.config<span class="w"> </span>/path/to/some/folder
+</code></pre></div>
+
+</div>
+
 <h2 id="core-features">Core Features<a class="headerlink" href="#core-features" title="Permanent link">#</a></h2>
 <ul>
 <li>
@@ -1288,7 +1298,13 @@ or directly from GitHub<br />
     <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.78eede0e.min.js"></script>
+      <script src="assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
+      
+        <script src="style/js/termynal.js"></script>
+      
+        <script src="style/js/custom.js"></script>
       
     
   </body>

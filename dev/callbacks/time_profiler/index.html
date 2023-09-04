@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.6">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.7">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.0e669242.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.046329b4.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.85d0ee34.min.css">
@@ -49,6 +49,10 @@
     
     
       <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../style/css/termynal.css">
+    
+      <link rel="stylesheet" href="../../style/css/custom.css">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -336,7 +340,7 @@
         
   
   <span class="md-ellipsis">
-    Callbacks
+    Overview
   </span>
   
 
@@ -456,12 +460,19 @@
     Reference
   </a>
   
-    <nav class="md-nav" aria-label="Reference">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thunder.callbacks.time_profiler.TimeProfiler" class="md-nav__link">
+    TimeProfiler
+  </a>
+  
+    <nav class="md-nav" aria-label="TimeProfiler">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#thunder.callbacks.time_profiler.TimeProfiler" class="md-nav__link">
-    TimeProfiler
+  <a href="#thunder.callbacks.time_profiler.TimeProfiler--parameters" class="md-nav__link">
+    Parameters
   </a>
   
 </li>
@@ -714,7 +725,7 @@
         
   
   <span class="md-ellipsis">
-    Examples
+    Overview
   </span>
   
 
@@ -1120,12 +1131,19 @@
     Reference
   </a>
   
-    <nav class="md-nav" aria-label="Reference">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thunder.callbacks.time_profiler.TimeProfiler" class="md-nav__link">
+    TimeProfiler
+  </a>
+  
+    <nav class="md-nav" aria-label="TimeProfiler">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#thunder.callbacks.time_profiler.TimeProfiler" class="md-nav__link">
-    TimeProfiler
+  <a href="#thunder.callbacks.time_profiler.TimeProfiler--parameters" class="md-nav__link">
+    Parameters
   </a>
   
 </li>
@@ -1234,47 +1252,21 @@
 
 
 
-<h3 id="thunder.callbacks.time_profiler.TimeProfiler" class="doc doc-heading">
-          <span class="doc doc-object-name doc-class-name">thunder.callbacks.time_profiler.TimeProfiler</span>
+<h2 id="thunder.callbacks.time_profiler.TimeProfiler" class="doc doc-heading">
+          <code>thunder.callbacks.time_profiler.TimeProfiler</code>
 
 
-<a href="#thunder.callbacks.time_profiler.TimeProfiler" class="headerlink" title="Permanent link">#</a></h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">TimeProfiler</span><span class="p">(</span><span class="o">*</span><span class="n">keys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span>
-</code></pre></div>
+<a href="#thunder.callbacks.time_profiler.TimeProfiler" class="headerlink" title="Permanent link">#</a></h2>
+
 
   <div class="doc doc-contents first">
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="lightning.Callback">Callback</span></code></p>
 
   
-
-
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>keys</code></td>
-          <td>
-                <code><span title="typing.Union">Union</span>[str, bool]</code>
-          </td>
-          <td>
-            <div class="doc-md-description">
-              <p>Optional keys for logging. If set to <code>True</code> it will log all keys.</p>
-            </div>
-          </td>
-          <td>
-                <code>()</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+      <h4 id="thunder.callbacks.time_profiler.TimeProfiler--parameters">Parameters<a class="headerlink" href="#thunder.callbacks.time_profiler.TimeProfiler--parameters" title="Permanent link">#</a></h4>
+<p>keys : Union[str, bool]
+    Optional keys for logging. If set to <code>True</code> it will log all keys.</p>
 
 
   
@@ -1336,7 +1328,13 @@
     <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.78eede0e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.dff1b7c8.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
+      
+        <script src="../../style/js/termynal.js"></script>
+      
+        <script src="../../style/js/custom.js"></script>
       
     
   </body>
