@@ -5,9 +5,9 @@
 
 > You saw the lightning. Now it's time to hear the thunder 🌩️
 
-# Thunder
+# Thunder 🌩️ 
 
-🌩️ The Deep Learning framework based on [Lightning](https://lightning.ai/)
+The Deep Learning framework based on [Lightning](https://lightning.ai/).
 
 ## Install
 
@@ -35,9 +35,9 @@ It's as simple as 1, 2, 3:
     ```
 
 2. Build the experiment:
-    ```shell
-    thunder build base.config /path/to/some/folder
-    ```
+   ```shell
+   thunder build base.config /path/to/some/folder
+   ```
 
 3. Run it
     ```shell
