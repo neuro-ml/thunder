@@ -57,6 +57,15 @@ markdown_extensions:
       toc_depth: 4
       permalink: "#"
 
+extra_css:
+  - style/css/termynal.css
+  - style/css/custom.css
+
+extra_javascript:
+  - https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js
+  - style/js/termynal.js
+  - style/js/custom.js
+
 extra:
   version:
     provider: mike
