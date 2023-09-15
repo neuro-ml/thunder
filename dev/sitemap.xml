@@ -71,6 +71,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://neuro-ml.github.io/thunder/latest/layout/fixed/</loc>
+         <lastmod>2023-09-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://neuro-ml.github.io/thunder/latest/layout/splits/</loc>
          <lastmod>2023-09-15</lastmod>
          <changefreq>daily</changefreq>
