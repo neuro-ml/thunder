@@ -23,7 +23,7 @@ class FixedSplit(Split):
             assert len(splits[0]) == len(names)
 
         self.entries = sorted(set(collapse(splits)))
-        self.splits = splits
+        self.splits = [tuple(fold) for fold in splits]
         self.names = names
         self.fold: Optional[int] = None
 
@@ -37,7 +37,8 @@ class FixedSingleSplit(SingleSplit):
         ----------
         split: Union[Sequence, Dict[str, Sequence]]
             split of data
-        Names of folds, e.g. 'train', 'val', test'.
+        Names of folds, e.g. 'train', 'val', test'. If data is of type `dict`,
+        then it is not required.
         """
         self.entries = sorted(set(collapse(split)))
 
@@ -46,4 +47,3 @@ class FixedSingleSplit(SingleSplit):
             split = split.values()
 
         self.split = dict(zip_equal(names, split))
-        self.split = split

@@ -2,11 +2,11 @@ import pytest
 from lazycon import Config
 from sklearn.model_selection import KFold
 
-from thunder.layout import Node, Single, SingleSplit, Split
+from thunder.layout import Node, Single, SingleSplit, Split, FixedSplit, FixedSingleSplit
 
 
 @pytest.mark.parametrize('layout', (
-    Single(), SingleSplit([1, 2, 3], train=1, test=2), Split(KFold(3), [1, 2, 3]),
+        Single(), SingleSplit([1, 2, 3], train=1, test=2), Split(KFold(3), [1, 2, 3]),
 ))
 def test_basic_properties(layout, temp_dir):
     text = 'a = 1\nb = 2\n'
@@ -72,3 +72,26 @@ def test_single_split(temp_dir):
     # check negative
     with pytest.raises(ValueError, match="non-negative"):
         SingleSplit([1, 2, 3], train=1, test=-1)
+
+
+def test_fixed_split(temp_dir):
+    layout = FixedSplit([[[1, 2, 3], [4, 5], [6, 7]]], names=["train", "val", "test"])
+    nodes = list(layout.build(temp_dir, Config()))
+    assert len(nodes) == 1
+    _, p, kw = layout.load(temp_dir, Node(name='0'))
+    assert p == temp_dir / 'fold_0'
+    assert layout.splits[0] == kw['split']
+    assert set(kw) == {'fold', 'split'}
+    layout.set(**kw)
+
+
+@pytest.mark.parametrize("layout", [FixedSingleSplit([[1], [2], [3]], ["train", "val", "test"]),
+                                    FixedSingleSplit({"train": [1], "val": [2], "test": [3]})])
+def test_fixed_single_split(layout, temp_dir):
+    nodes = list(layout.build(temp_dir, Config()))
+    assert len(nodes) == 0
+    _, p, kw = layout.load(temp_dir, None)
+    assert p == temp_dir
+    assert set(kw) == {'split'}
+    assert layout.split == kw['split']
+    layout.set(**kw)
