@@ -61,5 +61,14 @@ def test_single_split(temp_dir):
     assert {'train': layout.train, 'test': layout.test} == layout.split
 
     with pytest.raises(ValueError):
+        # check consistency error
         layout = SingleSplit([1, 2, 3], train=1, test=2, random_state=1)
         layout.set(**layout.load(temp_dir, None)[-1])
+
+    # check if split consists of 255 cases and not 254 or smth else.
+    layout = SingleSplit(list(range(255)), train=0.7, test=0.3)
+    assert len(layout.train) + len(layout.test) == 255
+
+    # check negative
+    with pytest.raises(ValueError, match="non-negative"):
+        SingleSplit([1, 2, 3], train=1, test=-1)

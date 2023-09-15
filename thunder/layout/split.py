@@ -12,7 +12,6 @@ from torch.utils.data import Dataset, Subset
 from ..utils import collect
 from .interface import Layout, Node
 
-
 try:
     import connectome
 except ImportError:
@@ -181,26 +180,25 @@ def multi_split(ids: Sequence, sizes: Sequence[int, float],
         ids = [ids[i] for i in random_state.permutation(len(ids))]
 
     total = len(ids)
+
+    if not all(s > 0 for s in sizes):
+        raise ValueError(f"All sizes must be non-negative ints and floats, got {sizes}.")
+
+    total_size = sum(sizes)
+    if total_size != 1 and isinstance(sizes, float):
+        raise ValueError("If sizes are specified as floats, they should sum up to 1, "
+                         f"got sum({sizes}) = {total_size}.")
+    elif all(isinstance(s, int) for s in sizes) and total_size != total:
+        raise ValueError("If sizes are specified as ints, they should sum up to number of cases, "
+                         f"got sum({sizes}) = {total_size} and {total} cases.")
+
     sizes = [round(total * x) if isinstance(x, float) else x for x in sizes]
-    negative = [x for x in sizes if x < 0]
-    pos = sum(x for x in sizes if x >= 0)
-    if len(negative) > 1:
-        # TODO
-        raise ValueError
-    if pos > total:
-        raise ValueError
-
-    if len(negative) == 1:
-        sizes = [x if x >= 0 else total - pos for x in sizes]
-
-    final = sum(sizes)
-    if final != total:
-        raise ValueError
 
     start = 0
-    for size in sizes:
+    for size in sizes[:-1]:
         yield ids[start:start + size]
         start += size
+    yield ids[start:]
 
 
 def jsonify(x):
