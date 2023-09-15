@@ -12,6 +12,7 @@ from torch.utils.data import Dataset, Subset
 from ..utils import collect
 from .interface import Layout, Node
 
+
 try:
     import connectome
 except ImportError:
