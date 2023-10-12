@@ -2,6 +2,5 @@ pytest
 pytest-cov
 pytest-subprocess
 pytest-timeout
-torchvision
 scikit-learn
 pandas
