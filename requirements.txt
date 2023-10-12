@@ -5,6 +5,7 @@ pydantic<2.0.0
 click
 torch
 toolz
+rich
 numpy
 more_itertools
 pyyaml
