@@ -14,7 +14,10 @@ Correct config should contain the following objects:
 | `test_data`    | :x:                | Loader of test data.                 |
 | `predict_data` | :x:                | Loader of test data.                 |
 | `datamodule`   | :x:                | LightningDataModule instance, replaces `train_data`, `val_data` and `test_data` if specified. |
- 
+
+After executing `thunder run` (see [Executing a config](./#executing-a-config)), thunder will extract 
+necessary fields. If some optional field (e.g. `val_data`) is not provided, features 
+dependent on it will not be used (e.g. no validation if `val_data` is not provided).
 
 ## Executing a config
 Thunder has its own **Command Line Interface**, 
