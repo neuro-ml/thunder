@@ -13,6 +13,7 @@ from typing_extensions import Annotated
 
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
+from ..torch.utils import last_checkpoint
 from ..utils import chdir
 from .app import app
 from .backend import BackendCommand
@@ -85,10 +86,13 @@ def start(
         if "datamodule" in config:
             trainer.fit(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
             trainer.test(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
+            trainer.predict(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
         else:
             trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path=ckpt_path)
-            if 'test_data' in config:
+            if "test_data" in config:
                 trainer.test(module, config.test_data, ckpt_path=last_checkpoint("."))
+            if "predict_data" in config:
+                trainer.predict(module, config.predict_data, ckpt_path=last_checkpoint("."))
 
 
 @app.command()
@@ -188,10 +192,3 @@ def get_nodes(experiment: Path, names: Optional[Sequence[str]]):
         return
 
     return [nodes[x] for x in names]
-
-
-def last_checkpoint(root: Union[Path, str]) -> Union[Path, str]:
-    checkpoints = list(Path(root).glob("**/last.ckpt"))
-    if not checkpoints:
-        return "last"
-    return max(checkpoints, key=lambda t: os.stat(t).st_mtime)

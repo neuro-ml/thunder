@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from typing import Any, Union
 
 import numpy as np
@@ -87,3 +89,21 @@ def maybe_from_np(*x: Any, device: Union[torch.device, str] = "cpu") -> Any:
             return x.to(device)
         return torch.from_numpy(x).to(device)
     return squeeze_first(apply_to_collection(x, (np.ndarray, np.generic, torch.Tensor), to_tensor))
+
+
+def last_checkpoint(root: Union[Path, str]) -> Union[Path, str]:
+    """
+    Load most fresh last.ckpt file based on time.
+    Parameters
+    ----------
+    root: Union[Path, str]
+        Path to folder, where last.ckpt supposed to be.
+    Returns
+    -------
+    checkpoint_path: Union[Path, str]
+        If last.ckpt exists - returns Path to it. Otherwise, returns 'last'.
+    """
+    checkpoints = list(Path(root).glob("**/last.ckpt"))
+    if not checkpoints:
+        return "last"
+    return max(checkpoints, key=lambda t: os.stat(t).st_mtime)
