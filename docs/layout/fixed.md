@@ -1,5 +1,8 @@
 # Fixed Splits
 
+:warning:
+> This feature is currently not stable, changes may be applied in the future.
+
 Fixed splits allow to create layouts from predefined splits of data.
 
 ::: thunder.layout.fixed.FixedSplit
@@ -16,7 +19,7 @@ Fixed splits allow to create layouts from predefined splits of data.
 ::: thunder.layout.fixed.FixedSingleSplit
     handler: python
     options:
-      members: 
+      members:
         - build
         - load
         - set

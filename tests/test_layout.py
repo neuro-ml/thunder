@@ -75,7 +75,7 @@ def test_single_split(temp_dir):
 
 
 def test_fixed_split(temp_dir):
-    layout = FixedSplit([[[1, 2, 3], [4, 5], [6, 7]]], names=["train", "val", "test"])
+    layout = FixedSplit([[[1, 2, 3], [4, 5], [6, 7]]], "train", "val", "test")
     nodes = list(layout.build(temp_dir, Config()))
     assert len(nodes) == 1
     _, p, kw = layout.load(temp_dir, Node(name='0'))
@@ -85,7 +85,7 @@ def test_fixed_split(temp_dir):
     layout.set(**kw)
 
 
-@pytest.mark.parametrize("layout", [FixedSingleSplit([[1], [2], [3]], ["train", "val", "test"]),
+@pytest.mark.parametrize("layout", [FixedSingleSplit([[1], [2], [3]], "train", "val", "test"),
                                     FixedSingleSplit({"train": [1], "val": [2], "test": [3]})])
 def test_fixed_single_split(layout, temp_dir):
     nodes = list(layout.build(temp_dir, Config()))

@@ -6,18 +6,26 @@ from .split import SingleSplit, Split
 
 
 class FixedSplit(Split):
-    def __init__(self, splits: Sequence,
-                 names: Optional[Sequence[str]] = None):
+    def __init__(self, splits: Sequence, *names: str):
         """
         Creates experiment layout from given split.
         Parameters
         ----------
         splits: Sequence
             Split of data.
-        names: Optional[Sequence[str]]
+        *names: str
             Names of folds, e.g. 'train', 'val', test'.
+        Examples
+        ----------
+        ```python
+        # 3 folds of train-val splits.
+        split: dict = [[[...], [...]],
+                        [[...], [...]],
+                        [[...], [...]]]
+        layout = FixedSplit(split, "train", "val")
+        ```
         """
-        if names is not None:
+        if names:
             if len(set(names)) != len(names):
                 raise ValueError(f"Names of splits are not unique: {names}")
             if len(splits[0]) != len(names):
@@ -30,16 +38,25 @@ class FixedSplit(Split):
 
 
 class FixedSingleSplit(SingleSplit):
-    def __init__(self, split: Union[Sequence, Dict[str, Sequence]],
-                 names: Optional[Sequence[str]] = None):
+    def __init__(self, split: Union[Sequence, Dict[str, Sequence]], *names: str):
         """
         Creates single fold experiment from given split.
         Parameters
         ----------
         split: Union[Sequence, Dict[str, Sequence]]
             split of data
-        Names of folds, e.g. 'train', 'val', test'. If data is of type `dict`,
-        then it is not required.
+        *names: str
+            Names of folds, e.g. 'train', 'val', test'. If data is of type `dict`,
+            then it is not required.
+        Examples
+        ----------
+        ```python
+        split: dict = {"train": [...], "val": [...]}
+        layout = FixedSingleSplit(split)
+        # or
+        split: list = [[...], [...]]
+        layout = FixedSingeSplit(split, "train", "val")
+        ```
         """
         if isinstance(split, dict):
             names = split.keys()  # from python3.7 order is guaranteed.
