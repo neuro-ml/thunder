@@ -1473,7 +1473,7 @@ However, during initialization they do not require optimizer to be passed.</p>
 We have just created a policy, but to make it work, it still needs an optimizers.<br />
 Let's see how it works after being assembled.<br />
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">optimizer</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">scheduler</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span> <span class="c1"># bounds optimizer to scheduler</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">scheduler</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span> <span class="c1"># binds optimizer to scheduler</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># or </span>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># scheduler = scheduler(optimizer)</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># You can also retrieve optimizer:</span>

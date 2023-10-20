@@ -862,6 +862,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#thunder-layouts" class="md-nav__link">
     Thunder Layouts
   </a>
@@ -1124,6 +1131,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#thunder-layouts" class="md-nav__link">
     Thunder Layouts
   </a>
@@ -1159,6 +1173,17 @@
 <p>Layout instances are responsible for splitting your datasets and managing
 which data fold is used for each experiment.
 They also check reproducibility of your data splits.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">#</a></h2>
+<p>Layout is a cornerstone of every built experiment. Via layout one can define structure of 
+their data splits.  </p>
+<p>After building an experiment one may want to extract data of created splits. 
+Heretofore it was done by manually loading the ids. Thunder's Layouts provides interface
+for extracting them by simply loading experiment config. 
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span> <span class="nn">lazycon</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">cfg</span> <span class="o">=</span> <span class="n">lazycon</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/path/to/experiment.config&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">cfg</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">fold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">train_ids</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">train</span> <span class="c1"># cfg.layout.SPLIT_NAME </span>
+</code></pre></div></p>
 <h2 id="thunder-layouts">Thunder Layouts<a class="headerlink" href="#thunder-layouts" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -1175,6 +1200,14 @@ They also check reproducibility of your data splits.</p>
 <tr>
 <td><a href="./splits/#thunder.layout.split.SingleSplit">SingleSplit</a></td>
 <td>Layout with several sets (e.g. train + val + test)</td>
+</tr>
+<tr>
+<td><a href="./fixed/#thunder.layout.fixed.FixedSplit">FixedSplit</a></td>
+<td>Creates layout from predefined K-fold   split</td>
+</tr>
+<tr>
+<td><a href="./fixed/#thunder.layout.fixed.FixedSingleSplit">FixedSingleSplit</a></td>
+<td>Creates single fold layout from predefined data split.</td>
 </tr>
 </tbody>
 </table>
