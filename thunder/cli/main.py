@@ -1,8 +1,7 @@
-import os
 import shutil
 from io import StringIO
 from pathlib import Path
-from typing import List, Optional, Sequence, Union
+from typing import List, Optional, Sequence
 
 import yaml
 from deli import load, save
