@@ -22,3 +22,6 @@ dependent on it will not be used (e.g. no validation if `val_data` is not provid
 ## Executing a config
 Thunder has its own **Command Line Interface**, 
 about which you can read [here](../cli).
+
+## Logging
+All primitive values (e.g. int, float, tuples) are logged automatically via config parsing.
