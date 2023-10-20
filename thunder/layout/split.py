@@ -41,7 +41,15 @@ class Split(Layout):
         names: Optional[Sequence[str]]
             Names of folds, e.g. 'train', 'val', test'
         kwargs: Any
-        kwargs for split.
+            kwargs for split.
+        Examples
+        ----------
+        ```python
+        from sklearn.model_selection import KFold
+
+        ids = [0, 1, ...]
+        layout = Split(KFold(3), ids, names=["train", "test"])
+        ```
         """
         if not callable(split):
             if not hasattr(split, 'split'):
@@ -117,6 +125,13 @@ class SingleSplit(Layout):
             Whether to shuffle entries.
         random_state : Union[np.random.RandomState, int, None]
         sizes: Union[int, float]
+            Size of each split.
+        Examples
+        ----------
+        ```python
+        ids = [...]
+        layout = SingleSplit(ids, train=0.7, val=0.1, test=0.2)
+        ```
         """
         if not isinstance(random_state, np.random.RandomState):
             random_state = np.random.RandomState(random_state)

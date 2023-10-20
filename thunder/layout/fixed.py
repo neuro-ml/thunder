@@ -19,7 +19,7 @@ class FixedSplit(Split):
         ----------
         ```python
         # 3 folds of train-val splits.
-        split: dict = [[[...], [...]],
+        split: list = [[[...], [...]],
                         [[...], [...]],
                         [[...], [...]]]
         layout = FixedSplit(split, "train", "val")
