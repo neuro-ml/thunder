@@ -67,3 +67,4 @@ class FixedSingleSplit(SingleSplit):
                              f"{len(split)} and {len(names)}")
 
         self.split = dict(zip_equal(names, split))
+        self.entries = sorted(collapse(split))

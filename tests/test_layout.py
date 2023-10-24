@@ -84,6 +84,8 @@ def test_fixed_split(temp_dir):
     assert set(kw) == {'fold', 'split'}
     layout.set(**kw)
 
+    _check_attributes(layout.names, layout)
+
 
 @pytest.mark.parametrize("layout", [FixedSingleSplit([[1], [2], [3]], "train", "val", "test"),
                                     FixedSingleSplit({"train": [1], "val": [2], "test": [3]})])
@@ -95,3 +97,10 @@ def test_fixed_single_split(layout, temp_dir):
     assert set(kw) == {'split'}
     assert layout.split == kw['split']
     layout.set(**kw)
+
+    _check_attributes(layout.split.keys(), layout)
+
+
+def _check_attributes(keys, layout):
+    for k in keys:
+        assert getattr(layout, k)

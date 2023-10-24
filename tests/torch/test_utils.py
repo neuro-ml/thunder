@@ -1,3 +1,4 @@
+import time
 from contextlib import nullcontext as does_not_raise
 from pathlib import Path
 
@@ -6,10 +7,9 @@ import pytest
 import torch
 from lightning import LightningModule
 from more_itertools import zip_equal
-import time
 
 from thunder import ThunderModule
-from thunder.torch.utils import get_device, maybe_from_np, to_np, last_checkpoint
+from thunder.torch.utils import get_device, last_checkpoint, maybe_from_np, to_np
 
 
 @pytest.mark.parametrize(
@@ -81,7 +81,7 @@ def test_get_device(x, expected):
 def test_last_checkpoint(temp_dir):
     def _create_file(fp: Path):
         fp.parent.mkdir(exist_ok=True, parents=True)
-        with open(fp, "w") as f:
+        with open(fp, "w"):
             pass
 
     _create_file(temp_dir / "two_checkpoints" / "first" / "last.ckpt")
