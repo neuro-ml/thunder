@@ -1,4 +1,4 @@
-site_name: 'A small experiments runner for Pytorch Lightning'
+site_name: 'Thunder'
 site_url: https://neuro-ml.github.io/thunder
 repo_url: https://github.com/neuro-ml/thunder
 
@@ -44,18 +44,32 @@ theme:
 markdown_extensions:
   - admonition
   - tables
+  - extra
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.details
-  - pymdownx.superfences
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - toc:
       toc_depth: 4
       permalink: "#"
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra_css:
+  - style/css/termynal.css
+  - style/css/custom.css
+
+extra_javascript:
+  - https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js
+  - style/js/termynal.js
+  - style/js/custom.js
 
 extra:
   version:

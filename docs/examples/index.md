@@ -1,4 +1,4 @@
-# Examples
+# Overview
 Here are some examples of Thunder experiments.
 
 | Name                                          | Description                                              |

@@ -1,4 +1,6 @@
+import time
 from contextlib import nullcontext as does_not_raise
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -7,7 +9,7 @@ from lightning import LightningModule
 from more_itertools import zip_equal
 
 from thunder import ThunderModule
-from thunder.torch.utils import get_device, maybe_from_np, to_np
+from thunder.torch.utils import get_device, last_checkpoint, maybe_from_np, to_np
 
 
 @pytest.mark.parametrize(
@@ -74,3 +76,22 @@ def test_maybe_from_np(value, target):
 def test_get_device(x, expected):
     with expected:
         assert get_device(x) == torch.device("cpu")
+
+
+def test_last_checkpoint(temp_dir):
+    def _create_file(fp: Path):
+        fp.parent.mkdir(exist_ok=True, parents=True)
+        with open(fp, "w"):
+            pass
+
+    _create_file(temp_dir / "two_checkpoints" / "first" / "last.ckpt")
+    time.sleep(0.1)
+    _create_file(temp_dir / "two_checkpoints" / "second" / "last.ckpt")
+
+    assert last_checkpoint(temp_dir / "two_checkpoints") == temp_dir / "two_checkpoints" / "second" / "last.ckpt"
+
+    _create_file(temp_dir / "zero_checkpoints" / "first" / "not_ckpt")
+    time.sleep(0.1)
+    _create_file(temp_dir / "zero_checkpoints" / "second" / "not_ckpt")
+
+    assert last_checkpoint(temp_dir / "zero_checkpoints") == "last"

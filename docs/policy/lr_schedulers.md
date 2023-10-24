@@ -14,7 +14,7 @@ We have just created a policy, but to make it work, it still needs an optimizers
 Let's see how it works after being assembled.  
 ```python
 optimizer = Adam(...)
-scheduler(optimizer) # bounds optimizer to scheduler
+scheduler(optimizer) # binds optimizer to scheduler
 # or 
 # scheduler = scheduler(optimizer)
 # You can also retrieve optimizer:

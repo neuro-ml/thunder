@@ -1,4 +1,4 @@
-# Callbacks
+# Overview
 
 Lightning Callbacks allow you to modify your training pipelines.  
 For extra information see [this](https://lightning.ai/docs/pytorch/stable/extensions/callbacks.html).

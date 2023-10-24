@@ -117,9 +117,10 @@ class MetricLogger(Callback):
             for k, v in loss.items():
                 group[k].append(v)
 
-        names = set(map(len, group.values()))
-        if len(names) != 1:
-            raise ValueError('Loss names are inconsistent')
+        n_entries = set(map(len, group.values()))
+        if len(n_entries) != 1:
+            raise ValueError("Losses are inconsistent, number of entries for each loss: "
+                             f"{valmap(len, group)}")
 
         for k, vs in group.items():
             pl_module.log(f'train/{k}', np.mean(vs))

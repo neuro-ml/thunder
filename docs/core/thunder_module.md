@@ -119,7 +119,7 @@ During inference step, ThunderModule uses Predictors in order to preprocess data
 make inverse transforms after passing data through the model. Default predictor
 is just an identity function.
 
-For more on predictors see [Thunder Predictors Docs]().
+For more on predictors see [Thunder Predictors Docs](../inference/index.md).
 
 ## Batch Transfer
 ThunderModule transfers training batches to device by default. However, during 

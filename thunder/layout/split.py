@@ -41,7 +41,15 @@ class Split(Layout):
         names: Optional[Sequence[str]]
             Names of folds, e.g. 'train', 'val', test'
         kwargs: Any
-        kwargs for split.
+            kwargs for split.
+        Examples
+        ----------
+        ```python
+        from sklearn.model_selection import KFold
+
+        ids = [0, 1, ...]
+        layout = Split(KFold(3), ids, names=["train", "test"])
+        ```
         """
         if not callable(split):
             if not hasattr(split, 'split'):
@@ -117,6 +125,13 @@ class SingleSplit(Layout):
             Whether to shuffle entries.
         random_state : Union[np.random.RandomState, int, None]
         sizes: Union[int, float]
+            Size of each split.
+        Examples
+        ----------
+        ```python
+        ids = [...]
+        layout = SingleSplit(ids, train=0.7, val=0.1, test=0.2)
+        ```
         """
         if not isinstance(random_state, np.random.RandomState):
             random_state = np.random.RandomState(random_state)
@@ -181,26 +196,25 @@ def multi_split(ids: Sequence, sizes: Sequence[int, float],
         ids = [ids[i] for i in random_state.permutation(len(ids))]
 
     total = len(ids)
+
+    if not all(s > 0 for s in sizes):
+        raise ValueError(f"All sizes must be non-negative ints and floats, got {sizes}.")
+
+    total_size = sum(sizes)
+    if total_size != 1 and isinstance(sizes, float):
+        raise ValueError("If sizes are specified as floats, they should sum up to 1, "
+                         f"got sum({sizes}) = {total_size}.")
+    elif all(isinstance(s, int) for s in sizes) and total_size != total:
+        raise ValueError("If sizes are specified as ints, they should sum up to number of cases, "
+                         f"got sum({sizes}) = {total_size} and {total} cases.")
+
     sizes = [round(total * x) if isinstance(x, float) else x for x in sizes]
-    negative = [x for x in sizes if x < 0]
-    pos = sum(x for x in sizes if x >= 0)
-    if len(negative) > 1:
-        # TODO
-        raise ValueError
-    if pos > total:
-        raise ValueError
-
-    if len(negative) == 1:
-        sizes = [x if x >= 0 else total - pos for x in sizes]
-
-    final = sum(sizes)
-    if final != total:
-        raise ValueError
 
     start = 0
-    for size in sizes:
+    for size in sizes[:-1]:
         yield ids[start:start + size]
         start += size
+    yield ids[start:]
 
 
 def jsonify(x):

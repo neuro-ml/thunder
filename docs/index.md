@@ -1,21 +1,23 @@
-> You saw the lightning. Now it's time to hear the thunder
-# Thunder
-The Deep Learning framework based on Lightning.
+> You saw the lightning. Now it's time to hear the thunder 🌩️
 
-## Installation
-You can install from pypi  
+# Thunder
+
+🌩️ The Deep Learning framework based on [Lightning](https://lightning.ai/)
+
+## Install
+
 ```bash
 pip install thunder
 ```
-or directly from GitHub  
-```bash
-git clone https://github.com/neuro-ml/thunder.git
-cd thunder && pip install -e .
-```
+
+:warning:  
+> Currently thunder is not published on pypi. Install it via git clone.  
 
 ## Start experimenting
+Many frameworks provide you with interfaces for your models and training pipelines, but we 
+have yet to see any tools for creating whole experiment.
 
-It's as simple as 1, 2, 3:
+With :thunder: it's as simple as 1, 2, 3:
 
 1. Create a config (e.g. `base.config`):
     ```python
@@ -30,10 +32,9 @@ It's as simple as 1, 2, 3:
     ```
 
 2. Build the experiment:
-    ```shell
-    thunder build base.config /path/to/some/folder
-    ```
-
+   ```shell
+   thunder build base.config /path/to/some/folder
+   ```
 3. Run it
     ```shell
     thunder run /path/to/some/folder
@@ -43,6 +44,15 @@ Also, 2 and 3 can be combined into a single command:
 ```shell
 thunder build-run base.config /path/to/some/folder
 ```
+
+<div class="termy">
+
+```console
+$ thunder build base.config /path/to/some/folder
+```
+
+</div>
+
 
 ## Core Features
 - ### [ThunderModule](./core/thunder_module)
