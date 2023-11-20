@@ -190,7 +190,7 @@ class MetricLogger(Callback):
 
         for dataloader_idx, all_predictions in self._all_predictions.items():
             loader_postfix = f"/{dataloader_idx}" if len(self._all_predictions) > 1 else ""
-            predictions, targets = zip(*all_predictions)
+            targets, predictions = zip(*all_predictions)
             for preprocess, metrics_names in self.group_preprocess.items():
                 preprocessed = preprocess(targets, predictions)
                 for name in metrics_names:
