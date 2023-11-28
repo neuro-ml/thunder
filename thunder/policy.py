@@ -163,7 +163,7 @@ class Schedule(MappingPolicy):
         return juxt(self.current_mapping)(self.last_epoch)
 
     def state_dict(self) -> Dict[str, Any]:
-        return super().state_dict("mapping")
+        return super().state_dict("mapping", "current_mapping")
 
     def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
         super().load_state_dict(state_dict)
