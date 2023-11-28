@@ -48,7 +48,16 @@ If you use any loggers (e.g. `Tensorboard` or `WandB`), `accuracy` will appear i
 `test/accuracy` - test metrics.
 
 You can also use preprocessing functions as keys of the dictionary. It is 
-covered in **Preprocessing** part in **Single Metrics** paragraph.
+covered in **Preprocessing** part in **Single Metrics** paragraph. Here is simple example
+```python
+from sklearn.metrics import accuracy_score, recall_score
+# y is binary label
+# x is e.g. a binary tensor and we want to know if there is any true value in it.
+threshold = lambda y, x: (y, x.any())
+
+group_metrics = {threshold: [accuracy_score, recall_score]}
+```
+Despite group metrics being calculated on collections of entries, preprocessing is applied individually.
 
 ### Single metrics
 Single metrics are computed on each object separately and only then aggregated.
@@ -113,13 +122,16 @@ from sklearn.metrics import accuracy_score, recall_score
 
 threshold = lambda y, x: (y > 0.5, x)
 
-single_metrics = {threshold: [accuracy_score, recall_score()]} 
+single_metrics = {threshold: [accuracy_score, recall_score]} 
 # or
 single_metrics = {threshold: {"acc": accuracy_score, "rec": recall_score}}
 # or
 single_metrics = {threshold: recall_score}
 ...
 ```
+In the example above, `accuracy_score` and `recall_score` are computed on each case separately 
+(e.g. like in semantic segmentation task). 
+Preprocessing functions are applied on each entry separately in both `single_megtrics` and `group_metrics`.
 #### Individual Metrics
 While computing `single_metrics`, one may appear in need of knowledge of metrics on each case.
 For this particular problem, the callback provides its users with `log_individual_metrics`

@@ -196,7 +196,9 @@ class MetricMonitor(Callback):
             for preprocess, metrics_names in self.group_preprocess.items():
                 preprocessed = _recombine_batch(all_predictions[preprocess])
                 for name in metrics_names:
-                    group_metric_values[f"{name}{loader_postfix}"] = self.group_metrics[name](*preprocessed)
+                    group_metric_values[f"{name}{loader_postfix}"] = self.group_metrics[name](
+                        *map(np.asarray, preprocessed)
+                    )
 
         single_metric_values = {}
         for fn_name, fn in self.aggregate_fn.items():

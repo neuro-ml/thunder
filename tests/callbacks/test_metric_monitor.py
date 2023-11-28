@@ -10,6 +10,7 @@ import torch
 from lightning import Trainer
 from lightning.pytorch.demos.boring_classes import RandomDataset
 from lightning.pytorch.loggers import CSVLogger
+from lightning.pytorch.utilities.types import EVAL_DATALOADERS, TRAIN_DATALOADERS
 from more_itertools import collapse
 from sklearn.metrics import accuracy_score, recall_score
 from torch import nn
@@ -142,6 +143,48 @@ def test_group_metrics_with_preprocessing(tmpdir):
     y = np.asarray(list(collapse([[i % 2, i % 3] for i in range(4)])))
     acc = accuracy(x, y)
     assert all(np.allclose(acc, metrics["val/accuracy_score"].dropna().iloc[i]) for i in range(2))
+
+
+def test_group_preprocessing(tmpdir):
+    class Module(ThunderModule):
+        def __init__(self):
+            super().__init__(nn.Linear(2, 1), lambda: ())
+
+        def train_dataloader(self) -> TRAIN_DATALOADERS:
+            return DataLoader(RandomDataset(32, 64), batch_size=16)
+
+        def val_dataloader(self) -> EVAL_DATALOADERS:
+            return DataLoader(RandomDataset(32, 64), batch_size=3)
+
+        def training_step(self, batch, *args, **kwargs):
+            x = torch.mean(batch[0])
+            x.requires_grad = True
+            return x
+
+        def validation_step(self, batch, *args, **kwargs):
+            return batch, torch.randn(3) > 0.5
+
+        def configure_optimizers(self):
+            return torch.optim.Adam(self.architecture.parameters())
+
+    def check_preprocess(y, x):
+        assert y == 0 or y == 1
+        assert tuple(x.shape) == (32,)
+        return y, x.mean() > 0
+
+    metric_monitor = MetricMonitor(group_metrics={check_preprocess: accuracy_score})
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=2,
+        limit_train_batches=4,
+        limit_val_batches=4,
+        enable_checkpointing=False,
+        enable_progress_bar=False,
+        callbacks=[metric_monitor],
+        logger=CSVLogger(tmpdir),
+    )
+    model = Module()
+    trainer.fit(model)
 
 
 def test_metrics_collision(tmpdir):
