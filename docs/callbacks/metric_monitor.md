@@ -35,11 +35,12 @@ element of batch `X1`.
 ### Group metrics
 Group metrics are computed on the entire dataset.
 For example, you want to compute classification accuracy on MNIST.
+
 ```python
-from thunder.callbacks import MetricLogger
+from thunder.callbacks import MetricMonitor
 from sklearn.metrics import accuracy_score
 
-trainer = Trainer(callbacks=[MetricLogger(group_metrics={"accuracy": accuracy_score})])
+trainer = Trainer(callbacks=[MetricMonitor(group_metrics={"accuracy": accuracy_score})])
 ```
 
 If you use any loggers (e.g. `Tensorboard` or `WandB`), `accuracy` will appear in them as follows:  
@@ -53,26 +54,28 @@ covered in **Preprocessing** part in **Single Metrics** paragraph.
 Single metrics are computed on each object separately and only then aggregated.
 It is a common use case for tasks like segmentation or object detection.
 #### Simple use case
+
 ```python
-from thunder.callbacks import MetricLogger
+from thunder.callbacks import MetricMonitor
 from sklearn.metrics import accuracy_score
 
-trainer = Trainer(callbacks=[MetricLogger(single_metrics={"accuracy": accuracy_score})])
+trainer = Trainer(callbacks=[MetricMonitor(single_metrics={"accuracy": accuracy_score})])
 ```
 MetricLogger will log mean values by default. But you can add custom aggregations as well.
 #### Custom aggregations
 Let see what can be done if we want to log `std` of metrics as well as mean values.
+
 ```python
 import numpy as np
-from thunder.callbacks import MetricLogger
+from thunder.callbacks import MetricMonitor
 from sklearn.metrics import accuracy_score
 
 aggregate_fn = np.std
 
-metric_logger = MetricLogger(single_metrics={"accuracy": accuracy_score},
-                             aggregate_fn=aggregate_fn) 
+metric_monitor = MetricMonitor(single_metrics={"accuracy": accuracy_score},
+                              aggregate_fn=aggregate_fn)
 
-trainer = Trainer(callbacks=[metric_logger])
+trainer = Trainer(callbacks=[metric_monitor])
 ```
 The mean values appear in loggers with no additional keys. 
 MetricCallback will try to infer the name of an aggregating function
@@ -134,7 +137,7 @@ By default aforementioned tables are saved to `default_root_dir` of lightning's 
 `set_name/dataloader_idx.csv` (e.g. `val/dataloader_0.csv`).  
 If loggers you use have method `log_table` (e.g. `WandbLogger`), 
 then this method will receive key and each table in the format of `pd.DataFrame`.  
-Code from `metric_logger.py`:
+Code from `metric_monitor.py`:
 ```python
 logger.log_table(f"{key}/dataloader_{dataloader_idx}", dataframe=dataframe)
 ```
@@ -151,7 +154,7 @@ If all batches consist of single object, then `"_{i}"` is removed.
 
 
 ## Reference
-::: thunder.callbacks.metric_logger.MetricLogger
+::: thunder.callbacks.metric_monitor.MetricLogger
     handler: python
     options:
       members:

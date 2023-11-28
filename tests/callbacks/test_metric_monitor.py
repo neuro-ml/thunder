@@ -11,12 +11,12 @@ from lightning import Trainer
 from lightning.pytorch.demos.boring_classes import RandomDataset
 from lightning.pytorch.loggers import CSVLogger
 from more_itertools import collapse
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, recall_score
 from torch import nn
 from torch.utils.data import DataLoader
 
 from thunder import ThunderModule
-from thunder.callbacks import MetricLogger
+from thunder.callbacks import MetricMonitor
 
 
 def ravel(metric):
@@ -28,6 +28,7 @@ def ravel(metric):
 
 
 accuracy = ravel(accuracy_score)
+recall = ravel(recall_score)
 
 
 class NoOptimModule(ThunderModule):
@@ -71,7 +72,7 @@ class NoOptimSegm(NoOptimModule):
 
 
 def test_single_metrics(tmpdir):
-    metric_logger = MetricLogger(single_metrics={"accuracy": accuracy})
+    metric_monitor = MetricMonitor(single_metrics={"accuracy": accuracy})
     trainer = Trainer(
         default_root_dir=tmpdir,
         max_epochs=2,
@@ -79,7 +80,7 @@ def test_single_metrics(tmpdir):
         limit_val_batches=4,
         enable_checkpointing=False,
         enable_progress_bar=False,
-        callbacks=[metric_logger],
+        callbacks=[metric_monitor],
         logger=CSVLogger(tmpdir),
     )
     model = NoOptimSegm(nn.Linear(2, 1), lambda x, y: x + y, -1)
@@ -96,7 +97,7 @@ def test_single_metrics(tmpdir):
 
 
 def test_group_metrics(tmpdir):
-    metric_logger = MetricLogger(group_metrics={"accuracy": accuracy})
+    metric_monitor = MetricMonitor(group_metrics={"accuracy": accuracy})
     trainer = Trainer(
         default_root_dir=tmpdir,
         max_epochs=2,
@@ -104,7 +105,7 @@ def test_group_metrics(tmpdir):
         limit_val_batches=4,
         enable_checkpointing=False,
         enable_progress_bar=False,
-        callbacks=[metric_logger],
+        callbacks=[metric_monitor],
         logger=CSVLogger(tmpdir),
     )
     model = NoOptimModule(nn.Linear(2, 1), lambda x, y: x + y, -1)
@@ -120,7 +121,7 @@ def test_group_metrics(tmpdir):
 
 
 def test_group_metrics_with_preprocessing(tmpdir):
-    metric_logger = MetricLogger(group_metrics={lambda y, x: (y > 0.5, x): accuracy_score})
+    metric_monitor = MetricMonitor(group_metrics={lambda y, x: (y > 0.5, x): accuracy_score})
     trainer = Trainer(
         default_root_dir=tmpdir,
         max_epochs=2,
@@ -128,7 +129,7 @@ def test_group_metrics_with_preprocessing(tmpdir):
         limit_val_batches=4,
         enable_checkpointing=False,
         enable_progress_bar=False,
-        callbacks=[metric_logger],
+        callbacks=[metric_monitor],
         logger=CSVLogger(tmpdir),
     )
     model = NoOptimModule(nn.Linear(2, 1), lambda x, y: x + y, -1)
@@ -144,15 +145,15 @@ def test_group_metrics_with_preprocessing(tmpdir):
 
 
 def test_metrics_collision(tmpdir):
-    metric_logger = MetricLogger(single_metrics={"accuracy": lambda y, x: y + x,
-                                                 "recall": lambda y, x: y + x},
-                                 group_metrics={"accuracy": lambda y, x: y + x,
-                                                "precision": lambda y, x: y + x})
+    metric_monitor = MetricMonitor(single_metrics={"accuracy": lambda y, x: y + x,
+                                                   "recall": lambda y, x: y + x},
+                                   group_metrics={"accuracy": lambda y, x: y + x,
+                                                  "precision": lambda y, x: y + x})
 
-    assert sorted(metric_logger.single_metrics.keys()) == sorted(["single/accuracy", "recall"])
-    assert sorted(metric_logger.group_metrics.keys()) == sorted(["group/accuracy", "precision"])
-    assert sorted(chain(*metric_logger.single_preprocess.values())) == sorted(["single/accuracy", "recall"])
-    assert sorted(chain(*metric_logger.group_preprocess.values())) == sorted(["group/accuracy", "precision"])
+    assert sorted(metric_monitor.single_metrics.keys()) == sorted(["single/accuracy", "recall"])
+    assert sorted(metric_monitor.group_metrics.keys()) == sorted(["group/accuracy", "precision"])
+    assert sorted(chain(*metric_monitor.single_preprocess.values())) == sorted(["single/accuracy", "recall"])
+    assert sorted(chain(*metric_monitor.group_preprocess.values())) == sorted(["group/accuracy", "precision"])
 
 
 @pytest.mark.parametrize(
@@ -172,10 +173,10 @@ def test_metrics_collision(tmpdir):
     ],
 )
 def test_aggregators(aggregate_fn, target, exception, tmpdir):
-    metric_logger = None
+    metric_monitor = None
     with exception:
-        metric_logger = MetricLogger(single_metrics={"accuracy": accuracy}, aggregate_fn=aggregate_fn)
-    if metric_logger is None:
+        metric_monitor = MetricMonitor(single_metrics={"accuracy": accuracy}, aggregate_fn=aggregate_fn)
+    if metric_monitor is None:
         return
 
     trainer = Trainer(
@@ -185,7 +186,7 @@ def test_aggregators(aggregate_fn, target, exception, tmpdir):
         limit_val_batches=4,
         enable_checkpointing=False,
         enable_progress_bar=False,
-        callbacks=[metric_logger],
+        callbacks=[metric_monitor],
         logger=CSVLogger(tmpdir),
     )
     model = NoOptimSegm(nn.Linear(2, 1), lambda x, y: x + y, -1)
@@ -226,10 +227,10 @@ def accuracy2(*args, **kwargs):
     ],
 )
 def test_preprocessing(single_metrics, target, exception, tmpdir):
-    metric_logger = None
+    metric_monitor = None
     with exception:
-        metric_logger = MetricLogger(single_metrics=single_metrics)
-    if metric_logger is None:
+        metric_monitor = MetricMonitor(single_metrics=single_metrics)
+    if metric_monitor is None:
         return
 
     trainer = Trainer(
@@ -239,7 +240,7 @@ def test_preprocessing(single_metrics, target, exception, tmpdir):
         limit_val_batches=4,
         enable_checkpointing=False,
         enable_progress_bar=False,
-        callbacks=[metric_logger],
+        callbacks=[metric_monitor],
         logger=CSVLogger(tmpdir),
     )
     model = NoOptimSegm(nn.Linear(2, 1), lambda x, y: x + y, -1)
@@ -281,7 +282,7 @@ class MultiSegmCustomBS(MultiSegm):
 
 @pytest.mark.parametrize("batch_size", [1, 2, 16])
 def test_multioutput(batch_size, tmpdir):
-    metric_logger = MetricLogger(
+    metric_monitor = MetricMonitor(
         {
             lambda x, y: (
                 y[0] if isinstance(y, (tuple, list)) else y,
@@ -296,7 +297,7 @@ def test_multioutput(batch_size, tmpdir):
         limit_val_batches=4,
         enable_checkpointing=False,
         enable_progress_bar=False,
-        callbacks=[metric_logger],
+        callbacks=[metric_monitor],
         logger=CSVLogger(tmpdir),
     )
     model = MultiSegmCustomBS(batch_size, nn.Linear(2, 1), lambda x, y: x + y, -1)
@@ -339,7 +340,7 @@ class MultiLoaderModule(NoOptimModule):
 
 
 def test_multiple_loaders(tmpdir):
-    metric_logger = MetricLogger(single_metrics={"accuracy": accuracy})
+    metric_monitor = MetricMonitor(single_metrics={"accuracy": accuracy})
     trainer = Trainer(
         default_root_dir=tmpdir,
         max_epochs=2,
@@ -347,7 +348,7 @@ def test_multiple_loaders(tmpdir):
         limit_val_batches=4,
         enable_checkpointing=False,
         enable_progress_bar=False,
-        callbacks=[metric_logger],
+        callbacks=[metric_monitor],
         logger=CSVLogger(tmpdir),
     )
     model = MultiLoaderModule(nn.Linear(2, 1), lambda x, y: x + y, -1)
@@ -365,7 +366,7 @@ def test_multiple_loaders(tmpdir):
 
 
 def test_log_table(tmpdir):
-    metric_logger = MetricLogger(single_metrics={"accuracy": accuracy}, log_individual_metrics=True)
+    metric_monitor = MetricMonitor(single_metrics={"accuracy": accuracy}, log_individual_metrics=True)
     trainer = Trainer(
         default_root_dir=tmpdir,
         max_epochs=2,
@@ -373,7 +374,7 @@ def test_log_table(tmpdir):
         limit_val_batches=4,
         enable_checkpointing=False,
         enable_progress_bar=False,
-        callbacks=[metric_logger],
+        callbacks=[metric_monitor],
         logger=CSVLogger(tmpdir),
     )
     model = MultiLoaderModule(nn.Linear(2, 1), lambda x, y: x + y, -1)
