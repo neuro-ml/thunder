@@ -16,7 +16,7 @@ from ..torch.utils import to_np
 from ..utils import collect, squeeze_first
 
 
-class MetricLogger(Callback):
+class MetricMonitor(Callback):
     def __init__(
             self,
             single_metrics: Dict = None,
@@ -62,7 +62,7 @@ class MetricLogger(Callback):
         self.group_preprocess = group_preprocess
         self._train_losses = []
         self._single_metric_values = defaultdict(lambda: {name: {} for name in single_metrics})
-        self._all_predictions = defaultdict(list)
+        self._all_predictions = defaultdict(lambda: {prep: [] for prep in self.group_preprocess})
         self._default_aggregators = {"min": np.min, "max": np.max, "median": np.median, "std": np.std}
 
         self.aggregate_fn = {"": np.mean}
@@ -173,9 +173,12 @@ class MetricLogger(Callback):
         outputs = (ys, xs)
 
         if self.group_metrics:
-            self._all_predictions[dataloader_idx].extend(zip(*outputs))
+            for preprocess in self.group_preprocess.keys():
+                self._all_predictions[dataloader_idx][preprocess].extend(
+                    preprocess(*args) for args in zip_equal(*outputs)
+                )
 
-        for i, (target, pred) in enumerate(zip(*outputs)):
+        for i, (target, pred) in enumerate(zip_equal(*outputs)):
             object_idx = f"{batch_idx}_{i}"
             for preprocess, metrics_names in self.single_preprocess.items():
                 preprocessed = preprocess(target, pred)
@@ -190,11 +193,12 @@ class MetricLogger(Callback):
 
         for dataloader_idx, all_predictions in self._all_predictions.items():
             loader_postfix = f"/{dataloader_idx}" if len(self._all_predictions) > 1 else ""
-            predictions, targets = map(np.asarray, zip(*all_predictions))
             for preprocess, metrics_names in self.group_preprocess.items():
-                preprocessed = preprocess(targets, predictions)
+                preprocessed = _recombine_batch(all_predictions[preprocess])
                 for name in metrics_names:
-                    group_metric_values[f"{name}{loader_postfix}"] = self.group_metrics[name](*preprocessed)
+                    group_metric_values[f"{name}{loader_postfix}"] = self.group_metrics[name](
+                        *map(np.asarray, preprocessed)
+                    )
 
         single_metric_values = {}
         for fn_name, fn in self.aggregate_fn.items():
@@ -240,7 +244,7 @@ def _get_func_name(function: Callable) -> str:
             return function.__name__
         return function.__class__.__name__
 
-    raise ValueError(f"You must pass a callable object, got f{type(function)}")
+    raise ValueError(f"You must pass a callable object, got {type(function)}")
 
 
 def _identity(*args):

@@ -6,7 +6,7 @@ from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.loggers import WandbLogger
 from sklearn.metrics import accuracy_score
 from thunder import ThunderModule
-from thunder.callbacks import MetricLogger
+from thunder.callbacks import MetricMonitor
 from thunder.placeholders import ExpName, GroupName
 from torch import nn
 from torch.utils.data import DataLoader
@@ -14,7 +14,6 @@ from torchvision import transforms
 from torchvision.datasets import MNIST
 
 BATCH_SIZE = 256
-
 
 train_ds = MNIST(".", train=True, download=True, transform=transforms.ToTensor())
 val_ds = MNIST(".", train=False, download=True, transform=transforms.ToTensor())
@@ -29,7 +28,8 @@ module = ThunderModule(
 
 # Initialize a trainer
 trainer = Trainer(
-    callbacks=[ModelCheckpoint(save_last=True), MetricLogger(group_metrics={lambda y, x: (np.argmax(y), x): accuracy_score})],
+    callbacks=[ModelCheckpoint(save_last=True),
+               MetricMonitor(group_metrics={lambda y, x: (np.argmax(y), x): accuracy_score})],
     accelerator="auto",
     devices=1,
     max_epochs=100,
