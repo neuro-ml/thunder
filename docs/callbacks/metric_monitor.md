@@ -1,4 +1,4 @@
-# MetricLogger
+# MetricMonitor
 This callback takes on computation and aggregation of the specified metrics.  
 
 ## Usage
@@ -19,7 +19,7 @@ At the end of epoch they are averaged and sent to logger.
 Metrics are assumed to be received as tuple `(X, Y)`, where
 **X** - batch of predictions, **Y** - batch of targets. 
 Further process of computation depends on whether `Group` or `Single`
-metrics are used. Also, there is no difference for MetricLogger between 
+metrics are used. Also, there is no difference for MetricMonitor between 
 `(X, Y)` and `((X,), (Y,))`.  
 If your model has multiple outputs or requires multiple targets
 (e.g. neural network with 2 heads.), the output is expected to be
@@ -61,7 +61,7 @@ from sklearn.metrics import accuracy_score
 
 trainer = Trainer(callbacks=[MetricMonitor(single_metrics={"accuracy": accuracy_score})])
 ```
-MetricLogger will log mean values by default. But you can add custom aggregations as well.
+MetricMonitor will log mean values by default. But you can add custom aggregations as well.
 #### Custom aggregations
 Let see what can be done if we want to log `std` of metrics as well as mean values.
 
@@ -95,7 +95,7 @@ aggregate_fn = [np.std, np.median]
 aggregate_fn = [np.std, "median", "max", "min"]
 aggregate_fn = {"zero": lambda x: x[0]}
 ```
-MetricLogger can accept `str` or `List[str]` as `aggregate_fn`, 
+MetricMonitor can accept `str` or `List[str]` as `aggregate_fn`, 
 in this format it supports the following metrics:
 
 | Name     | Function    |  
@@ -132,7 +132,7 @@ flag. Being set to `True` it forces the callback to store table of metrics in th
 | ...          | ...        | ...         |
 | batch_idxn_m | some_value | some_value  |
 
-For each set (e.g. `val`, `test`) and each `dataloader_idx`, MetricLogger stores separate table.  
+For each set (e.g. `val`, `test`) and each `dataloader_idx`, MetricMonitor stores separate table.  
 By default aforementioned tables are saved to `default_root_dir` of lightning's Trainer, in the format of
 `set_name/dataloader_idx.csv` (e.g. `val/dataloader_0.csv`).  
 If loggers you use have method `log_table` (e.g. `WandbLogger`), 
@@ -154,7 +154,7 @@ If all batches consist of single object, then `"_{i}"` is removed.
 
 
 ## Reference
-::: thunder.callbacks.metric_monitor.MetricLogger
+::: thunder.callbacks.metric_monitor.MetricMonitor
     handler: python
     options:
       members:
