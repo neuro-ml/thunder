@@ -2,107 +2,107 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/utils/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/callbacks/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/callbacks/fail_on_interrupt/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://neuro-ml.github.io/thunder/latest/callbacks/metric_logger/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <loc>https://neuro-ml.github.io/thunder/latest/callbacks/metric_monitor/</loc>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/callbacks/seed_everything/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/callbacks/time_profiler/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/cli/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/configs/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/core/thunder_module/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/examples/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/examples/mnist/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/examples/totalsegm_lowres/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/inference/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/layout/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/layout/fixed/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/layout/splits/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/loggers/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/loggers/wandb/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/policy/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://neuro-ml.github.io/thunder/latest/policy/lr_schedulers/</loc>
-         <lastmod>2023-11-27</lastmod>
+         <lastmod>2023-11-28</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

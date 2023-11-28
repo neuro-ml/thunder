@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://neuro-ml.github.io/thunder/latest/callbacks/metric_logger/">
+        <link rel="canonical" href="https://neuro-ml.github.io/thunder/latest/callbacks/metric_monitor/">
       
       
         <link rel="prev" href="../fail_on_interrupt/">
@@ -22,7 +22,7 @@
     
     
       
-        <title>MetricLogger - Thunder</title>
+        <title>MetricMonitor - Thunder</title>
       
     
     
@@ -83,7 +83,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#metriclogger" class="md-skip">
+        <a href="#metricmonitor" class="md-skip">
           Skip to content
         </a>
       
@@ -123,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              MetricLogger
+              MetricMonitor
             
           </span>
         </div>
@@ -397,7 +397,7 @@
           
   
   <span class="md-ellipsis">
-    MetricLogger
+    MetricMonitor
   </span>
   
 
@@ -408,7 +408,7 @@
         
   
   <span class="md-ellipsis">
-    MetricLogger
+    MetricMonitor
   </span>
   
 
@@ -532,9 +532,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#thunder.callbacks.metric_logger.MetricLogger" class="md-nav__link">
+  <a href="#thunder.callbacks.metric_monitor.MetricMonitor" class="md-nav__link">
     <span class="md-ellipsis">
-      MetricLogger
+      MetricMonitor
     </span>
   </a>
   
@@ -1373,9 +1373,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#thunder.callbacks.metric_logger.MetricLogger" class="md-nav__link">
+  <a href="#thunder.callbacks.metric_monitor.MetricMonitor" class="md-nav__link">
     <span class="md-ellipsis">
-      MetricLogger
+      MetricMonitor
     </span>
   </a>
   
@@ -1399,7 +1399,7 @@
   
 
 
-<h1 id="metriclogger">MetricLogger<a class="headerlink" href="#metriclogger" title="Permanent link">#</a></h1>
+<h1 id="metricmonitor">MetricMonitor<a class="headerlink" href="#metricmonitor" title="Permanent link">#</a></h1>
 <p>This callback takes on computation and aggregation of the specified metrics.  </p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">#</a></h2>
 <h3 id="loss">Loss<a class="headerlink" href="#loss" title="Permanent link">#</a></h3>
@@ -1417,7 +1417,7 @@ loss(es). It casts them by the following rules:<br />
 <p>Metrics are assumed to be received as tuple <code>(X, Y)</code>, where
 <strong>X</strong> - batch of predictions, <strong>Y</strong> - batch of targets. 
 Further process of computation depends on whether <code>Group</code> or <code>Single</code>
-metrics are used. Also, there is no difference for MetricLogger between 
+metrics are used. Also, there is no difference for MetricMonitor between 
 <code>(X, Y)</code> and <code>((X,), (Y,))</code>.<br />
 If your model has multiple outputs or requires multiple targets
 (e.g. neural network with 2 heads.), the output is expected to be
@@ -1432,39 +1432,47 @@ element of batch <code>X1</code>.  </p>
 </blockquote>
 <h3 id="group-metrics">Group metrics<a class="headerlink" href="#group-metrics" title="Permanent link">#</a></h3>
 <p>Group metrics are computed on the entire dataset.
-For example, you want to compute classification accuracy on MNIST.
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">thunder.callbacks</span> <span class="kn">import</span> <span class="n">MetricLogger</span>
+For example, you want to compute classification accuracy on MNIST.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">thunder.callbacks</span> <span class="kn">import</span> <span class="n">MetricMonitor</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">MetricLogger</span><span class="p">(</span><span class="n">group_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">})])</span>
-</code></pre></div></p>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">MetricMonitor</span><span class="p">(</span><span class="n">group_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">})])</span>
+</code></pre></div>
 <p>If you use any loggers (e.g. <code>Tensorboard</code> or <code>WandB</code>), <code>accuracy</code> will appear in them as follows:<br />
 <code>val/accuracy</code> - validation metrics.<br />
 <code>test/accuracy</code> - test metrics.</p>
 <p>You can also use preprocessing functions as keys of the dictionary. It is 
-covered in <strong>Preprocessing</strong> part in <strong>Single Metrics</strong> paragraph.</p>
+covered in <strong>Preprocessing</strong> part in <strong>Single Metrics</strong> paragraph. Here is simple example
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">recall_score</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># y is binary label</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># x is e.g. a binary tensor and we want to know if there is any true value in it.</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">threshold</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">any</span><span class="p">())</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">group_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">threshold</span><span class="p">:</span> <span class="p">[</span><span class="n">accuracy_score</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">]}</span>
+</code></pre></div>
+Despite group metrics being calculated on collections of entries, preprocessing is applied individually.</p>
 <h3 id="single-metrics">Single metrics<a class="headerlink" href="#single-metrics" title="Permanent link">#</a></h3>
 <p>Single metrics are computed on each object separately and only then aggregated.
 It is a common use case for tasks like segmentation or object detection.</p>
 <h4 id="simple-use-case">Simple use case<a class="headerlink" href="#simple-use-case" title="Permanent link">#</a></h4>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">thunder.callbacks</span> <span class="kn">import</span> <span class="n">MetricLogger</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">MetricLogger</span><span class="p">(</span><span class="n">single_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">})])</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">thunder.callbacks</span> <span class="kn">import</span> <span class="n">MetricMonitor</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">MetricMonitor</span><span class="p">(</span><span class="n">single_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">})])</span>
 </code></pre></div>
-MetricLogger will log mean values by default. But you can add custom aggregations as well.</p>
+MetricMonitor will log mean values by default. But you can add custom aggregations as well.</p>
 <h4 id="custom-aggregations">Custom aggregations<a class="headerlink" href="#custom-aggregations" title="Permanent link">#</a></h4>
-<p>Let see what can be done if we want to log <code>std</code> of metrics as well as mean values.
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">thunder.callbacks</span> <span class="kn">import</span> <span class="n">MetricLogger</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">aggregate_fn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">metric_logger</span> <span class="o">=</span> <span class="n">MetricLogger</span><span class="p">(</span><span class="n">single_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">},</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>                             <span class="n">aggregate_fn</span><span class="o">=</span><span class="n">aggregate_fn</span><span class="p">)</span> 
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">metric_logger</span><span class="p">])</span>
+<p>Let see what can be done if we want to log <code>std</code> of metrics as well as mean values.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span> <span class="nn">thunder.callbacks</span> <span class="kn">import</span> <span class="n">MetricMonitor</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">aggregate_fn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">metric_monitor</span> <span class="o">=</span> <span class="n">MetricMonitor</span><span class="p">(</span><span class="n">single_metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">},</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>                              <span class="n">aggregate_fn</span><span class="o">=</span><span class="n">aggregate_fn</span><span class="p">)</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">metric_monitor</span><span class="p">])</span>
 </code></pre></div>
 The mean values appear in loggers with no additional keys. 
 MetricCallback will try to infer the name of an aggregating function
@@ -1474,13 +1482,13 @@ and use it as an additional key.</p>
 <code>test/accuracy</code> - test mean accuracy.<br />
 <code>test/std/accuracy</code> - test accuracy std.</p>
 <p><code>aggregate_fn</code> can also be specified as follows:</p>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">aggregate_fn</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">]</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">aggregate_fn</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">]</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">aggregate_fn</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;zero&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">aggregate_fn</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">]</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">aggregate_fn</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">]</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">aggregate_fn</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;zero&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
 </code></pre></div>
-MetricLogger can accept <code>str</code> or <code>List[str]</code> as <code>aggregate_fn</code>, 
+MetricMonitor can accept <code>str</code> or <code>List[str]</code> as <code>aggregate_fn</code>, 
 in this format it supports the following metrics:</p>
 <table>
 <thead>
@@ -1511,17 +1519,20 @@ in this format it supports the following metrics:</p>
 <h4 id="preprocessing">Preprocessing<a class="headerlink" href="#preprocessing" title="Permanent link">#</a></h4>
 <p>Sometimes metrics require some preprocessing. In this case, keys of <code>single_metrics</code> dict
 must be callable objects.
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">recall_score</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">threshold</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">single_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">threshold</span><span class="p">:</span> <span class="p">[</span><span class="n">accuracy_score</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">()]}</span> 
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># or</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">single_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">threshold</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;acc&quot;</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="s2">&quot;rec&quot;</span><span class="p">:</span> <span class="n">recall_score</span><span class="p">}}</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># or</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">single_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">threshold</span><span class="p">:</span> <span class="n">recall_score</span><span class="p">}</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="o">...</span>
-</code></pre></div></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">recall_score</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">threshold</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">single_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">threshold</span><span class="p">:</span> <span class="p">[</span><span class="n">accuracy_score</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">]}</span> 
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># or</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="n">single_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">threshold</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;acc&quot;</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="s2">&quot;rec&quot;</span><span class="p">:</span> <span class="n">recall_score</span><span class="p">}}</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="c1"># or</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="n">single_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">threshold</span><span class="p">:</span> <span class="n">recall_score</span><span class="p">}</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="o">...</span>
+</code></pre></div>
+In the example above, <code>accuracy_score</code> and <code>recall_score</code> are computed on each case separately 
+(e.g. like in semantic segmentation task). 
+Preprocessing functions are applied on each entry separately in both <code>single_megtrics</code> and <code>group_metrics</code>.</p>
 <h4 id="individual-metrics">Individual Metrics<a class="headerlink" href="#individual-metrics" title="Permanent link">#</a></h4>
 <p>While computing <code>single_metrics</code>, one may appear in need of knowledge of metrics on each case.
 For this particular problem, the callback provides its users with <code>log_individual_metrics</code>
@@ -1557,20 +1568,20 @@ flag. Being set to <code>True</code> it forces the callback to store table of me
 </tr>
 </tbody>
 </table>
-<p>For each set (e.g. <code>val</code>, <code>test</code>) and each <code>dataloader_idx</code>, MetricLogger stores separate table.<br />
+<p>For each set (e.g. <code>val</code>, <code>test</code>) and each <code>dataloader_idx</code>, MetricMonitor stores separate table.<br />
 By default aforementioned tables are saved to <code>default_root_dir</code> of lightning's Trainer, in the format of
 <code>set_name/dataloader_idx.csv</code> (e.g. <code>val/dataloader_0.csv</code>).<br />
 If loggers you use have method <code>log_table</code> (e.g. <code>WandbLogger</code>), 
 then this method will receive key and each table in the format of <code>pd.DataFrame</code>.<br />
-Code from <code>metric_logger.py</code>:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">logger</span><span class="o">.</span><span class="n">log_table</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">/dataloader_</span><span class="si">{</span><span class="n">dataloader_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">dataframe</span><span class="o">=</span><span class="n">dataframe</span><span class="p">)</span>
+Code from <code>metric_monitor.py</code>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">logger</span><span class="o">.</span><span class="n">log_table</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">/dataloader_</span><span class="si">{</span><span class="n">dataloader_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">dataframe</span><span class="o">=</span><span class="n">dataframe</span><span class="p">)</span>
 </code></pre></div>
 where key is the current state of trainer (<code>val</code> or <code>test</code>).  </p>
 <p>Since lightning allows to use <code>batch_idx</code>, these indexes are used for metrics dataframes.
 But there can be more than one object in batch. To overcome this issue we iterate over batch
 and mark each object with the next index: 
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="nb">object</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="n">object_idx</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">batch_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="nb">object</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">object_idx</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">batch_idx</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div>
 If all batches consist of single object, then <code>"_{i}"</code> is removed.</p>
 <h2 id="reference">Reference<a class="headerlink" href="#reference" title="Permanent link">#</a></h2>
@@ -1581,11 +1592,11 @@ If all batches consist of single object, then <code>"_{i}"</code> is removed.</p
 
 
 
-<h2 id="thunder.callbacks.metric_logger.MetricLogger" class="doc doc-heading">
-          <code>thunder.callbacks.metric_logger.MetricLogger</code>
+<h2 id="thunder.callbacks.metric_monitor.MetricMonitor" class="doc doc-heading">
+          <code>thunder.callbacks.metric_monitor.MetricMonitor</code>
 
 
-<a href="#thunder.callbacks.metric_logger.MetricLogger" class="headerlink" title="Permanent link">#</a></h2>
+<a href="#thunder.callbacks.metric_monitor.MetricMonitor" class="headerlink" title="Permanent link">#</a></h2>
 
 
   <div class="doc doc-contents first">
