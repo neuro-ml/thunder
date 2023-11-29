@@ -7,7 +7,7 @@
 
 # Thunder 🌩️ 
 
-The Deep Learning framework based on [Lightning](https://lightning.ai/).
+The Deep Learning framework based on [Lightning](https://github.com/Lightning-AI/lightning).
 
 ## Install
 
