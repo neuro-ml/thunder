@@ -118,32 +118,38 @@ def test_switch(mapping, lr_init, targets, optim, tmpdir):
     check_scheduler_saving(new_scheduler, scheduler, optim, tmpdir)
 
 
-@pytest.mark.parametrize("lr_scheduler, mapping",
-                         [
-                             (Switch({0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, lr_init=1), {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}),
-                             (Multiply({0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, lr_init=1), {0: 1, 1: 1, 2: 10, 3: 40, 4: 200}),
-                             (Schedule(lambda x: x + 1, lr_init=1), {i: i + 1 for i in range(5)}),
-                         ],
-                         )
+@pytest.mark.parametrize(
+    "lr_scheduler, mapping",
+    [
+        (Switch({0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, lr_init=1), {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}),
+        (Multiply({0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, lr_init=1), {0: 1, 1: 1, 2: 10, 3: 40, 4: 200}),
+        (Schedule(lambda x: x + 1, lr_init=1), {i: i + 1 for i in range(5)}),
+    ],
+)
 def test_load_from_checkpoint(lr_scheduler, mapping, model, tmpdir):
+    """
+    Checks whether state of schedulers is restored properly after experiment fails.
+    """
     class Dataset(RandomDataset):
         def __getitem__(self, item):
             return super().__getitem__(item), torch.randn(1)[0]
 
     ERR_MSG = "Baby it's time to fail."
 
-    FAILED = [False]
+    FAILED = [False]  # Marks if training has failed.
 
     class Module(ThunderModule):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
 
         def training_step(self, batch, batch_idx):
+            """
+
+            """
             if FAILED[0]:
                 assert self.trainer.current_epoch >= 2
             out = super().training_step(batch, batch_idx)
             if self.trainer.current_epoch == 2 and not FAILED[0]:
-                self.failed = True
                 raise RuntimeError(ERR_MSG)
             if callable(mapping):
                 lr = mapping(self.trainer.current_epoch)
@@ -163,6 +169,7 @@ def test_load_from_checkpoint(lr_scheduler, mapping, model, tmpdir):
         logger=CSVLogger(tmpdir),
         enable_progress_bar=False,
     )
+
     with pytest.raises(RuntimeError, match=ERR_MSG):
         trainer.fit(module, loader, ckpt_path="last")
 
