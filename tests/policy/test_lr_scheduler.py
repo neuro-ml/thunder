@@ -119,14 +119,14 @@ def test_switch(mapping, lr_init, targets, optim, tmpdir):
 
 
 @pytest.mark.parametrize(
-    "lr_scheduler, mapping",
+    "lr_scheduler, mapping, lr_mapping",
     [
-        (Switch({0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, lr_init=1), {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}),
-        (Multiply({0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, lr_init=1), {0: 1, 1: 1, 2: 10, 3: 40, 4: 200}),
-        (Schedule(lambda x: x + 1, lr_init=1), {i: i + 1 for i in range(5)}),
+        (Switch({0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, lr_init=1), {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}),
+        (Multiply({0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, lr_init=1), {0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 1, 2: 10, 3: 40, 4: 200}),
+        (Schedule(lambda x: x + 1, lr_init=1), lambda x: x + 1, {i: i + 1 for i in range(5)}),
     ],
 )
-def test_load_from_checkpoint(lr_scheduler, mapping, model, tmpdir):
+def test_load_from_checkpoint(lr_scheduler, mapping, lr_mapping, model, tmpdir):
     """
     Checks whether state of schedulers is restored properly after experiment fails.
     """
@@ -151,10 +151,10 @@ def test_load_from_checkpoint(lr_scheduler, mapping, model, tmpdir):
             out = super().training_step(batch, batch_idx)
             if self.trainer.current_epoch == 2 and not FAILED[0]:
                 raise RuntimeError(ERR_MSG)
-            if callable(mapping):
-                lr = mapping(self.trainer.current_epoch)
+            if callable(lr_mapping):
+                lr = lr_mapping(self.trainer.current_epoch)
             else:
-                lr = mapping[self.trainer.current_epoch]
+                lr = lr_mapping[self.trainer.current_epoch]
             assert lr == self.optimizer.param_groups[0]["lr"]
             return out
 
@@ -176,7 +176,8 @@ def test_load_from_checkpoint(lr_scheduler, mapping, model, tmpdir):
     FAILED[0] = True
     optimizer = Adam(model.parameters(), lr=1)
     loader = DataLoader(Dataset(3, 64), batch_size=2)
-    module = Module(model, lambda x, y: x.mean(), optimizer=optimizer, lr_scheduler=lr_scheduler)
+    new_lr_scheduler = lr_scheduler.__class__(mapping, lr_init=1)
+    module = Module(model, lambda x, y: x.mean(), optimizer=optimizer, lr_scheduler=new_lr_scheduler)
     trainer = Trainer(
         default_root_dir=tmpdir,
         max_epochs=5,
