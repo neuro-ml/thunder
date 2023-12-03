@@ -119,11 +119,8 @@ class MetricMonitor(Callback):
 
         n_entries = set(map(len, group.values()))
         if len(n_entries) != 1:
-            # raise ValueError("Losses are inconsistent, number of entries for each loss: "
-            #                  f"{valmap(len, group)}")
-            pl_module.log(f"train/loss", None)
-            self._train_losses = []
-            return
+            raise ValueError("Losses are inconsistent, number of entries for each loss: "
+                             f"{valmap(len, group)}")
 
         for k, vs in group.items():
             pl_module.log(f'train/{k}', np.mean(vs))
