@@ -121,8 +121,10 @@ def test_switch(mapping, lr_init, targets, optim, tmpdir):
 @pytest.mark.parametrize(
     "lr_scheduler, mapping, lr_mapping",
     [
-        (Switch({0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, lr_init=1), {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}),
-        (Multiply({0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, lr_init=1), {0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 1, 2: 10, 3: 40, 4: 200}),
+        (Switch({0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, lr_init=1),
+         {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}),
+        (Multiply({0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, lr_init=1),
+         {0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 1, 2: 10, 3: 40, 4: 200}),
         (Schedule(lambda x: x + 1, lr_init=1), lambda x: x + 1, {i: i + 1 for i in range(5)}),
     ],
 )
