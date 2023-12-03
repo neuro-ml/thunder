@@ -1,3 +1,4 @@
+import warnings
 from collections import defaultdict
 from functools import partial
 from itertools import chain
@@ -119,8 +120,10 @@ class MetricMonitor(Callback):
 
         n_entries = set(map(len, group.values()))
         if len(n_entries) != 1:
-            raise ValueError("Losses are inconsistent, number of entries for each loss: "
-                             f"{valmap(len, group)}")
+            warnings.warn("Losses are inconsistent, number of entries for each loss: "
+                          f"{valmap(len, group)}. "
+                          "This can also happen due to rerun experiment, "
+                          "however please validate you loss function.")
 
         for k, vs in group.items():
             pl_module.log(f'train/{k}', np.mean(vs))

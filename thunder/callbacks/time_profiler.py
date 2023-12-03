@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import Dict, List, Literal, Union, overload, Any
+from typing import Any, Dict, List, Literal, Union, overload
 
 from lightning import Callback
 from lightning.pytorch.utilities.exceptions import MisconfigurationException
