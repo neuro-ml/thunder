@@ -84,14 +84,16 @@ def start(
 
         if "datamodule" in config:
             trainer.fit(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
-            trainer.test(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
-            trainer.predict(module, datamodule=config.datamodule, ckpt_path=ckpt_path)
+            new_ckpt_path = last_checkpoint(".")
+            trainer.test(module, datamodule=config.datamodule, ckpt_path=new_ckpt_path)
+            trainer.predict(module, datamodule=config.datamodule, ckpt_path=new_ckpt_path)
         else:
             trainer.fit(module, config.train_data, config.get('val_data', None), ckpt_path=ckpt_path)
+            new_ckpt_path = last_checkpoint(".")
             if "test_data" in config:
-                trainer.test(module, config.test_data, ckpt_path=last_checkpoint("."))
+                trainer.test(module, config.test_data, ckpt_path=new_ckpt_path)
             if "predict_data" in config:
-                trainer.predict(module, config.predict_data, ckpt_path=last_checkpoint("."))
+                trainer.predict(module, config.predict_data, ckpt_path=new_ckpt_path)
 
 
 @app.command()
