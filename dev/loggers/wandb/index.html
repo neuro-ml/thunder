@@ -1141,12 +1141,16 @@
 
 <h1 id="wandblogger">WandbLogger<a class="headerlink" href="#wandblogger" title="Permanent link">#</a></h1>
 <p>Slightly modified <a href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.loggers.wandb.html#module-lightning.pytorch.loggers.wandb">WandbLogger</a>.<br />
-<code>thunder</code> version has additional parameter <code>remove_dead_duplicates</code> 
+<code>thunder</code> version has additional parameter <code>remove_dead_duplicates</code> and <code>allow_rerun</code> 
 that if being set to <code>True</code> (<code>False</code> by default), deletes all crashed or failed runs 
 with the same name and group within your project.
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">thunder.torch.loggers</span> <span class="kn">import</span> <span class="n">WandbLogger</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">logger</span> <span class="o">=</span> <span class="n">WandbLogger</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">remove_dead_duplicates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div></p>
+<p><code>allow_rerun</code> equals <code>True</code> disables <code>remove_dead_duplicates</code> and seeks<br />
+last experiment WandB has created in your experiment folder. 
+If your experiment failed during the previous run and you restarted it with <code>allow_rerun = True</code>.
+WandB will not create new versions, but will use the last run for logging and checkpointing.</p>
 
 
 
