@@ -26,11 +26,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://neuro-ml.github.io/thunder/latest/callbacks/seed_everything/</loc>
-         <lastmod>2024-02-07</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://neuro-ml.github.io/thunder/latest/callbacks/time_profiler/</loc>
          <lastmod>2024-02-07</lastmod>
          <changefreq>daily</changefreq>

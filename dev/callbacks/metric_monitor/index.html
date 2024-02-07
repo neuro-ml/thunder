@@ -14,7 +14,7 @@
         <link rel="prev" href="../fail_on_interrupt/">
       
       
-        <link rel="next" href="../seed_everything/">
+        <link rel="next" href="../time_profiler/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -544,27 +544,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../seed_everything/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SeedEverything
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -1450,7 +1429,7 @@ covered in <strong>Preprocessing</strong> part in <strong>Single Metrics</strong
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">group_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="n">threshold</span><span class="p">:</span> <span class="p">[</span><span class="n">accuracy_score</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">]}</span>
 </code></pre></div>
-Despite group metrics being calculated on collections of entries, preprocessing is applied individually.</p>
+Despite group metrics being calculated on collections of entries, <strong><em>preprocessing is applied individually</em></strong>.</p>
 <h3 id="single-metrics">Single metrics<a class="headerlink" href="#single-metrics" title="Permanent link">#</a></h3>
 <p>Single metrics are computed on each object separately and only then aggregated.
 It is a common use case for tasks like segmentation or object detection.</p>
