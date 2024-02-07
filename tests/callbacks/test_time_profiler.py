@@ -14,6 +14,7 @@ from thunder import ThunderModule
 from thunder.callbacks import TimeProfiler
 from thunder.torch.utils import last_checkpoint
 
+
 TESTKEYS = [
     tuple(), ("optimizer step",),
     ("backward", "optimizer step", "total train downtime", "total val downtime"),
