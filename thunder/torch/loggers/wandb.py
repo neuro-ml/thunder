@@ -1,8 +1,8 @@
+import os
+from pathlib import Path
 from typing import Union
 
-from pathlib import Path
 import wandb
-import os
 from lightning.pytorch.loggers import WandbLogger as _WandbLogger
 
 
