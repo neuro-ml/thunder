@@ -103,7 +103,8 @@ def last_checkpoint(root: Union[Path, str]) -> Union[Path, str]:
     checkpoint_path: Union[Path, str]
         If last.ckpt exists - returns Path to it. Otherwise, returns 'last'.
     """
-    checkpoints = list(Path(root).glob("**/*.ckpt"))
+    glob = Path(root).glob("**/*.ckpt")
+    checkpoints = list(filter(lambda p: p.name != "last.ckpt", glob))
     if not checkpoints:
         return "last"
     return max(checkpoints, key=lambda t: os.stat(t).st_mtime)
