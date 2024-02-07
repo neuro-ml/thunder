@@ -1,12 +1,18 @@
 import csv
 
 import pytest
+import torch
 from lightning.pytorch import Trainer
-from lightning.pytorch.demos.boring_classes import BoringModel
+from lightning.pytorch.callbacks import ModelCheckpoint
+from lightning.pytorch.demos.boring_classes import BoringModel, RandomDataset
 from lightning.pytorch.loggers import CSVLogger
 from lightning.pytorch.utilities.exceptions import MisconfigurationException
+from torch.optim import Adam
+from torch.utils.data import DataLoader
 
+from thunder import ThunderModule
 from thunder.callbacks import TimeProfiler
+from thunder.torch.utils import last_checkpoint
 
 
 TESTKEYS = [
@@ -127,3 +133,58 @@ def test_with_no_validation(tmpdir):
     # searching for validation stage logs
     for key in filter(lambda k: "val" in k, time_profiler.keys):
         assert f"{time_profiler.__class__.__name__}/{key}" not in it
+
+
+@pytest.mark.parametrize("args", [(True,), ("backward",)])
+def test_load_from_checkpoint(args, tmpdir):
+    """
+    Checks whether state `TimeProfiler` is restored properly after experiment fails.
+    """
+    class Dataset(RandomDataset):
+        def __getitem__(self, item):
+            return super().__getitem__(item), torch.randn(1)[0]
+
+    ERR_MSG = "Baby it's time to fail."
+
+    FAILED = [False]  # Marks if training has failed.
+
+    class Module(ThunderModule):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        def training_step(self, batch, batch_idx):
+            if FAILED[0]:
+                assert self.trainer.current_epoch >= 2
+            out = super().training_step(batch, batch_idx)
+            if self.trainer.current_epoch == 2 and not FAILED[0]:
+                raise RuntimeError(ERR_MSG)
+            return out
+
+    model = torch.nn.Sequential(torch.nn.Linear(3, 1))
+
+    optimizer = Adam(model.parameters(), lr=1)
+    loader = DataLoader(Dataset(3, 64), batch_size=2)
+    module = Module(model, lambda x, y: x.mean(), optimizer=optimizer)
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=5,
+        limit_train_batches=2,
+        callbacks=[ModelCheckpoint(save_last=True), TimeProfiler(*args)],
+        logger=CSVLogger(tmpdir),
+        enable_progress_bar=False,
+    )
+
+    with pytest.raises(RuntimeError, match=ERR_MSG):
+        trainer.fit(module, loader, ckpt_path="last")
+
+    FAILED[0] = True
+    module = Module(model, lambda x, y: x.mean(), optimizer=optimizer)
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=5,
+        limit_train_batches=2,
+        callbacks=[TimeProfiler(*args), ModelCheckpoint(save_last=True)],
+        logger=CSVLogger(tmpdir),
+        enable_progress_bar=False,
+    )
+    trainer.fit(module, loader, ckpt_path=last_checkpoint(tmpdir))

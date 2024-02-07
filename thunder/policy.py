@@ -35,10 +35,10 @@ class Policy(LRScheduler, metaclass=ABCMeta):
         """
         pass
 
-    @abstractmethod
-    def state_dict(self, *keys: str) -> Dict[str, Any]:
+    def prepare_state_dict(self, *keys: str) -> Dict[str, Any]:
         """
-        Creates state dict of scheduler, excluding optimizer.
+        Creates state dict of scheduler, excluding optimizer and specified keys.
+        Be aware that this method does not save state_dict. And only useful for preparing it.
         Parameters
         ----------
         keys: str
@@ -134,9 +134,6 @@ class Multiply(MappingPolicy):
             for param_group, mapping in zip_equal(self.optimizer.param_groups, self.current_mapping)
         ]
 
-    def state_dict(self) -> Dict[str, Any]:
-        return super().state_dict()
-
     def load_state_dict(self, state_dict):
         super().load_state_dict(state_dict)
 
@@ -163,7 +160,7 @@ class Schedule(MappingPolicy):
         return juxt(self.current_mapping)(self.last_epoch)
 
     def state_dict(self) -> Dict[str, Any]:
-        return super().state_dict("mapping")
+        return self.prepare_state_dict("mapping", "current_mapping")
 
     def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
         super().load_state_dict(state_dict)
@@ -192,9 +189,6 @@ class Switch(MappingPolicy):
             mapping.get(self.last_epoch, param_group["lr"])
             for param_group, mapping in zip_equal(self.optimizer.param_groups, self.current_mapping)
         ]
-
-    def state_dict(self) -> Dict[str, Any]:
-        return super().state_dict()
 
     def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
         super().load_state_dict(state_dict)

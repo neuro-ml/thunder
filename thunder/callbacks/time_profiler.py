@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import Dict, List, Literal, Union, overload
+from typing import Any, Dict, List, Literal, Union, overload
 
 from lightning import Callback
 from lightning.pytorch.utilities.exceptions import MisconfigurationException
@@ -14,6 +14,7 @@ class TimeProfiler(Callback):
     keys : Union[str, bool]
         Optional keys for logging. If set to `True` it will log all keys.
     """
+
     @overload
     def __init__(self, *keys: str):
         ...
@@ -48,6 +49,7 @@ class TimeProfiler(Callback):
         self.keys = sorted(set(keys).union(self._default_keys))
         self.time_stamps: Dict[str, List[datetime]] = defaultdict(list)
         self.batch_sizes: Dict[str, List[int]] = defaultdict(list)
+        self.deltas = dict()
 
     def log_time(self, key: str) -> None:
         self.time_stamps[key].append(datetime.now())
@@ -76,18 +78,19 @@ class TimeProfiler(Callback):
                 deltas["total val downtime"] = deltas["validation epoch"] - n_val_batches * deltas["validation batch"]
                 deltas["avg val downtime"] = deltas["total val downtime"] / sum(self.batch_sizes["validation batch"])
 
-        return deltas
+        self.deltas = deltas
 
     def log_to_logger(self, pl_module):
-        deltas = self.compute_time_delta()
+        self.compute_time_delta()
         pl_module.log_dict(
-            {f"{self.__class__.__name__}/{k}": v for k, v in deltas.items() if k in self.keys},
+            {f"{self.__class__.__name__}/{k}": v for k, v in self.deltas.items() if k in self.keys},
             prog_bar=False,
             on_step=False,
             on_epoch=True,
         )
         self.time_stamps.clear()
         self.batch_sizes.clear()
+        self.deltas.clear()
 
     def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
         self.log_time("train batch")
@@ -137,3 +140,16 @@ class TimeProfiler(Callback):
         if stage == "fit":
             self.time_stamps.clear()
             self.batch_sizes.clear()
+
+    def state_dict(self) -> Dict[str, Any]:
+        return {"keys": self.keys,
+                "time_stamps": self.time_stamps,
+                "batch_sizes": self.batch_sizes,
+                "deltas": self.deltas}
+
+    def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
+        self.deltas = state_dict["deltas"]
+        self.time_stamps = state_dict["time_stamps"]
+        self.batch_sizes = state_dict["batch_sizes"]
+        self.keys = state_dict["keys"]
+        super().load_state_dict(state_dict)

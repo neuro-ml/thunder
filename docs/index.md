@@ -56,6 +56,6 @@ $ thunder build base.config /path/to/some/folder
 
 ## Core Features
 - ### [ThunderModule](./core/thunder_module)
-- ### [MetricLogger](./callbacks/metric_logger)
+- ### [MetricMonitor](./callbacks/metric_monitor)
 - ### [Experiment configs](./configs)
 - ### [CLI & Integrations with WandB](./cli)

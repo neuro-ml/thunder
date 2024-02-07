@@ -1,12 +1,19 @@
 import numpy as np
 import pytest
 import torch
+from lightning import Trainer
+from lightning.pytorch.callbacks import ModelCheckpoint
+from lightning.pytorch.demos.boring_classes import RandomDataset
+from lightning.pytorch.loggers import CSVLogger
 from more_itertools import zip_equal
 from torch import nn
 from torch.nn import Sequential
 from torch.optim import Adam
+from torch.utils.data import DataLoader
 
+from thunder import ThunderModule
 from thunder.policy import Multiply, Policy, Schedule, Switch
+from thunder.torch.utils import last_checkpoint
 
 
 @pytest.fixture
@@ -57,8 +64,8 @@ def test_custom_policy(optim, tmpdir):
             super().load_state_dict(state_dict)
 
     policy = NewPolicy()(optim)
-    _test_scheduler(policy, [0, 0, 0, 0, 0])
-    _test_scheduler_saving(NewPolicy()(optim), policy, optim, tmpdir)
+    check_scheduler(policy, [0, 0, 0, 0, 0])
+    check_scheduler_saving(NewPolicy()(optim), policy, optim, tmpdir)
 
 
 @pytest.mark.parametrize(
@@ -73,10 +80,10 @@ def test_custom_policy(optim, tmpdir):
 def test_multiply(mapping, targets, optim, tmpdir):
     scheduler = Multiply(mapping, [1, 100])
     scheduler(optim)
-    _test_scheduler(scheduler, targets)
+    check_scheduler(scheduler, targets)
 
     new_scheduler = Multiply(mapping)
-    _test_scheduler_saving(new_scheduler, scheduler, optim, tmpdir)
+    check_scheduler_saving(new_scheduler, scheduler, optim, tmpdir)
 
 
 @pytest.mark.parametrize("mapping,targets", [(np.cos, [[np.cos(i), np.cos(i)] for i in range(5)]),
@@ -84,10 +91,10 @@ def test_multiply(mapping, targets, optim, tmpdir):
 def test_schedule(mapping, targets, optim, tmpdir):
     scheduler = Schedule(mapping, [1, 100])
     scheduler(optim)
-    _test_scheduler(scheduler, targets)
+    check_scheduler(scheduler, targets)
 
     new_scheduler = Schedule(mapping)
-    _test_scheduler_saving(new_scheduler, scheduler, optim, tmpdir)
+    check_scheduler_saving(new_scheduler, scheduler, optim, tmpdir)
 
 
 @pytest.mark.parametrize(
@@ -105,20 +112,93 @@ def test_schedule(mapping, targets, optim, tmpdir):
 def test_switch(mapping, lr_init, targets, optim, tmpdir):
     scheduler = Switch(mapping, lr_init)
     scheduler(optim)
-    _test_scheduler(scheduler, targets)
+    check_scheduler(scheduler, targets)
 
     new_scheduler = Switch(mapping, 0.0001)
-    _test_scheduler_saving(new_scheduler, scheduler, optim, tmpdir)
+    check_scheduler_saving(new_scheduler, scheduler, optim, tmpdir)
 
 
-def _test_scheduler(scheduler, targets):
+@pytest.mark.parametrize(
+    "lr_scheduler, mapping, lr_mapping",
+    [
+        (Switch({0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, lr_init=1),
+         {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}),
+        (Multiply({0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, lr_init=1),
+         {0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 1, 2: 10, 3: 40, 4: 200}),
+        (Schedule(lambda x: x + 1, lr_init=1), lambda x: x + 1, {i: i + 1 for i in range(5)}),
+    ],
+)
+def test_load_from_checkpoint(lr_scheduler, mapping, lr_mapping, model, tmpdir):
+    """
+    Checks whether state of schedulers is restored properly after experiment fails.
+    """
+    class Dataset(RandomDataset):
+        def __getitem__(self, item):
+            return super().__getitem__(item), torch.randn(1)[0]
+
+    ERR_MSG = "Baby it's time to fail."
+
+    FAILED = [False]  # Marks if training has failed.
+
+    class Module(ThunderModule):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        def training_step(self, batch, batch_idx):
+            """
+
+            """
+            if FAILED[0]:
+                assert self.trainer.current_epoch >= 2
+            out = super().training_step(batch, batch_idx)
+            if self.trainer.current_epoch == 2 and not FAILED[0]:
+                raise RuntimeError(ERR_MSG)
+            if callable(lr_mapping):
+                lr = lr_mapping(self.trainer.current_epoch)
+            else:
+                lr = lr_mapping[self.trainer.current_epoch]
+            assert lr == self.optimizer.param_groups[0]["lr"]
+            return out
+
+    optimizer = Adam(model.parameters(), lr=1)
+    loader = DataLoader(Dataset(3, 64), batch_size=2)
+    module = Module(model, lambda x, y: x.mean(), optimizer=optimizer, lr_scheduler=lr_scheduler)
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=5,
+        limit_train_batches=2,
+        callbacks=[ModelCheckpoint(save_last=True)],
+        logger=CSVLogger(tmpdir),
+        enable_progress_bar=False,
+    )
+
+    with pytest.raises(RuntimeError, match=ERR_MSG):
+        trainer.fit(module, loader, ckpt_path="last")
+
+    FAILED[0] = True
+    optimizer = Adam(model.parameters(), lr=1)
+    loader = DataLoader(Dataset(3, 64), batch_size=2)
+    new_lr_scheduler = lr_scheduler.__class__(mapping, lr_init=1)
+    module = Module(model, lambda x, y: x.mean(), optimizer=optimizer, lr_scheduler=new_lr_scheduler)
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=5,
+        limit_train_batches=2,
+        callbacks=[ModelCheckpoint(save_last=True)],
+        logger=CSVLogger(tmpdir),
+        enable_progress_bar=False,
+    )
+    trainer.fit(module, loader, ckpt_path=last_checkpoint(tmpdir))
+
+
+def check_scheduler(scheduler, targets):
     for i, target in zip_equal(range(5), targets):
         assert np.allclose([pg["lr"] for pg in scheduler.optimizer.param_groups], target), f"epoch {i}"
         scheduler.optimizer.step()
         scheduler.step()
 
 
-def _test_scheduler_saving(new_scheduler, scheduler, optim, tmpdir):
+def check_scheduler_saving(new_scheduler, scheduler, optim, tmpdir):
     torch.save(scheduler.state_dict(), f"{tmpdir}/scheduler.pth")
     new_scheduler(optim)
     new_scheduler.load_state_dict(torch.load(f"{tmpdir}/scheduler.pth"))

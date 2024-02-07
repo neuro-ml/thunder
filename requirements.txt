@@ -12,4 +12,5 @@ pyyaml
 deli
 joblib
 pytimeparse
+requests
 typing-extensions

@@ -84,11 +84,11 @@ def test_last_checkpoint(temp_dir):
         with open(fp, "w"):
             pass
 
-    _create_file(temp_dir / "two_checkpoints" / "first" / "last.ckpt")
+    _create_file(temp_dir / "two_checkpoints" / "first" / "model0.ckpt")
     time.sleep(0.1)
-    _create_file(temp_dir / "two_checkpoints" / "second" / "last.ckpt")
+    _create_file(temp_dir / "two_checkpoints" / "second" / "model1.ckpt")
 
-    assert last_checkpoint(temp_dir / "two_checkpoints") == temp_dir / "two_checkpoints" / "second" / "last.ckpt"
+    assert last_checkpoint(temp_dir / "two_checkpoints") == temp_dir / "two_checkpoints" / "second" / "model1.ckpt"
 
     _create_file(temp_dir / "zero_checkpoints" / "first" / "not_ckpt")
     time.sleep(0.1)
