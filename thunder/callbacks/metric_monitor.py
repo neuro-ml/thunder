@@ -123,7 +123,7 @@ class MetricMonitor(Callback):
             warnings.warn("Losses are inconsistent, number of entries for each loss: "
                           f"{valmap(len, group)}. "
                           "This can also happen due to rerun experiment, "
-                          "however please validate you loss function.")
+                          "however please validate your loss function.")
 
         for k, vs in group.items():
             pl_module.log(f'train/{k}', np.mean(vs))
