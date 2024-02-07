@@ -57,7 +57,7 @@ threshold = lambda y, x: (y, x.any())
 
 group_metrics = {threshold: [accuracy_score, recall_score]}
 ```
-Despite group metrics being calculated on collections of entries, preprocessing is applied individually.
+Despite group metrics being calculated on collections of entries, __*preprocessing is applied individually*__.
 
 ### Single metrics
 Single metrics are computed on each object separately and only then aggregated.
