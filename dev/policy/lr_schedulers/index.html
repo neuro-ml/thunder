@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.8">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.9">
     
     
       
@@ -304,10 +304,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
@@ -432,10 +430,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
@@ -497,10 +493,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
@@ -562,10 +556,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
@@ -627,10 +619,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
@@ -734,10 +724,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
@@ -799,10 +787,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
@@ -906,10 +892,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
@@ -994,10 +978,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
@@ -2351,7 +2333,7 @@ Parameters</p>
 <a id="__codelineno-0-99" name="__codelineno-0-99"></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_lr_init</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">):</span>
 <a id="__codelineno-0-100" name="__codelineno-0-100"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_lr_init</span><span class="p">)</span><span class="si">}</span><span class="s2"> lr_init and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">)</span><span class="si">}</span><span class="s2"> param groups&quot;</span><span class="p">)</span>
 <a id="__codelineno-0-101" name="__codelineno-0-101"></a>
-<a id="__codelineno-0-102" name="__codelineno-0-102"></a>        <span class="k">for</span> <span class="n">lr_init</span><span class="p">,</span> <span class="n">param_group</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_lr_init</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">):</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>        <span class="k">for</span> <span class="n">lr_init</span><span class="p">,</span> <span class="n">param_group</span> <span class="ow">in</span> <span class="n">zip_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_lr_init</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">):</span>
 <a id="__codelineno-0-103" name="__codelineno-0-103"></a>            <span class="n">param_group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_init</span>
 <a id="__codelineno-0-104" name="__codelineno-0-104"></a>
 <a id="__codelineno-0-105" name="__codelineno-0-105"></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_optimizer</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
