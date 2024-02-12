@@ -106,7 +106,7 @@ class MetricMonitor(Callback):
         if isinstance(outputs, dict):
             outputs = valmap(to_np, outputs)
         elif isinstance(outputs, (list, tuple)):
-            outputs = dict(zip(map(str, range(len(outputs))), map(to_np, outputs)))
+            outputs = dict(zip_equal(map(str, range(len(outputs))), map(to_np, outputs)))
         else:
             raise TypeError(f"Unknown type of outputs: {type(outputs[0])}")
 
