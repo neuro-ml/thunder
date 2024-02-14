@@ -121,6 +121,39 @@ def test_group_metrics(tmpdir):
     assert all(np.allclose(acc, metrics["val/accuracy"].dropna().iloc[i]) for i in range(2))
 
 
+def test_group_metrics_with_singleton_batch(tmpdir):
+    metric_monitor = MetricMonitor(group_metrics={"accuracy_score": accuracy_score})
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=2,
+        limit_train_batches=4,
+        limit_val_batches=4,
+        num_sanity_val_steps=0,
+        enable_checkpointing=False,
+        enable_progress_bar=False,
+        callbacks=[metric_monitor],
+        logger=CSVLogger(tmpdir),
+    )
+
+    class Module(NoOptimModule):
+        def validation_step(self, batch, batch_idx, dataloader_idx=0):
+            return np.asarray([1]), np.asarray([batch_idx % 2])
+
+        def test_step(self, batch, batch_idx, dataloader_idx=0):
+            return np.asarray([1]), np.asarray([batch_idx % 2])
+
+    model = Module(nn.Linear(2, 1), lambda x, y: x + y, -1)
+    trainer.fit(model)
+    trainer.test(model)
+
+    metrics = pd.read_csv(f"{tmpdir}/lightning_logs/version_0/metrics.csv")
+    assert all(np.allclose(0, metrics["train/loss"].dropna().iloc[i]) for i in range(2))
+    x = np.asarray(list(collapse([[1] for i in range(4)])))
+    y = np.asarray(list(collapse([[i % 2] for i in range(4)])))
+    acc = accuracy(x, y)
+    assert all(np.allclose(acc, metrics["val/accuracy_score"].dropna().iloc[i]) for i in range(2))
+
+
 def test_group_metrics_with_preprocessing(tmpdir):
     metric_monitor = MetricMonitor(group_metrics={lambda y, x: (y > 0.5, x): accuracy_score})
     trainer = Trainer(
