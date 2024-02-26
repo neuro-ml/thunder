@@ -97,13 +97,21 @@ def last_checkpoint(root: Union[Path, str]) -> Union[Path, str]:
     Parameters
     ----------
     root: Union[Path, str]
-        Path to folder, where last.ckpt supposed to be.
+        Path to folder, where last.ckpt or its symbolic link supposed to be.
     Returns
     -------
     checkpoint_path: Union[Path, str]
         If last.ckpt exists - returns Path to it. Otherwise, returns 'last'.
     """
-    checkpoints = [p for p in Path(root).glob("**/*.ckpt") if p.name != "last.ckpt"]
+    checkpoints = []
+    for p in Path(root).rglob('*'):
+        if p.is_symlink():
+            p = p.resolve(strict=False)
+            if p.suffix == '.ckpt':
+                checkpoints.append(p)
+        elif p.suffix == '.ckpt':
+            checkpoints.append(p)
+
     if not checkpoints:
-        return "last"
+        return None
     return max(checkpoints, key=lambda t: os.stat(t).st_mtime)
