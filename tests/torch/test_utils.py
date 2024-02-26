@@ -94,4 +94,4 @@ def test_last_checkpoint(temp_dir):
     time.sleep(0.1)
     _create_file(temp_dir / "zero_checkpoints" / "second" / "not_ckpt")
 
-    assert last_checkpoint(temp_dir / "zero_checkpoints") == None
+    assert last_checkpoint(temp_dir / "zero_checkpoints") is None
