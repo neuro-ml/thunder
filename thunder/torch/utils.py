@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any, Union
+from typing import Any, Union, Optional
 
 import numpy as np
 import torch
@@ -84,14 +84,16 @@ def maybe_from_np(*x: Any, device: Union[torch.device, str] = "cpu") -> Any:
     >>> x, y, z = maybe_from_np(x, y, z) # maybe_from_np converts np arrays and tensors and does not affect other types
     >>> dict_of_tensors = to_np(dict_of_np) # maybe_from_np converts any collection
     """
+
     def to_tensor(x):
         if isinstance(x, torch.Tensor):
             return x.to(device)
         return torch.from_numpy(x).to(device)
+
     return squeeze_first(apply_to_collection(x, (np.ndarray, np.generic, torch.Tensor), to_tensor))
 
 
-def last_checkpoint(root: Union[Path, str]) -> Union[Path, str]:
+def last_checkpoint(root: Union[Path, str]) -> Optional[Union[Path, str]]:
     """
     Load most fresh last.ckpt file based on time.
     Parameters
