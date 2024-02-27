@@ -145,7 +145,7 @@ flag. Being set to `True` it forces the callback to store table of metrics in th
 | batch_idxn_m | some_value | some_value  |
 
 For each set (e.g. `val`, `test`) and each `dataloader_idx`, MetricMonitor stores separate table.  
-By default aforementioned tables are saved to `default_root_dir` of lightning's Trainer, in the format of
+By default aforementioned tables are saved to `trainer.log_dir` in the format of
 `set_name/dataloader_idx.csv` (e.g. `val/dataloader_0.csv`).  
 If loggers you use have method `log_table` (e.g. `WandbLogger`), 
 then this method will receive key and each table in the format of `pd.DataFrame`.  
