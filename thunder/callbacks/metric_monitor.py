@@ -209,7 +209,7 @@ class MetricMonitor(Callback):
 
                 if self.log_individual_metrics:
                     dataframe = pd.DataFrame(metrics)
-                    root_dir = Path(trainer.default_root_dir) / key  # trainer.log_dir / key ?
+                    root_dir = Path(trainer.log_dir) / key
                     root_dir.mkdir(exist_ok=True)
                     for logger in pl_module.loggers:
                         if hasattr(logger, "log_table"):
