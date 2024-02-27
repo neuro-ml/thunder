@@ -1530,7 +1530,7 @@ flag. Being set to <code>True</code> it forces the callback to store table of me
 </tbody>
 </table>
 <p>For each set (e.g. <code>val</code>, <code>test</code>) and each <code>dataloader_idx</code>, MetricMonitor stores separate table.<br />
-By default aforementioned tables are saved to <code>default_root_dir</code> of lightning's Trainer, in the format of
+By default aforementioned tables are saved to <code>trainer.log_dir</code> in the format of
 <code>set_name/dataloader_idx.csv</code> (e.g. <code>val/dataloader_0.csv</code>).<br />
 If loggers you use have method <code>log_table</code> (e.g. <code>WandbLogger</code>), 
 then this method will receive key and each table in the format of <code>pd.DataFrame</code>.<br />
