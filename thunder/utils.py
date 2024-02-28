@@ -1,6 +1,9 @@
 import os
+import random
 from contextlib import contextmanager
 
+import numpy as np
+import torch
 from more_itertools import make_decorator
 
 
@@ -22,3 +25,12 @@ def squeeze_first(inputs):
 
 
 collect = make_decorator(list)()
+
+
+def fix_seed(seed=0xBadCafe):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
