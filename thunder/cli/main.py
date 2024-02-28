@@ -57,7 +57,7 @@ def start(
     main_config = Config.load(config_path)
 
     # execute pre-run callbacks
-    run_callbacks(main_config)
+    main_config.get("CALLBACKS")
 
     # get the layout
     main_layout: Layout = main_config.get('layout', Single())
@@ -198,8 +198,3 @@ def get_nodes(experiment: Path, names: Optional[Sequence[str]]):
         return
 
     return [nodes[x] for x in names]
-
-
-def run_callbacks(config: Config):
-    for cb in collapse([config.get("CALLBACKS", seed_everything(0xBadCafe))]):
-        cb()
