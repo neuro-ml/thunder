@@ -6,9 +6,10 @@ from typing import List, Optional, Sequence
 import yaml
 from deli import load, save
 from lazycon import Config
-from lightning import LightningModule, Trainer
+from lightning import LightningModule, Trainer, seed_everything
 from typer import Abort, Argument, Option
 from typing_extensions import Annotated
+from more_itertools import collapse
 
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
@@ -54,6 +55,10 @@ def start(
 
     # load the main config
     main_config = Config.load(config_path)
+
+    # execute pre-run callbacks
+    run_callbacks(main_config)
+
     # get the layout
     main_layout: Layout = main_config.get('layout', Single())
     config, root, params = main_layout.load(experiment, node)
@@ -193,3 +198,8 @@ def get_nodes(experiment: Path, names: Optional[Sequence[str]]):
         return
 
     return [nodes[x] for x in names]
+
+
+def run_callbacks(config: Config):
+    for cb in collapse([config.get("CALLBACKS", seed_everything(0xBadCafe))]):
+        cb()
