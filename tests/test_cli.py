@@ -5,6 +5,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
+from deli import load_text, save_text
 from lazycon import Config, load as read_config
 from typer.testing import CliRunner
 
@@ -13,7 +14,6 @@ import thunder.cli.backend_cli
 from thunder.cli.backend import collect_configs, load_backend_configs
 from thunder.cli.entrypoint import app
 from thunder.utils import chdir
-
 
 runner = CliRunner()
 
@@ -135,6 +135,32 @@ def test_run(temp_dir, dumb_config):
     collect_configs.cache_clear()
     invoke("backend", "add", "cli_for_test_run", "backend=cli")
     result = invoke("run", "--backend", "cli_for_test_run", experiment)
+    assert result.exit_code == 0, result.output
+
+
+@pytest.mark.timeout(60)
+def test_run_callbacks(temp_dir, dumb_config):
+    experiment = temp_dir / "test_run_callbacks_no_cb"
+    experiment.mkdir()
+    config = experiment / "experiment.config"
+    shutil.copy(dumb_config, config)
+
+    # absolute path
+    result = invoke("run", experiment)
+    assert result.exit_code == 0, result.output
+
+    ### Add pre run callbacks
+
+    experiment = temp_dir / "test_run_callbacks"
+    experiment.mkdir()
+    config = experiment / "experiment.config"
+    config_text = "\n".join(["from lightning import seed_everything",
+                             load_text(dumb_config), "CALLBACKS=[seed_everything()]"])
+
+    save_text(config_text, config)
+
+    # absolute path
+    result = invoke("run", experiment)
     assert result.exit_code == 0, result.output
 
 

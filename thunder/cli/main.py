@@ -57,7 +57,8 @@ def start(
     main_config = Config.load(config_path)
 
     # execute pre-run callbacks
-    main_config.get("CALLBACKS")
+    if not main_config.get("CALLBACKS", None):
+        print("\n>>> No pre-run callbacks were executed.\n", flush=True)
 
     # get the layout
     main_layout: Layout = main_config.get('layout', Single())
