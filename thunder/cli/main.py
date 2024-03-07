@@ -6,18 +6,17 @@ from typing import List, Optional, Sequence
 import yaml
 from deli import load, save
 from lazycon import Config
-from lightning import LightningModule, Trainer, seed_everything
+from lightning import LightningModule, Trainer
+from lightning_utilities.core.rank_zero import rank_zero_info
 from typer import Abort, Argument, Option
 from typing_extensions import Annotated
-from more_itertools import collapse
 
+from .app import app
+from .backend import BackendCommand
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
 from ..torch.utils import last_checkpoint
 from ..utils import chdir
-from .app import app
-from .backend import BackendCommand
-
 
 ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment.')]
 ConfArg = Annotated[Path, Argument(show_default=False, help='The config from which the experiment will be built.')]
@@ -58,7 +57,7 @@ def start(
 
     # execute pre-run callbacks
     if not main_config.get("CALLBACKS", None):
-        print("\n>>> No pre-run callbacks were executed.\n", flush=True)
+        rank_zero_info("\nTHUNDER: No pre-run callbacks were executed.\n")
 
     # get the layout
     main_layout: Layout = main_config.get('layout', Single())
