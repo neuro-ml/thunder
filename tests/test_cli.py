@@ -141,6 +141,8 @@ def test_run(temp_dir, dumb_config):
 
 @pytest.mark.timeout(60)
 def test_run_callbacks(temp_dir, dumb_config, caplog):
+    # we use cli function directly since `runner.invoke`
+    # erases stdout and logging info
     from thunder.cli.main import start as cli_start
 
     experiment = temp_dir / "test_run_callbacks_no_cb"
