@@ -16,6 +16,7 @@ from thunder.cli.backend import collect_configs, load_backend_configs
 from thunder.cli.entrypoint import app
 from thunder.utils import chdir
 
+
 runner = CliRunner()
 
 
