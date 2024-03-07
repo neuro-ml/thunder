@@ -169,7 +169,7 @@ def test_run_callbacks(temp_dir, dumb_config, caplog):
     # absolute path
     with caplog.at_level(logging.INFO):
         cli_start(experiment)
-    assert any("Global seed set to" in r.message for r in caplog.records), caplog.records
+    assert any("seed set to" in r.message.lower() for r in caplog.records), caplog.records
 
 
 def test_backend_add(temp_dir, mock_backend):
