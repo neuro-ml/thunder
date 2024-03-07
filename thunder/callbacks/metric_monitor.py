@@ -128,7 +128,7 @@ class MetricMonitor(Callback):
         for k, vs in group.items():
             pl_module.log(f'train/{k}', np.mean(vs))
 
-        self._train_losses = []
+        self._train_losses.clear()
 
     def on_validation_batch_end(
             self,
