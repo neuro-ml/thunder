@@ -33,7 +33,7 @@ class MetricMonitor(Callback):
         group_metrics: Dict
             Metrics that are calculated on entire dataset.
         aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]]
-            How to aggregate metrics. By default it computes mean value. If yoy specify something,
+            How to aggregate metrics. By default, it computes mean value. If yoy specify something,
             then the callback will compute mean and the specified values.
         log_individual_metrics: bool
             If True, logs table for case-wise metrics (if logger has `log_table` method) and saves table to csv file.
@@ -89,11 +89,11 @@ class MetricMonitor(Callback):
         elif isinstance(aggregate_fn, dict):
             not_callable = dict(filter(lambda it: not callable(it[1]), aggregate_fn.items()))
             if not_callable:
-                raise TypeError(f"All aggregators must be callable if you pass a dict, got uncallable {not_callable}")
+                raise TypeError(f"All aggregators must be callable if you pass a dict, got not callable {not_callable}")
             self.aggregate_fn.update(aggregate_fn)
         else:
             if aggregate_fn is not None:
-                raise ValueError(f"Unknown type of aggrefate_fn: {type(aggregate_fn)}")
+                raise ValueError(f"Unknown type of aggregate_fn: {type(aggregate_fn)}")
 
     def on_train_batch_end(
             self, trainer: Trainer, pl_module: LightningModule, outputs: STEP_OUTPUT, batch: Any, batch_idx: int
