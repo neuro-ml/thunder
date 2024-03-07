@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import shutil
@@ -139,17 +140,20 @@ def test_run(temp_dir, dumb_config):
 
 
 @pytest.mark.timeout(60)
-def test_run_callbacks(temp_dir, dumb_config):
+def test_run_callbacks(temp_dir, dumb_config, caplog):
+    from thunder.cli.main import start as cli_start
+
     experiment = temp_dir / "test_run_callbacks_no_cb"
     experiment.mkdir()
     config = experiment / "experiment.config"
     shutil.copy(dumb_config, config)
 
     # absolute path
-    result = invoke("run", experiment)
-    assert result.exit_code == 0, result.output
+    with caplog.at_level(logging.INFO):
+        cli_start(experiment)
+    assert any("No pre-run callbacks were executed" in r.message for r in caplog.records), caplog.records
 
-    ### Add pre run callbacks
+    # Add pre run callbacks
 
     experiment = temp_dir / "test_run_callbacks"
     experiment.mkdir()
@@ -160,8 +164,9 @@ def test_run_callbacks(temp_dir, dumb_config):
     save_text(config_text, config)
 
     # absolute path
-    result = invoke("run", experiment)
-    assert result.exit_code == 0, result.output
+    with caplog.at_level(logging.INFO):
+        cli_start(experiment)
+    assert any("Global seed set to" in r.message for r in caplog.records), caplog.records
 
 
 def test_backend_add(temp_dir, mock_backend):
