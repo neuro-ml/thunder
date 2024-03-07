@@ -11,12 +11,13 @@ from lightning_utilities.core.rank_zero import rank_zero_info
 from typer import Abort, Argument, Option
 from typing_extensions import Annotated
 
-from .app import app
-from .backend import BackendCommand
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
 from ..torch.utils import last_checkpoint
 from ..utils import chdir
+from .app import app
+from .backend import BackendCommand
+
 
 ExpArg = Annotated[Path, Argument(show_default=False, help='Path to the experiment.')]
 ConfArg = Annotated[Path, Argument(show_default=False, help='The config from which the experiment will be built.')]
