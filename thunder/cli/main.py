@@ -159,7 +159,8 @@ def run(
     backend, config = BackendCommand.get_backend(backend, kwargs)
     experiment = Path(experiment).absolute()
     if not experiment.exists():
-        raise ValueError(f"{experiment} does not exist.")
+        raise ValueError(f"Trying to run experiment from folder {experiment}, "
+                         "but it does not exist.")
     backend.run(config, experiment, get_nodes(experiment, names))
 
 
