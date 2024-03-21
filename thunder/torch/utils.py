@@ -106,14 +106,12 @@ def last_checkpoint(root: Union[Path, str]) -> Optional[Union[Path, str]]:
         If last.ckpt exists - returns Path to it. Otherwise, returns 'last'.
     """
     checkpoints = []
-    for p in Path(root).rglob('*'):
+    for p in Path(root).rglob("*"):
         if p.is_symlink():
             p = p.resolve(strict=False)
-            if p.suffix == '.ckpt':
-                checkpoints.append(p)
-        elif p.suffix == '.ckpt':
+        if p.suffix == ".ckpt":
             checkpoints.append(p)
 
     if not checkpoints:
-        return None
+        return "last"
     return max(checkpoints, key=lambda t: os.stat(t).st_mtime)
