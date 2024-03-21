@@ -90,8 +90,16 @@ def test_last_checkpoint(temp_dir):
 
     assert last_checkpoint(temp_dir / "two_checkpoints") == temp_dir / "two_checkpoints" / "second" / "model1.ckpt"
 
+    symlink_path = Path(temp_dir / "two_checkpoints" / "first" / "symlink")
+    symlink_path.symlink_to(temp_dir / "two_checkpoints" / "second" / "model1.ckpt")
+
+    assert (
+        last_checkpoint(temp_dir / "two_checkpoints" / "first")
+        == temp_dir / "two_checkpoints" / "second" / "model1.ckpt"
+    )
+
     _create_file(temp_dir / "zero_checkpoints" / "first" / "not_ckpt")
     time.sleep(0.1)
     _create_file(temp_dir / "zero_checkpoints" / "second" / "not_ckpt")
 
-    assert last_checkpoint(temp_dir / "zero_checkpoints") is None
+    assert last_checkpoint(temp_dir / "zero_checkpoints") == "last"
