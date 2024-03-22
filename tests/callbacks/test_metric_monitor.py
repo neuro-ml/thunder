@@ -461,3 +461,31 @@ def test_log_table(tmpdir):
     for p in Path(root_dir).glob("*/dataloader_*"):
         assert str(p.relative_to(root_dir)) not in ["val/dataloader_0", "val/dataloader_1",
                                                     "test/dataloader_0", "test/dataloader_1"]
+
+
+def test_empty_identity():
+    """
+    If all group metrics are specified with prerprocessing,
+    there should be no identity preprocessing
+    """
+
+    from thunder.callbacks.metric_monitor import _identity
+
+    preproc1 = lambda y, x: (y * 2, x)
+    preproc2 = lambda y, x: (y, x * 2)
+
+    group_metrics = {preproc1: accuracy_score, preproc2: {
+        "accuracy2": accuracy_score,
+        "accuracy3": accuracy_score,
+    }, "accuracy4": accuracy_score}
+
+    metric_monitor = MetricMonitor(group_metrics=group_metrics)
+
+    assert sorted(metric_monitor.group_metrics.keys()) == sorted(["accuracy_score", "accuracy2", "accuracy3", "accuracy4"])
+    assert list(metric_monitor.group_preprocess.keys()) == [preproc1, preproc2, _identity]
+
+    group_metrics.pop("accuracy4")
+    metric_monitor = MetricMonitor(group_metrics=group_metrics)
+
+    assert sorted(metric_monitor.group_metrics.keys()) == sorted(["accuracy_score", "accuracy2", "accuracy3"])
+    assert list(metric_monitor.group_preprocess.keys()) == [preproc1, preproc2], len(metric_monitor.group_preprocess.keys())

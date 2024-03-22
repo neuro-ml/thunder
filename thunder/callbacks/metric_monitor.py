@@ -41,6 +41,9 @@ class MetricMonitor(Callback):
         _single_metrics = dict(single_metrics or {})
         _group_metrics = dict(group_metrics or {})
 
+        # metrics = {"metric_name": func}
+        # preprocess = {preprocess_func: ["metric_name"]} + {identity: ["metric_name"]}
+
         single_metrics, single_preprocess = _process_metrics(_single_metrics)
         group_metrics, group_preprocess = _process_metrics(_group_metrics)
 
@@ -252,9 +255,8 @@ def _identity(*args):
     return squeeze_first(args)
 
 
-@collect
 def _recombine_batch(xs: Sequence) -> List:
-    yield from map(squeeze_first, zip_equal(*xs))
+    return [squeeze_first(x) for x in zip_equal(*xs)]
 
 
 def _process_metrics(raw_metrics: Dict) -> Tuple[Dict[str, Callable], Dict[Callable, List[str]]]:
@@ -285,5 +287,7 @@ def _process_metrics(raw_metrics: Dict) -> Tuple[Dict[str, Callable], Dict[Calla
         else:
             raise TypeError(f"Metric keys should be of type str or Callable, got {type(k)}")
 
-    preprocess[_identity] = sorted(set(processed_metrics.keys()) - set(chain.from_iterable(preprocess.values())))
+    identity_preprocess_metrics = sorted(set(processed_metrics.keys()) - set(chain.from_iterable(preprocess.values())))
+    if identity_preprocess_metrics:
+        preprocess[_identity] = identity_preprocess_metrics
     return processed_metrics, preprocess
