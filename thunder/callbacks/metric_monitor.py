@@ -14,7 +14,7 @@ from more_itertools import zip_equal
 from toolz import compose, keymap, valmap
 
 from ..torch.utils import to_np
-from ..utils import collect, squeeze_first
+from ..utils import squeeze_first
 
 
 class MetricMonitor(Callback):
@@ -33,13 +33,16 @@ class MetricMonitor(Callback):
         group_metrics: Dict
             Metrics that are calculated on entire dataset.
         aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]]
-            How to aggregate metrics. By default it computes mean value. If yoy specify something,
+            How to aggregate metrics. By default, it computes mean value. If yoy specify something,
             then the callback will compute mean and the specified values.
         log_individual_metrics: bool
             If True, logs table for case-wise metrics (if logger has `log_table` method) and saves table to csv file.
         """
         _single_metrics = dict(single_metrics or {})
         _group_metrics = dict(group_metrics or {})
+
+        # metrics = {"metric_name": func}
+        # preprocess = {preprocess_func: ["metric_name"]} + {identity: ["metric_name"]}
 
         single_metrics, single_preprocess = _process_metrics(_single_metrics)
         group_metrics, group_preprocess = _process_metrics(_group_metrics)
@@ -89,11 +92,11 @@ class MetricMonitor(Callback):
         elif isinstance(aggregate_fn, dict):
             not_callable = dict(filter(lambda it: not callable(it[1]), aggregate_fn.items()))
             if not_callable:
-                raise TypeError(f"All aggregators must be callable if you pass a dict, got uncallable {not_callable}")
+                raise TypeError(f"All aggregators must be callable if you pass a dict, got not callable {not_callable}")
             self.aggregate_fn.update(aggregate_fn)
         else:
             if aggregate_fn is not None:
-                raise ValueError(f"Unknown type of aggrefate_fn: {type(aggregate_fn)}")
+                raise ValueError(f"Unknown type of aggregate_fn: {type(aggregate_fn)}")
 
     def on_train_batch_end(
             self, trainer: Trainer, pl_module: LightningModule, outputs: STEP_OUTPUT, batch: Any, batch_idx: int
@@ -128,7 +131,7 @@ class MetricMonitor(Callback):
         for k, vs in group.items():
             pl_module.log(f'train/{k}', np.mean(vs))
 
-        self._train_losses = []
+        self._train_losses.clear()
 
     def on_validation_batch_end(
             self,
@@ -209,7 +212,7 @@ class MetricMonitor(Callback):
 
                 if self.log_individual_metrics:
                     dataframe = pd.DataFrame(metrics)
-                    root_dir = Path(trainer.default_root_dir) / key  # trainer.log_dir / key ?
+                    root_dir = Path(trainer.log_dir) / key
                     root_dir.mkdir(exist_ok=True)
                     for logger in pl_module.loggers:
                         if hasattr(logger, "log_table"):
@@ -252,9 +255,8 @@ def _identity(*args):
     return squeeze_first(args)
 
 
-@collect
 def _recombine_batch(xs: Sequence) -> List:
-    yield from map(squeeze_first, zip_equal(*xs))
+    return [squeeze_first(x) for x in zip_equal(*xs)]
 
 
 def _process_metrics(raw_metrics: Dict) -> Tuple[Dict[str, Callable], Dict[Callable, List[str]]]:
@@ -285,5 +287,7 @@ def _process_metrics(raw_metrics: Dict) -> Tuple[Dict[str, Callable], Dict[Calla
         else:
             raise TypeError(f"Metric keys should be of type str or Callable, got {type(k)}")
 
-    preprocess[_identity] = sorted(set(processed_metrics.keys()) - set(chain.from_iterable(preprocess.values())))
+    identity_preprocess_metrics = sorted(set(processed_metrics.keys()) - set(chain.from_iterable(preprocess.values())))
+    if identity_preprocess_metrics:
+        preprocess[_identity] = identity_preprocess_metrics
     return processed_metrics, preprocess
