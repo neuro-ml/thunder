@@ -471,8 +471,11 @@ def test_empty_identity():
 
     from thunder.callbacks.metric_monitor import _identity
 
-    preproc1 = lambda y, x: (y * 2, x)
-    preproc2 = lambda y, x: (y, x * 2)
+    def preproc1(y, x):
+        return y * 2, x
+
+    def preproc2(y, x):
+        return y, x * 2
 
     group_metrics = {preproc1: accuracy_score, preproc2: {
         "accuracy2": accuracy_score,
@@ -481,11 +484,14 @@ def test_empty_identity():
 
     metric_monitor = MetricMonitor(group_metrics=group_metrics)
 
-    assert sorted(metric_monitor.group_metrics.keys()) == sorted(["accuracy_score", "accuracy2", "accuracy3", "accuracy4"])
+    assert sorted(metric_monitor.group_metrics.keys()) == \
+           sorted(["accuracy_score", "accuracy2", "accuracy3", "accuracy4"])
     assert list(metric_monitor.group_preprocess.keys()) == [preproc1, preproc2, _identity]
 
     group_metrics.pop("accuracy4")
     metric_monitor = MetricMonitor(group_metrics=group_metrics)
 
-    assert sorted(metric_monitor.group_metrics.keys()) == sorted(["accuracy_score", "accuracy2", "accuracy3"])
-    assert list(metric_monitor.group_preprocess.keys()) == [preproc1, preproc2], len(metric_monitor.group_preprocess.keys())
+    assert sorted(metric_monitor.group_metrics.keys()) == \
+           sorted(["accuracy_score", "accuracy2", "accuracy3"])
+    assert list(metric_monitor.group_preprocess.keys()) == \
+           [preproc1, preproc2], len(metric_monitor.group_preprocess.keys())

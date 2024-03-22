@@ -14,7 +14,7 @@ from more_itertools import zip_equal
 from toolz import compose, keymap, valmap
 
 from ..torch.utils import to_np
-from ..utils import collect, squeeze_first
+from ..utils import squeeze_first
 
 
 class MetricMonitor(Callback):
