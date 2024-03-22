@@ -112,6 +112,4 @@ def last_checkpoint(root: Union[Path, str]) -> Optional[Union[Path, str]]:
         if p.suffix == ".ckpt":
             checkpoints.append(p)
 
-    if not checkpoints:
-        return "last"
-    return max(checkpoints, key=lambda t: os.stat(t).st_mtime)
+    return max(checkpoints, key=lambda t: os.stat(t).st_mtime, default="last")
