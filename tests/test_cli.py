@@ -197,7 +197,7 @@ def test_datamodule(temp_dir, dumb_config):
     config = experiment / "experiment.config"
     config_text = "\n".join([
         "from lightning.pytorch.demos.boring_classes import BoringDataModule",
-         load_text(dumb_config),
+        load_text(dumb_config),
         "datamodule = BoringDataModule()"
     ])
 
