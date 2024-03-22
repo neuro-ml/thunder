@@ -197,7 +197,7 @@ class MetricMonitor(Callback):
         for dataloader_idx, all_predictions in self._all_predictions.items():
             loader_postfix = f"/{dataloader_idx}" if len(self._all_predictions) > 1 else ""
             for preprocess, metrics_names in self.group_preprocess.items():
-                preprocessed = [to_np(p) for p in zip_equal(*all_predictions[preprocess])]
+                preprocessed = [np.asarray(p) for p in zip_equal(*all_predictions[preprocess])]
                 for name in metrics_names:
                     group_metric_values[f"{name}{loader_postfix}"] = self.group_metrics[name](*preprocessed)
 
