@@ -58,7 +58,7 @@ def start(
 
     # execute pre-run callbacks
     if not main_config.get("CALLBACKS", None):
-        rank_zero_info("\nTHUNDER: No pre-run callbacks were executed.\n")
+        rank_zero_info("THUNDER: No pre-run callbacks were executed.")
 
     # get the layout
     main_layout: Layout = main_config.get('layout', Single())
