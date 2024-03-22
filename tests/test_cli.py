@@ -224,6 +224,23 @@ def test_backend_remove(temp_dir, mock_backend):
     assert not load_backend_configs().keys()
 
 
+def test_datamodule(temp_dir, dumb_config):
+    experiment = temp_dir / "test_datamodule"
+    experiment.mkdir()
+    config = experiment / "experiment.config"
+    config_text = "\n".join([
+        "from lightning.pytorch.demos.boring_classes import BoringDataModule",
+        load_text(dumb_config),
+        "datamodule = BoringDataModule()"
+    ])
+
+    save_text(config_text, config)
+
+    result = invoke("run", experiment)
+    # TODO: we need something smarter?
+    assert result.exit_code == 0, result.output
+
+
 def invoke(*cmd):
     return runner.invoke(app, list(map(str, cmd)))
 

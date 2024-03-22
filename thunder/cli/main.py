@@ -163,7 +163,11 @@ def run(
     if names is not None:
         names = names.split(',')
     backend, config = BackendCommand.get_backend(backend, kwargs)
-    backend.run(config, Path(experiment).absolute(), get_nodes(experiment, names))
+    experiment = Path(experiment).absolute()
+    if not experiment.exists():
+        raise ValueError(f"Trying to run experiment from folder {experiment}, "
+                         "but it does not exist.")
+    backend.run(config, experiment, get_nodes(experiment, names))
 
 
 @app.command(cls=BackendCommand)
