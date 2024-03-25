@@ -7,7 +7,7 @@ import yaml
 from deli import load, save
 from lazycon import Config
 from lightning import LightningModule, Trainer
-from lightning_utilities.core.rank_zero import rank_zero_warn
+from lightning_utilities.core.rank_zero import rank_zero_info
 from typer import Abort, Argument, Option
 from typing_extensions import Annotated
 
@@ -58,7 +58,7 @@ def start(
 
     # execute pre-run callbacks
     if not main_config.get("CALLBACKS", None):
-        rank_zero_warn("THUNDER: No pre-run callbacks were executed.")
+        rank_zero_info("THUNDER: No pre-run callbacks were executed.")
 
     # get the layout
     main_layout: Layout = main_config.get('layout', Single())
