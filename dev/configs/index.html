@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.14">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.15">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.10ba22f1.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e359304.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
@@ -578,6 +578,15 @@
   <a href="#config-structure" class="md-nav__link">
     <span class="md-ellipsis">
       Config structure
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
     </span>
   </a>
   
@@ -1157,6 +1166,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#executing-a-config" class="md-nav__link">
     <span class="md-ellipsis">
       Executing a config
@@ -1242,11 +1260,18 @@ experiments. </p>
 <td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/274c.svg" title=":x:" /></td>
 <td>LightningDataModule instance, replaces <code>train_data</code>, <code>val_data</code> and <code>test_data</code> if specified.</td>
 </tr>
+<tr>
+<td><code>CALLBACKS</code></td>
+<td><img alt="❌" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/274c.svg" title=":x:" /></td>
+<td>Arbitrary function (list of functions) you want to be executed before run.</td>
+</tr>
 </tbody>
 </table>
 <p>After executing <code>thunder run</code> (see <a href="./#executing-a-config">Executing a config</a>), thunder will extract 
 necessary fields. If some optional field (e.g. <code>val_data</code>) is not provided, features 
 dependent on it will not be used (e.g. no validation if <code>val_data</code> is not provided).</p>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
+<p>Examples of configs can be seen <a href="../examples">here</a></p>
 <h2 id="executing-a-config">Executing a config<a class="headerlink" href="#executing-a-config" title="Permanent link">#</a></h2>
 <p>Thunder has its own <strong>Command Line Interface</strong>, 
 about which you can read <a href="../cli">here</a>.</p>
