@@ -2,6 +2,7 @@
 import numpy as np
 import torch
 from lightning import Trainer
+from lightning import seed_everything
 from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.loggers import WandbLogger
 from sklearn.metrics import accuracy_score
@@ -12,6 +13,10 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.datasets import MNIST
+
+
+# will be executed just before `thunder run`
+CALLBACKS = [seed_everything()]
 
 BATCH_SIZE = 256
 
