@@ -99,7 +99,7 @@ class MappingPolicy(Policy, metaclass=ABCMeta):
         if len(self.current_lr_init) != len(optimizer.param_groups):
             raise ValueError(f"Got {len(self.current_lr_init)} lr_init and {len(optimizer.param_groups)} param groups")
 
-        for lr_init, param_group in zip(self.current_lr_init, optimizer.param_groups):
+        for lr_init, param_group in zip_equal(self.current_lr_init, optimizer.param_groups):
             param_group["lr"] = lr_init
 
         super().set_optimizer(optimizer)

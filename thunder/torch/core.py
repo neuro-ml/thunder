@@ -97,7 +97,7 @@ class ThunderModule(LightningModule):
 
         _optimizers = list(collapse([self.optimizer]))
         _lr_schedulers = list(collapse([self.lr_scheduler]))
-        max_len = max(map(len, (_optimizers, _lr_schedulers)))
+        max_len = max(len(_optimizers), len(_lr_schedulers))
         _optimizers = list(padded(_optimizers, None, max_len))
         _lr_schedulers = list(padded(_lr_schedulers, None, max_len))
 

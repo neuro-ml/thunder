@@ -62,7 +62,8 @@ class TimeProfiler(Callback):
     def compute_time_delta(self) -> Dict[str, float]:
         deltas = {}
         for key, time_stamps in self.time_stamps.items():
-            deltas[key] = [(t[1] - t[0]).total_seconds() for t in windowed(time_stamps, 2, step=2)]
+            deltas[key] = [(t[1] - t[0]).total_seconds() for t in windowed(time_stamps, 2, step=2,
+                                                                           fillvalue=time_stamps[-1])]
             deltas[key] = sum(deltas[key]) / len(deltas[key])
 
         if "train epoch" in deltas:

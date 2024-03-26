@@ -1,4 +1,4 @@
-> You saw the lightning. Now it's time to hear the thunder 🌩️
+> _You saw the lightning. Now it's time to hear the thunder_ 🌩️
 
 # Thunder
 
