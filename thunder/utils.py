@@ -28,6 +28,7 @@ collect = make_decorator(list)()
 
 
 def fix_seed(seed=0xBadCafe):
+    """Lightning's `seed_everything` with addition `torch.backends` configurations"""
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
