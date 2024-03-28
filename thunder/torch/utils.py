@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Literal, Union
 
 import numpy as np
 import torch
@@ -93,7 +93,7 @@ def maybe_from_np(*x: Any, device: Union[torch.device, str] = "cpu") -> Any:
     return squeeze_first(apply_to_collection(x, (np.ndarray, np.generic, torch.Tensor), to_tensor))
 
 
-def last_checkpoint(root: Union[Path, str]) -> Optional[Union[Path, str]]:
+def last_checkpoint(root: Union[Path, str]) -> Union[Path, Literal["last"]]:
     """
     Load most fresh last.ckpt file based on time.
     Parameters
