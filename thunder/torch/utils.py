@@ -5,6 +5,7 @@ from typing import Any, Literal, Union
 import numpy as np
 import torch
 from lightning import LightningModule
+import lazycon
 from lightning_utilities import apply_to_collection
 from torch import nn
 
@@ -113,3 +114,8 @@ def last_checkpoint(root: Union[Path, str]) -> Union[Path, Literal["last"]]:
             checkpoints.append(p)
 
     return max(checkpoints, key=lambda t: os.stat(t).st_mtime, default="last")
+
+
+def load_module_from_checkpoint(config_path: Union[Path, str], ckpt_path: Union[Path, Literal["last"]] = "last", **kwargs) -> LightningModule:
+    config = lazycon.load(Path(config_path))
+    pass

@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from lazycon import load as load_config
 import torch
 from lightning import LightningModule
 from more_itertools import zip_equal
@@ -103,3 +104,7 @@ def test_last_checkpoint(temp_dir):
     _create_file(temp_dir / "zero_checkpoints" / "second" / "not_ckpt")
 
     assert last_checkpoint(temp_dir / "zero_checkpoints") == "last"
+
+
+def test_load_module_from_checkpoint(temp_dir, dumb_config):
+    raise
