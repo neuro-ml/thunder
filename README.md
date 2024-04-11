@@ -3,7 +3,7 @@
 [![codecov](https://codecov.io/gh/neuro-ml/thunder/branch/master/graph/badge.svg)](https://codecov.io/gh/neuro-ml/thunder)
 [![pypi](https://img.shields.io/pypi/v/thunder?logo=pypi&label=PyPi)](https://pypi.org/project/thunder/)
 
-> You saw the lightning. Now it's time to hear the thunder 🌩️
+> _You saw the lightning. Now it's time to hear the thunder_ 🌩️
 
 # Thunder 🌩️ 
 

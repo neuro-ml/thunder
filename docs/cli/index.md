@@ -143,3 +143,4 @@ You can copy it and paste it into the following command:
 ```bash
 thunder PASTE_HERE /path/to/config /path/to/experiment 
 ```
+In [sweep config](https://docs.wandb.ai/guides/sweeps/define-sweep-configuration#sweep-configuration-examples) instead of `train.py` one should specify `experiment.config`.

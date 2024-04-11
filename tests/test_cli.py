@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import shutil
@@ -5,6 +6,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
+from deli import load_text, save_text
 from lazycon import Config, load as read_config
 from typer.testing import CliRunner
 
@@ -138,6 +140,38 @@ def test_run(temp_dir, dumb_config):
     assert result.exit_code == 0, result.output
 
 
+@pytest.mark.timeout(60)
+def test_run_callbacks(temp_dir, dumb_config, caplog):
+    # we use cli function directly since `runner.invoke`
+    # erases stdout and logging info
+    from thunder.cli.main import start as cli_start
+
+    experiment = temp_dir / "test_run_callbacks_no_cb"
+    experiment.mkdir()
+    config = experiment / "experiment.config"
+    shutil.copy(dumb_config, config)
+
+    # absolute path
+    with caplog.at_level(logging.INFO):
+        cli_start(experiment)
+    assert any("No pre-run callbacks were executed" in r.message for r in caplog.records), caplog.records
+
+    # Add pre run callbacks
+
+    experiment = temp_dir / "test_run_callbacks"
+    experiment.mkdir()
+    config = experiment / "experiment.config"
+    config_text = "\n".join(["from lightning import seed_everything",
+                             load_text(dumb_config), "CALLBACKS=[seed_everything()]"])
+
+    save_text(config_text, config)
+
+    # absolute path
+    with caplog.at_level(logging.INFO):
+        cli_start(experiment)
+    assert any("seed set to" in r.message.lower() for r in caplog.records), caplog.records
+
+
 def test_backend_add(temp_dir, mock_backend):
     result = invoke("backend", "add", "new_config", "backend=slurm", "ram=100")
     assert result.exit_code == 0 and "new_config" in load_backend_configs()
@@ -188,6 +222,23 @@ def test_backend_remove(temp_dir, mock_backend):
 
     assert result.exit_code == 0
     assert not load_backend_configs().keys()
+
+
+def test_datamodule(temp_dir, dumb_config):
+    experiment = temp_dir / "test_datamodule"
+    experiment.mkdir()
+    config = experiment / "experiment.config"
+    config_text = "\n".join([
+        "from lightning.pytorch.demos.boring_classes import BoringDataModule",
+        load_text(dumb_config),
+        "datamodule = BoringDataModule()"
+    ])
+
+    save_text(config_text, config)
+
+    result = invoke("run", experiment)
+    # TODO: we need something smarter?
+    assert result.exit_code == 0, result.output
 
 
 def invoke(*cmd):

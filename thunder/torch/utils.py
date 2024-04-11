@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any, Union
+from typing import Any, Literal, Union
 
 import numpy as np
 import torch
@@ -84,26 +84,32 @@ def maybe_from_np(*x: Any, device: Union[torch.device, str] = "cpu") -> Any:
     >>> x, y, z = maybe_from_np(x, y, z) # maybe_from_np converts np arrays and tensors and does not affect other types
     >>> dict_of_tensors = to_np(dict_of_np) # maybe_from_np converts any collection
     """
+
     def to_tensor(x):
         if isinstance(x, torch.Tensor):
             return x.to(device)
         return torch.from_numpy(x).to(device)
+
     return squeeze_first(apply_to_collection(x, (np.ndarray, np.generic, torch.Tensor), to_tensor))
 
 
-def last_checkpoint(root: Union[Path, str]) -> Union[Path, str]:
+def last_checkpoint(root: Union[Path, str]) -> Union[Path, Literal["last"]]:
     """
     Load most fresh last.ckpt file based on time.
     Parameters
     ----------
     root: Union[Path, str]
-        Path to folder, where last.ckpt supposed to be.
+        Path to folder, where last.ckpt or its symbolic link supposed to be.
     Returns
     -------
     checkpoint_path: Union[Path, str]
         If last.ckpt exists - returns Path to it. Otherwise, returns 'last'.
     """
-    checkpoints = [p for p in Path(root).glob("**/*.ckpt") if p.name != "last.ckpt"]
-    if not checkpoints:
-        return "last"
-    return max(checkpoints, key=lambda t: os.stat(t).st_mtime)
+    checkpoints = []
+    for p in Path(root).rglob("*"):
+        if p.is_symlink():
+            p = p.resolve(strict=False)
+        if p.suffix == ".ckpt":
+            checkpoints.append(p)
+
+    return max(checkpoints, key=lambda t: os.stat(t).st_mtime, default="last")
