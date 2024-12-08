@@ -78,6 +78,9 @@ def _list(names: BackendNamesArg = None):
     table = Table("Name", "Backend", "Parameters",
                   title=f"Configs at {str(BACKENDS_CONFIG_PATH.resolve())}")
 
+    if names is None:
+        names = local.copy()
+
     extra = set(names) - set(local)
     if extra:
         console.print("These names are not among your configs:", extra)
