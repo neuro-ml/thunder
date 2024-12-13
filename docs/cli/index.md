@@ -53,7 +53,7 @@ The command shown above will run SLURM job with 4 CPUs and 100G of RAM.
 
 ### Predefined run configs
 You can predefine run configs to avoid reentering the same flags.
-Create `~/.config/thunder/backends.yml` (you can run `thunder show` in your terminal, 
+Create `~/.config/thunder/backends.yml` (you can run `thunder backend list` in your terminal, 
 required path will be at the title of the table) in you home directory. 
 Now you can specify config name and its parameters:
 ```yaml

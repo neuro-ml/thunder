@@ -37,6 +37,9 @@ class BackendEntryConfig(BaseModel):
 
 
 class MetaEntry(BaseModel):
+    """
+    Default backend set by `thunder backend set`
+    """
     default: str
 
 
