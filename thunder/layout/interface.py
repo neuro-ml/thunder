@@ -5,17 +5,14 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, Optional, Tuple
 
 from lazycon import Config
-from pydantic import BaseModel, Extra
+from ..pydantic_compat import NoExtra
 
 
-class Node(BaseModel):
+class Node(NoExtra):
     name: str
 
     # TODO: no layouts with parents so far
     # parents: Sequence[Node] = ()
-
-    class Config:
-        extra = Extra.forbid
 
 
 class Layout(ABC):

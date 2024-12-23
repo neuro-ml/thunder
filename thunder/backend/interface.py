@@ -1,14 +1,14 @@
 from pathlib import Path
 from typing import Dict, Optional, Sequence, Type
 
-from pydantic import BaseModel, Extra, validator
+from pydantic import BaseModel
+from thunder.pydantic_compat import NoExtra, field_validator, model_validate, PYDANTIC_MAJOR
 
 from ..layout import Node
 
 
-class BackendConfig(BaseModel):
-    class Config:
-        extra = Extra.ignore
+class BackendConfig(NoExtra):
+    """Backend Parameters"""
 
 
 class Backend:
@@ -19,21 +19,27 @@ class Backend:
         """Start running the given `nodes` of an experiment located at the given path"""
 
 
-class BackendEntryConfig(BaseModel):
+class BackendEntryConfig(NoExtra):
     backend: str
     config: BackendConfig
 
-    @validator('config', pre=True)
+    @field_validator("config", mode="before")
     def _val_config(cls, v, values):
-        val = backends[values['backend']]
-        return val.Config.parse_obj(v)
+        return parse_backend_config(v, values)
 
     @property
     def backend_cls(self):
         return backends[self.backend]
 
-    class Config:
-        extra = Extra.ignore
+
+if PYDANTIC_MAJOR == 2:
+    def parse_backend_config(v, values):
+        val = backends[values.data["backend"]]
+        return model_validate(val.Config, v)
+else:
+    def parse_backend_config(v, values):
+        val = backends[values["backend"]]
+        return model_validate(val.Config, v)
 
 
 class MetaEntry(BaseModel):
