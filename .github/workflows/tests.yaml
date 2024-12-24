@@ -15,7 +15,6 @@ jobs:
         exclude:
           - torch-version: '1.13'
             python-version: '3.11'
-            python-version: '3.12'
 
     steps:
       - uses: actions/checkout@v3
