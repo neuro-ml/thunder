@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Check Python version
+      - name: Check Python version # https://github.com/python/cpython/issues/95299
         id: check-version
         run: |
           python_version=$(python --version | awk '{print $2}')
@@ -33,6 +33,7 @@ jobs:
             echo "setuptools_present=true" >> $GITHUB_ENV
           else
             echo "setuptools_present=false" >> $GITHUB_ENV
+          fi
 
       - name: Build the package (python >= 3.12)
         if: env.setuptools_present == 'false'
