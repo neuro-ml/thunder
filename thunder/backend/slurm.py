@@ -8,12 +8,12 @@ from pathlib import Path
 from typing import Optional, Sequence
 
 from deli import save
-from thunder.pydantic_compat import field_validator
 from pytimeparse.timeparse import timeparse
 from typer import Option
 from typing_extensions import Annotated
 
 from ..layout import Node
+from ..pydantic_compat import field_validator
 from .interface import Backend, BackendConfig, backends
 
 

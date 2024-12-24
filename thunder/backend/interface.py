@@ -2,9 +2,9 @@ from pathlib import Path
 from typing import Dict, Optional, Sequence, Type
 
 from pydantic import BaseModel
-from thunder.pydantic_compat import NoExtra, field_validator, model_validate, PYDANTIC_MAJOR
 
 from ..layout import Node
+from ..pydantic_compat import PYDANTIC_MAJOR, NoExtra, field_validator, model_validate
 
 
 class BackendConfig(NoExtra):

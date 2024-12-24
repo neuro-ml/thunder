@@ -13,7 +13,7 @@ from typer.main import get_click_param
 from typer.models import ParamMeta
 
 from ..backend import BackendEntryConfig, MetaEntry, backends
-from thunder.pydantic_compat import resolve_pydantic_major, model_validate
+from ..pydantic_compat import model_validate, resolve_pydantic_major
 from .app import app
 
 
