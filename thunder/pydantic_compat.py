@@ -2,6 +2,7 @@ def resolve_pydantic_major() -> int:
     import pydantic
     return int(pydantic.__version__.split(".")[0])
 
+
 PYDANTIC_MAJOR = resolve_pydantic_major()
 
 if PYDANTIC_MAJOR == 2:
@@ -16,7 +17,6 @@ if PYDANTIC_MAJOR == 2:
 
     def model_dump(obj, **kwargs):
         return obj.model_dump(**kwargs)
-
 
     def model_copy(cls, **kwargs):
         return cls.model_copy(**kwargs)
