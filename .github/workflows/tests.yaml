@@ -64,6 +64,7 @@ jobs:
           python -m pip install -e .
           python -m pip install -r tests/dev-requirements.txt
           python -m pip install torch==${{ matrix.torch-version }}
+          python -m pip install lightning
           cd tests
           export MODULE_PARENT=$(python -c "import $MODULE_NAME, os; print(os.path.dirname($MODULE_NAME.__path__[0]))")
           export MODULE_PARENT=${MODULE_PARENT%"/"}
