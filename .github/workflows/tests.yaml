@@ -11,10 +11,12 @@ jobs:
     strategy:
       matrix:
         python-version: [ '3.8', '3.9', '3.10', '3.11', '3.12' ]
-        torch-version: [ '1.13', '2.0.1' ]
+        torch-version: [ '1.13', '2.0.1', '2.5.0']
         exclude:
           - torch-version: '1.13'
             python-version: '3.11'
+          - python-version: '3.12'
+            torch-version: ['1.13', '2.0.1']
 
     steps:
       - uses: actions/checkout@v3
