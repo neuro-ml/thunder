@@ -13,8 +13,6 @@ try:
     from torch.optim.lr_scheduler import LRScheduler
 except ImportError:
     from torch.optim.lr_scheduler import _LRScheduler as LRScheduler
-except Exception:
-    raise
 
 
 class Policy(LRScheduler, metaclass=ABCMeta):
