@@ -31,10 +31,17 @@ module = ThunderModule(
     architecture, nn.CrossEntropyLoss(), optimizer=torch.optim.Adam(architecture.parameters())
 )
 
+# Preparing metrics
+# 'y' and 'x' are single label and 
+# model prediction for a single image,
+# hence the 'np.argmax(x)' for extracting
+# the predicted label.
+group_accuracy = {lambda y, x: (y, np.argmax(x)): accuracy_score}
+
 # Initialize a trainer
 trainer = Trainer(
     callbacks=[ModelCheckpoint(save_last=True),
-               MetricMonitor(group_metrics={lambda y, x: (np.argmax(y), x): accuracy_score})],
+               MetricMonitor(group_metrics=group_accuracy)],
     accelerator="auto",
     devices=1,
     max_epochs=100,
