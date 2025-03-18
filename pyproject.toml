@@ -3,7 +3,7 @@ name = 'thunder'
 dynamic = ['version', 'dependencies']
 description = 'A small experiments runner for Pytorch Lightning'
 readme = 'README.md'
-requires-python = '>=3.8'
+requires-python = '>=3.10'
 license = { file = 'LICENSE' }
 keywords = ['deep learning', 'experiments']
 authors = [
@@ -16,6 +16,7 @@ classifiers = [
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
     'Programming Language :: Python :: 3 :: Only',
 ]
 
