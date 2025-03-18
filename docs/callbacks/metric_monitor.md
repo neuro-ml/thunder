@@ -16,21 +16,19 @@ loss(es). It casts them by the following rules:
 At the end of epoch they are averaged and sent to logger.
 
 ### Metric Computation
-Metrics are assumed to be received as tuple `(X, Y)`, where
-**X** - batch of predictions, **Y** - batch of targets. 
-Further process of computation depends on whether `Group` or `Single`
+
+`MetricMonitor` should receive outputs from `LightningModule` in form of `(X, Y)`, 
+where **X** is the batch of predictions, **Y** is the batch of targets.
+The following process of computation depends on whether `Group` or `Single` 
 metrics are used. Also, there is no difference for MetricMonitor between 
-`(X, Y)` and `((X,), (Y,))`.  
+`(X, Y)` and `((X,), (Y,))`. 
 If your model has multiple outputs or requires multiple targets
 (e.g. neural network with 2 heads.), the output is expected to be
-`((X1, X2), (Y1, Y2))` (the most common way to represent such data in PyTorch), where **X1** is batch of model's first output.
-In this case outputs will be recombined, so the first object
+`((X1, X2), (Y1, Y2))`, where **X1** is batch of model's first output.
+In this case outputs will be recombined inside the callback, so the first object
 of the output will be `((x1, x2), (y1, y2))`, where **x1** is the first
 element of batch `X1`.  
 
-:warning:  
-> Inside the callback outputs are swapped, so if LightningModule returns
-(X, Y) then metrics will receive (Y, X).
 
 ### Group metrics
 Group metrics are computed on the entire dataset.
@@ -133,7 +131,7 @@ In the example above, `accuracy_score` and `recall_score` are computed on each c
 (e.g. like in semantic segmentation task). 
 Preprocessing functions are applied on each entry separately in both `single_megtrics` and `group_metrics`.
 #### Individual Metrics
-While computing `single_metrics`, one may appear in need of knowledge of metrics on each case.
+While computing `single_metrics`, one may want to see metrics for each instance individually.
 For this particular problem, the callback provides its users with `log_individual_metrics`
 flag. Being set to `True` it forces the callback to store table of metrics in the following format:
 
