@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.3">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.d7758b05.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.4af4bdda.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
@@ -1412,6 +1412,7 @@ default inference runner.</p>
 
 
 
+
   <div class="doc doc-children">
 
 
@@ -1438,6 +1439,7 @@ default inference runner.</p>
 
 
         <p>Base class for all predictors.</p>
+
 
 
 
@@ -1515,6 +1517,7 @@ default inference runner.</p>
 
         <p>Post-process stream of predictions.</p>
 
+
             <details class="quote">
               <summary>Source code in <code>thunder/predict/predict.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-15">15</a></span>
@@ -1547,6 +1550,7 @@ default inference runner.</p>
 
         <p>Process stream of batches before model inference.</p>
 
+
             <details class="quote">
               <summary>Source code in <code>thunder/predict/predict.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-10">10</a></span>
@@ -1574,6 +1578,7 @@ default inference runner.</p>
     <div class="doc doc-contents ">
 
         <p>Runs preprocessing, inference and postprocessing.</p>
+
 
             <details class="quote">
               <summary>Source code in <code>thunder/predict/predict.py</code></summary>
@@ -1609,7 +1614,7 @@ default inference runner.</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="thunder.predict.predict.Predictor" href="#thunder.predict.predict.Predictor">Predictor</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="Predictor (thunder.predict.predict.Predictor)" href="#thunder.predict.predict.Predictor">Predictor</a></code></p>
 
 
         <p>Decorates inference function
@@ -1618,6 +1623,7 @@ Example</p>
 <p>Decorated(f, g, h)</p>
 <h4 id="thunder.predict.predict.Decorated--inside-decorated">inside Decorated<a class="headerlink" href="#thunder.predict.predict.Decorated--inside-decorated" title="Permanent link">#</a></h4>
 <p>predict_fn = f(g(h(predict_fn)))</p>
+
 
 
 
@@ -1691,10 +1697,11 @@ Example</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="thunder.predict.predict.BasePredictor" href="#thunder.predict.predict.BasePredictor">BasePredictor</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="BasePredictor (thunder.predict.predict.BasePredictor)" href="#thunder.predict.predict.BasePredictor">BasePredictor</a></code></p>
 
 
         <p>Useful for running inference on infinite stream of data.</p>
+
 
 
 
@@ -1754,10 +1761,11 @@ Example</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="thunder.predict.predict.InfinitePredictor" href="#thunder.predict.predict.InfinitePredictor">InfinitePredictor</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="InfinitePredictor (thunder.predict.predict.InfinitePredictor)" href="#thunder.predict.predict.InfinitePredictor">InfinitePredictor</a></code></p>
 
 
         <p>Assumes using finite amount of data for inference to be run on.</p>
+
 
 
 
@@ -1855,7 +1863,7 @@ Example</p>
     <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.f1b6f286.min.js"></script>
+      <script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
       
         <script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
       
