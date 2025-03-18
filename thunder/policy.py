@@ -7,7 +7,6 @@ from typing import Any, Callable, Dict, List, Union
 from more_itertools import zip_equal
 from toolz import juxt
 from torch.optim import Optimizer
-
 from torch.optim.lr_scheduler import LRScheduler
 
 
