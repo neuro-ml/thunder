@@ -1406,22 +1406,17 @@ loss(es). It casts them by the following rules:<br />
 </blockquote>
 <p>At the end of epoch they are averaged and sent to logger.</p>
 <h3 id="metric-computation">Metric Computation<a class="headerlink" href="#metric-computation" title="Permanent link">#</a></h3>
-<p>Metrics are assumed to be received as tuple <code>(X, Y)</code>, where
-<strong>X</strong> - batch of predictions, <strong>Y</strong> - batch of targets. 
-Further process of computation depends on whether <code>Group</code> or <code>Single</code>
+<p><code>MetricMonitor</code> should receive outputs from <code>LightningModule</code> in form of <code>(X, Y)</code>, 
+where <strong>X</strong> is the batch of predictions, <strong>Y</strong> is the batch of targets.
+The following process of computation depends on whether <code>Group</code> or <code>Single</code> 
 metrics are used. Also, there is no difference for MetricMonitor between 
-<code>(X, Y)</code> and <code>((X,), (Y,))</code>.<br />
+<code>(X, Y)</code> and <code>((X,), (Y,))</code>. 
 If your model has multiple outputs or requires multiple targets
 (e.g. neural network with 2 heads.), the output is expected to be
-<code>((X1, X2), (Y1, Y2))</code> (the most common way to represent such data in PyTorch), where <strong>X1</strong> is batch of model's first output.
-In this case outputs will be recombined, so the first object
+<code>((X1, X2), (Y1, Y2))</code>, where <strong>X1</strong> is batch of model's first output.
+In this case outputs will be recombined inside the callback, so the first object
 of the output will be <code>((x1, x2), (y1, y2))</code>, where <strong>x1</strong> is the first
 element of batch <code>X1</code>.  </p>
-<p><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/26a0.svg" title=":warning:" />  </p>
-<blockquote>
-<p>Inside the callback outputs are swapped, so if LightningModule returns
-(X, Y) then metrics will receive (Y, X).</p>
-</blockquote>
 <h3 id="group-metrics">Group metrics<a class="headerlink" href="#group-metrics" title="Permanent link">#</a></h3>
 <p>Group metrics are computed on the entire dataset.
 For example, you want to compute classification accuracy on MNIST.</p>
@@ -1526,7 +1521,7 @@ In the example above, <code>accuracy_score</code> and <code>recall_score</code> 
 (e.g. like in semantic segmentation task). 
 Preprocessing functions are applied on each entry separately in both <code>single_megtrics</code> and <code>group_metrics</code>.</p>
 <h4 id="individual-metrics">Individual Metrics<a class="headerlink" href="#individual-metrics" title="Permanent link">#</a></h4>
-<p>While computing <code>single_metrics</code>, one may appear in need of knowledge of metrics on each case.
+<p>While computing <code>single_metrics</code>, one may want to see metrics for each instance individually.
 For this particular problem, the callback provides its users with <code>log_individual_metrics</code>
 flag. Being set to <code>True</code> it forces the callback to store table of metrics in the following format:</p>
 <table>
