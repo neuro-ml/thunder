@@ -12,7 +12,7 @@ jobs:
       matrix:
         python-version: [ '3.10', '3.11', '3.12', '3.13' ]
         torch-version: [ '1.13', '2.0.1', '2.5.0', '2.6.0']
-#        exclude:
+        exclude:
 #          # python 3.10 supports torch < 2.5
 #          - python-version: '3.10'
 #            torch-version: '2.5.0'
@@ -21,11 +21,11 @@ jobs:
 #            torch-version: '1.13'
 #          - python-version: '3.11'
 #            torch-version: '2.5.0'
-#          # python 3.12 supports torch > 2.0.1
-#          - python-version: '3.12'
-#            torch-version: '1.13'
-#          - python-version: '3.12'
-#            torch-version: '2.0.1'
+          # python 3.12 supports torch >= 2.2.0
+          - python-version: '3.12'
+            torch-version: '1.13'
+          - python-version: '3.12'
+            torch-version: '2.0.1'
 #          # python 3.13 supports torch >= 2.5
 #          - python-version: '3.13'
 #            torch-version: '1.13'
@@ -66,8 +66,8 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r tests/dev-requirements.txt
-          python -m pip install torch==${{ matrix.torch-version }}
           python -m pip install -e .
+          python -m pip install torch==${{ matrix.torch-version }}
           cd tests
           export MODULE_PARENT=$(python -c "import $MODULE_NAME, os; print(os.path.dirname($MODULE_NAME.__path__[0]))")
           export MODULE_PARENT=${MODULE_PARENT%"/"}
