@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import pytest
 import torch
@@ -201,5 +203,9 @@ def check_scheduler(scheduler, targets):
 def check_scheduler_saving(new_scheduler, scheduler, optim, tmpdir):
     torch.save(scheduler.state_dict(), f"{tmpdir}/scheduler.pth")
     new_scheduler(optim)
+
+    # https://pytorch.org/blog/pytorch2-6/
+    # in pytorch >= 2.6 `weights_only=True` by default
+    # (previously `False` was teh default)
     new_scheduler.load_state_dict(torch.load(f"{tmpdir}/scheduler.pth"))
     assert new_scheduler.state_dict() == scheduler.state_dict()
