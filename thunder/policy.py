@@ -8,11 +8,7 @@ from more_itertools import zip_equal
 from toolz import juxt
 from torch.optim import Optimizer
 
-
-try:
-    from torch.optim.lr_scheduler import LRScheduler
-except ImportError:
-    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler
+from torch.optim.lr_scheduler import LRScheduler
 
 
 class Policy(LRScheduler, metaclass=ABCMeta):
