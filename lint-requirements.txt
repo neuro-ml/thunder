@@ -1,4 +1,4 @@
-flake8<=5
+flake8
 flake8-pyproject
 flake8-tidy-imports
 flake8-quotes
