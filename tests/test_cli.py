@@ -63,11 +63,11 @@ b = 2
 
     with cleanup(experiment):
         result = invoke('build', config, experiment, '-u', 'c=3')
-        assert result.exit_code != 0
+        assert result.exit_code != 0, result.output
         assert 'are missing from the config' in str(result.exception)
 
         result = invoke('build', config, experiment, '-u', 'a=10')
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.output
         assert Config.load(experiment / 'experiment.config').a == 10
 
     with cleanup(experiment):
@@ -111,7 +111,7 @@ def test_build_overwrite(temp_dir):
     config.write_text('b = 2')
 
     result = invoke('build', config, experiment, "--overwrite")
-    assert result.exit_code == 0
+    assert result.exit_code == 0, result.output
     assert not hasattr(read_config(experiment / "experiment.config"), "a")
     assert read_config(experiment / "experiment.config").b == 2
 
@@ -187,6 +187,11 @@ def test_backend_add(temp_dir, mock_backend):
     local = load_backend_configs()
     assert "new_config" in local and "new_config_2" in local
 
+    invoke("backend", "add", "new_config_3", "backend=cli", "n_workers=8")
+    local = load_backend_configs()
+    assert "new_config" in local and "new_config_2" in local
+    assert "new_config_3" in local
+
 
 def test_backend_list(temp_dir, mock_backend):
     # language=yaml
@@ -208,10 +213,11 @@ def test_backend_list(temp_dir, mock_backend):
 
 
 def test_backend_set(temp_dir, mock_backend):
-    assert invoke("backend", "add", "config", "backend=slurm", "ram=100G", "--force").exit_code == 0
+    result = invoke("backend", "add", "config", "backend=slurm", "ram=100G", "--force")
+    assert result.exit_code == 0, result.output
     result = invoke("backend", "set", "config")
 
-    assert result.exit_code == 0
+    assert result.exit_code == 0, result.output
     local = load_backend_configs()
     assert local[local["meta"].default].config.ram == "100G"
 

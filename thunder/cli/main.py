@@ -1,3 +1,4 @@
+import functools
 import shutil
 from io import StringIO
 from pathlib import Path
@@ -13,6 +14,7 @@ from typing_extensions import Annotated
 
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
+from ..pydantic_compat import model_validate
 from ..torch.utils import last_checkpoint
 from ..utils import chdir
 from .app import app
@@ -191,7 +193,8 @@ def load_nodes(experiment: Path):
     if not nodes.exists():
         return {}
     # TODO: check uniqueness
-    return {x.name: x for x in map(Node.parse_obj, load(nodes))}
+    parse_obj = functools.partial(model_validate, Node)
+    return {x.name: x for x in map(parse_obj, load(nodes))}
 
 
 def get_nodes(experiment: Path, names: Optional[Sequence[str]]):

@@ -171,7 +171,8 @@ class MetricMonitor(Callback):
             dataloader_idx: int = 0,
     ) -> None:
         if len(outputs) != 2:
-            raise ValueError(f"Expected step output in form of 2 elements (x, y)," f"but received {len(outputs)}")
+            raise ValueError(f"Expected step output in form of 2 elements (x, y), "
+                             f"but received {len(outputs)}")
         xs, ys = outputs
         xs = _recombine_batch(xs) if isinstance(xs, (list, tuple)) else xs
         ys = _recombine_batch(ys) if isinstance(ys, (list, tuple)) else ys

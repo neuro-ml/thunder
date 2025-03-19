@@ -201,5 +201,10 @@ def check_scheduler(scheduler, targets):
 def check_scheduler_saving(new_scheduler, scheduler, optim, tmpdir):
     torch.save(scheduler.state_dict(), f"{tmpdir}/scheduler.pth")
     new_scheduler(optim)
-    new_scheduler.load_state_dict(torch.load(f"{tmpdir}/scheduler.pth"))
+
+    # https://pytorch.org/blog/pytorch2-6/
+    # in pytorch >= 2.6 `weights_only=True` by default
+    # (previously `False` was the default)
+    # TODO: Might be unsafe
+    new_scheduler.load_state_dict(torch.load(f"{tmpdir}/scheduler.pth", weights_only=False))
     assert new_scheduler.state_dict() == scheduler.state_dict()

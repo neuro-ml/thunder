@@ -3,6 +3,24 @@
 Thunder provides its users with CLI to bring convenience and comfort into experiment
 building and execution routine.
 
+## Examples 
+```bash
+# 1. Buiding an experiment and overwriting some parameters
+thunder build /path/to/config /path/to/experiment -u batch_size=2 -u lr=0.001
+
+# 2. Running previously build experiment
+thunder run /path/to/experiment --backend slurm -c 4 -r 100G 
+
+# 3. Preparing new backend
+thunder backend add my_awesome_back backend=slurm ram=100 cpu=4 gpu=1 partition=partition_name
+# 4. Running experiment with `my_awesome_backend` 
+thunder run /path/to/experiment --backend my_awesome_back
+# 5. Setting `my_awesome_back` as the default
+thunder backend set my_awesome_back
+# 6. Same as 4
+thunder run /path/to/experiment
+```
+
 For any help you can use
 ```bash
 thunder --help
@@ -53,7 +71,7 @@ The command shown above will run SLURM job with 4 CPUs and 100G of RAM.
 
 ### Predefined run configs
 You can predefine run configs to avoid reentering the same flags.
-Create `~/.config/thunder/backends.yml` (you can run `thunder show` in your terminal, 
+Create `~/.config/thunder/backends.yml` (you can run `thunder backend list` in your terminal, 
 required path will be at the title of the table) in you home directory. 
 Now you can specify config name and its parameters:
 ```yaml

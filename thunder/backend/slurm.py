@@ -8,12 +8,12 @@ from pathlib import Path
 from typing import Optional, Sequence
 
 from deli import save
-from pydantic import validator
 from pytimeparse.timeparse import timeparse
 from typer import Option
 from typing_extensions import Annotated
 
 from ..layout import Node
+from ..pydantic_compat import field_validator
 from .interface import Backend, BackendConfig, backends
 
 
@@ -26,45 +26,45 @@ ROOT_ARRAYS = ROOT / 'arrays'
 
 class Slurm(Backend):
     class Config(BackendConfig):
-        ram: Annotated[str, Option(
-            ..., '-r', '--ram', '--mem',
+        ram: Annotated[Optional[str], Option(
+            None, '-r', '--ram', '--mem',
             help='The amount of RAM required per node. Default units are megabytes. '
                  'Different units can be specified using the suffix [K|M|G|T].'
         )] = None
-        cpu: Annotated[int, Option(
-            ..., '-c', '--cpu', '--cpus-per-task', show_default=False,
+        cpu: Annotated[Optional[int], Option(
+            None, ..., '-c', '--cpu', '--cpus-per-task', show_default=False,
             help='Number of CPU cores to allocate. Default to 1'
         )] = None
-        gpu: Annotated[int, Option(
-            ..., '-g', '--gpu', '--gpus-per-node',
+        gpu: Annotated[Optional[int], Option(
+            None, '-g', '--gpu', '--gpus-per-node',
             help='Number of GPUs to allocate'
         )] = None
-        partition: Annotated[str, Option(
-            ..., '-p', '--partition',
+        partition: Annotated[Optional[str], Option(
+            None, '-p', '--partition',
             help='Request a specific partition for the resource allocation'
         )] = None
-        nodelist: Annotated[str, Option(
-            ...,
+        nodelist: Annotated[Optional[str], Option(
+            None,
             help='Request a specific list of hosts. The list may be specified as a comma-separated '
-                 'list of hosts, a range of hosts (host[1-5,7,...] for example).'
+                 'list of hosts, a range of hosts (host[1-5,7,None] for example).'
         )] = None
-        time: Annotated[str, Option(
-            ..., '-t', '--time',
+        time: Annotated[Optional[str], Option(
+            None, '-t', '--time',
             help='Set a limit on the total run time of the job allocation. When the time limit is reached, '
                  'each task in each job step is sent SIGTERM followed by SIGKILL.'
         )] = None
-        limit: Annotated[int, Option(
-            ...,
+        limit: Annotated[Optional[int], Option(
+            None,
             help='Limit the number of jobs that are simultaneously running during the experiment',
         )] = None
 
-        @validator('time')
+        @field_validator("time")
         def val_time(cls, v):
             if v is None:
                 return
             return parse_duration(v)
 
-        @validator('limit')
+        @field_validator("limit")
         def val_limit(cls, v):
             assert v is None or v > 0, 'The jobs limit, if specified, must be positive'
             return v

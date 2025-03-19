@@ -13,6 +13,7 @@ from typer.main import get_click_param
 from typer.models import ParamMeta
 
 from ..backend import BackendEntryConfig, MetaEntry, backends
+from ..pydantic_compat import model_validate, resolve_pydantic_major
 from .app import app
 
 
@@ -92,21 +93,37 @@ def populate(backend_name):
             show_default=False,
         ),
     )]
-    for field in entry.backend_cls.Config.__fields__.values():
-        annotation = field.outer_type_
-        # TODO: https://stackoverflow.com/a/68337036
-        if not hasattr(annotation, '__metadata__') or not hasattr(annotation, '__origin__'):
-            raise ValueError('Please use the `Annotated` syntax to annotate you backend config')
-
-        # TODO
-        default, = annotation.__metadata__
-        default = copy.deepcopy(default)
-        default.default = getattr(entry.config, field.name)
-        default.help = f'[{backend_name} backend] {default.help}'
-        backend_params.append(ParamMeta(
-            name=field.name, default=default, annotation=annotation.__origin__,
-        ))
+    backend_params.extend(_collect_backend_params(entry, backend_name))
     return backend_params
+
+
+if resolve_pydantic_major() >= 2:
+    def _collect_backend_params(entry, backend_name):
+        """
+        Config Annotation depends on pydantic version.
+        """
+        for field_name, field in entry.backend_cls.Config.model_fields.items():
+            field_clone = copy.deepcopy(field)
+            field_clone.default = getattr(entry.config, field_name)
+            yield ParamMeta(
+                name=field_name, default=field_clone.default, annotation=field.annotation,
+            )
+else:
+    def _collect_backend_params(entry, backend_name):
+        for field in entry.backend_cls.Config.__fields__.values():
+            annotation = field.outer_type_
+            # TODO: https://stackoverflow.com/a/68337036
+            if not hasattr(annotation, '__metadata__') or not hasattr(annotation, '__origin__'):
+                raise ValueError('Please use the `Annotated` syntax to annotate you backend config')
+
+            # TODO
+            default, = annotation.__metadata__
+            default = copy.deepcopy(default)
+            default.default = getattr(entry.config, field.name)
+            default.help = f'[{backend_name} backend] {default.help}'
+            yield ParamMeta(
+                name=field.name, default=default, annotation=annotation.__origin__,
+            )
 
 
 def collect_backends() -> ChainMap:
@@ -144,7 +161,7 @@ def collect_configs() -> Tuple[ChainMap, Union[MetaEntry, None]]:
 def load_backend_configs() -> Dict[str, Union[BackendEntryConfig, MetaEntry]]:
     path = BACKENDS_CONFIG_PATH
     if not path.exists():
-        # print(path, flush=True)
+        # TODO: return Option[Dict]
         return {}
 
     with path.open('r') as file:
@@ -153,5 +170,5 @@ def load_backend_configs() -> Dict[str, Union[BackendEntryConfig, MetaEntry]]:
         return {}
     # FIXME
     assert isinstance(local, dict), type(local)
-    return {k: BackendEntryConfig.parse_obj(v)
-            if k != "meta" else MetaEntry.parse_obj(v) for k, v in local.items()}
+    return {k: model_validate(BackendEntryConfig, v)
+            if k != "meta" else model_validate(MetaEntry, v) for k, v in local.items()}

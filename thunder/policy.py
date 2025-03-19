@@ -7,7 +7,7 @@ from typing import Any, Callable, Dict, List, Union
 from more_itertools import zip_equal
 from toolz import juxt
 from torch.optim import Optimizer
-from torch.optim.lr_scheduler import _LRScheduler as LRScheduler
+from torch.optim.lr_scheduler import LRScheduler
 
 
 class Policy(LRScheduler, metaclass=ABCMeta):
@@ -48,19 +48,7 @@ class Policy(LRScheduler, metaclass=ABCMeta):
         -------
         Dict[str, Any]
         """
-        keys = (*keys, "optimizer")
-        return {key: value for key, value in self.__dict__.items() if key not in keys}
-
-    @abstractmethod
-    def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
-        """
-        Loads state dict of scheduler
-        Parameters
-        ----------
-        state_dict: Dict[str, Any]
-            State dict of scheduler.
-        """
-        self.__dict__.update(state_dict)
+        return {key: value for key, value in super().state_dict().items() if key not in keys}
 
 
 class MappingPolicy(Policy, metaclass=ABCMeta):
