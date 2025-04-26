@@ -8,10 +8,7 @@
 
 ```bash
 pip install thunder
-```
-
-:warning:  
-> Currently thunder is not published on pypi. Install it via git clone.  
+``` 
 
 ## Start experimenting
 For the sake of simplicity (and sanity) we will get by with MNIST classification problem.
