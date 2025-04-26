@@ -38,11 +38,6 @@ jobs:
           python_version=$(python --version | awk '{print $2}')
           major=$(echo $python_version | cut -d'.' -f1)
           minor=$(echo $python_version | cut -d'.' -f2)
-          if ([ "$major" -eq 3 ] && [ "$minor" -ge 12 ]); then
-            echo "setuptools_present=false" >> $GITHUB_ENV
-          else
-            echo "setuptools_present=true" >> $GITHUB_ENV
-          fi
 
       - name: Build the package
         run: |
