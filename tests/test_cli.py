@@ -140,6 +140,28 @@ def test_run(temp_dir, dumb_config):
     assert result.exit_code == 0, result.output
 
 
+@pytest.mark.timeout(30)
+def test_run_slurm(temp_dir, dumb_config):
+    """
+    We do not need installed slurm in order to check if
+    slurm cli works as we expect.
+    """
+    experiment = temp_dir / "test_run_exp"
+    experiment.mkdir()
+    config = experiment / "experiment.config"
+    shutil.copy(dumb_config, config)
+
+    # short flags
+    result = invoke("run", experiment, "--backend", "slurm",
+                    "-c", "10", "-r", "20G")
+    assert result.exit_code == 0, result.output
+
+    # full flags
+    result = invoke("run", experiment, "--backend", "slurm",
+                    "--cpu", "10", "--ram", "20G")
+    assert result.exit_code == 0, result.output
+
+
 @pytest.mark.timeout(60)
 def test_run_callbacks(temp_dir, dumb_config, caplog):
     # we use cli function directly since `runner.invoke`

@@ -32,7 +32,7 @@ class Slurm(Backend):
                  'Different units can be specified using the suffix [K|M|G|T].'
         )] = None
         cpu: Annotated[Optional[int], Option(
-            None, ..., '-c', '--cpu', '--cpus-per-task', show_default=False,
+            None,  '--cpu', '-c', '--cpus-per-task', show_default=False,
             help='Number of CPU cores to allocate. Default to 1'
         )] = None
         gpu: Annotated[Optional[int], Option(
