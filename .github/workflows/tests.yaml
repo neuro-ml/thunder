@@ -10,19 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ '3.10', '3.11', '3.12', '3.13' ]
-        torch-version: [ '2.1.0', '2.5.0', '2.6.0']
-        exclude:
         # In accordance with
         # https://github.com/pytorch/pytorch/blob/main/RELEASE.md#release-compatibility-matrix
-          - python-version: '3.12'
-            torch-version: '2.1.0'
-          - python-version: '3.13'
-            torch-version: '2.1.0'
-
-          # experimental
-          - python-version: '3.13'
-            torch-version: '2.5.0'
+        python-version: [ '3.12', '3.13' ]
+        torch-version: [ '2.6.0', '2.7.0', '2.8.0']
 
 
     steps:
