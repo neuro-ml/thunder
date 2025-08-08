@@ -6,7 +6,12 @@ from typing import Any, Dict, Iterable, Optional, Tuple
 
 from lazycon import Config
 
-from ..pydantic_compat import NoExtra
+from pydantic import BaseModel
+
+class NoExtra(BaseModel):
+    model_config = {
+        'extra': 'forbid'
+    }
 
 
 class Node(NoExtra):

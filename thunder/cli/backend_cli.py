@@ -7,7 +7,6 @@ from typer import Abort, Argument, Option, Typer
 from typing_extensions import Annotated
 
 from ..backend import MetaEntry
-from ..pydantic_compat import model_dump, model_validate
 from .backend import BACKENDS_CONFIG_PATH, BackendEntryConfig, load_backend_configs
 
 
@@ -39,7 +38,7 @@ def _set(name: BackendNameArg):
                       f"available configs: {sorted(local)}`")
         raise Abort(1)
 
-    local["meta"] = model_validate(MetaEntry, {"default": name})
+    local["meta"] = MetaEntry.model_validate({"default": name})
     with BACKENDS_CONFIG_PATH.open("w") as stream:
         yaml.safe_dump({k: _dump_backend_entry(v) for k, v in local.items()}, stream)
 
@@ -57,7 +56,7 @@ def add(name: BackendNameArg, params: BackendParamsArg, force: ForceAddArg = Fal
     kwargs = dict(map(lambda p: p.split("="), params))
     config = {"backend": kwargs.pop("backend", "cli"), "config": kwargs}
 
-    local.update({name: model_validate(BackendEntryConfig, config)})
+    local.update({name: BackendEntryConfig.model_validate(config)})
 
     if not BACKENDS_CONFIG_PATH.parent.exists() and not create_yml:
         path = str(BACKENDS_CONFIG_PATH)
@@ -111,7 +110,7 @@ def _list(names: BackendNamesArg = None):
 
 
 def _dump_backend_entry(backend: BackendEntryConfig) -> Dict[str, Union[str, Dict]]:
-    entry = model_dump(backend)
+    entry = backend.model_dump()
     if hasattr(backend, "config"):
-        entry["config"] = model_dump(backend.config)
+        entry["config"] = backend.config.model_dump()
     return entry

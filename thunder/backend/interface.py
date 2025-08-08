@@ -1,10 +1,15 @@
 from pathlib import Path
 from typing import Dict, Optional, Sequence, Type
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from ..layout import Node
-from ..pydantic_compat import PYDANTIC_MAJOR, NoExtra, field_validator, model_validate
+
+
+class NoExtra(BaseModel):
+    model_config = {
+        'extra': 'forbid'
+    }
 
 
 class BackendConfig(NoExtra):
@@ -32,14 +37,9 @@ class BackendEntryConfig(NoExtra):
         return backends[self.backend]
 
 
-if PYDANTIC_MAJOR == 2:
-    def parse_backend_config(v, values):
-        val = backends[values.data["backend"]]
-        return model_validate(val.Config, v)
-else:
-    def parse_backend_config(v, values):
-        val = backends[values["backend"]]
-        return model_validate(val.Config, v)
+def parse_backend_config(v, values):
+    val = backends[values.data["backend"]]
+    return val.Config.model_validate(v)
 
 
 class MetaEntry(BaseModel):
