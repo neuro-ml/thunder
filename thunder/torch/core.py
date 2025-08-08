@@ -3,7 +3,7 @@ from typing import Any, Callable, List, Tuple, Union
 import torch
 from lightning import LightningModule
 from lightning.pytorch.utilities.types import STEP_OUTPUT
-from more_itertools import collapse, padded, zip_equal
+from more_itertools import collapse, padded
 from toolz import identity
 from torch import Tensor, nn
 from torch.optim import Optimizer
@@ -104,7 +104,7 @@ class ThunderModule(LightningModule):
         optimizers = []
         lr_schedulers = []
 
-        for optimizer, lr_scheduler in zip_equal(_optimizers, _lr_schedulers):
+        for optimizer, lr_scheduler in zip(_optimizers, _lr_schedulers, strict=True):
             if callable(lr_scheduler):
                 if optimizer is None:
                     raise ValueError("The scheduler demands an Optimizer, but received None")

@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from pytest_subprocess import FakeProcess
 
-from thunder.backend import Cli, Slurm
+from thunder.engine import Cli, Slurm
 from thunder.layout import Node
 
 

@@ -5,7 +5,6 @@ from lightning import Trainer
 from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.demos.boring_classes import RandomDataset
 from lightning.pytorch.loggers import CSVLogger
-from more_itertools import zip_equal
 from torch import nn
 from torch.nn import Sequential
 from torch.optim import Adam
@@ -192,7 +191,7 @@ def test_load_from_checkpoint(lr_scheduler, mapping, lr_mapping, model, tmpdir):
 
 
 def check_scheduler(scheduler, targets):
-    for i, target in zip_equal(range(5), targets):
+    for i, target in zip(range(5), targets, strict=True):
         assert np.allclose([pg["lr"] for pg in scheduler.optimizer.param_groups], target), f"epoch {i}"
         scheduler.optimizer.step()
         scheduler.step()

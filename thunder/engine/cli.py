@@ -9,11 +9,11 @@ from typer import Option
 from typing_extensions import Annotated
 
 from ..layout import Node
-from .interface import Backend, BackendConfig, backends
+from .interface import Engine, EngineConfig, engines
 
 
-class Cli(Backend):
-    class Config(BackendConfig):
+class Cli(Engine):
+    class Config(EngineConfig):
         n_workers: Annotated[int, Option(..., help='The number of worker processes to spawn')] = 1
 
     @staticmethod
@@ -27,4 +27,4 @@ class Cli(Backend):
         )
 
 
-backends['cli'] = Cli
+engines['cli'] = Cli

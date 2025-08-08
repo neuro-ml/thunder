@@ -12,7 +12,7 @@ from typer.core import TyperCommand
 from typer.main import get_click_param
 from typer.models import ParamMeta
 
-from ..backend import BackendEntryConfig, MetaEntry, backends
+from ..engine import BackendEntryConfig, MetaEntry, engines
 from .app import app
 
 
@@ -23,12 +23,12 @@ class BackendCommand(TyperCommand):
     _current_backend: Optional[str] = None
 
     @staticmethod
-    def get_backend(backend: str, kwargs: dict):
+    def get_engine(backend: str, kwargs: dict):
         kwargs = kwargs.copy()
         duplicate = kwargs.pop('kwargs', None)
         assert duplicate is None, duplicate
-        backend = collect_backends()[backend]
-        return backend, backend.Config(**kwargs)
+        engine = collect_backends()[backend]
+        return engine, engine.Config.model_validate(kwargs)
 
     def parse_args(self, ctx: Context, args):
         self._current_backend = None
@@ -54,7 +54,7 @@ class BackendCommand(TyperCommand):
 
 def populate(backend_name):
     configs, meta = collect_configs()
-    local_configs = sorted(set(configs) - set(backends))
+    local_configs = sorted(set(configs) - set(engines))
     if backend_name is None:
         if meta is not None:
             entry = configs[meta.default]
@@ -117,8 +117,8 @@ def collect_backends() -> ChainMap:
     mapping config_name : backend
     """
     configs, _ = collect_configs()
-    local_backends = {name: backends[config.backend] for name, config in configs.items()}
-    return ChainMap(backends, local_backends)
+    local_backends = {name: engines[config.backend] for name, config in configs.items()}
+    return ChainMap(engines, local_backends)
 
 
 @functools.lru_cache()
@@ -134,7 +134,7 @@ def collect_configs() -> Tuple[ChainMap, Union[MetaEntry, None]]:
     local_configs = load_backend_configs()
     builtin_configs = {
         name: BackendEntryConfig(backend=name, config={})
-        for name in backends.keys()
+        for name in engines.keys()
     }
     meta = local_configs.pop("meta", None)
     return ChainMap(builtin_configs, local_configs), meta

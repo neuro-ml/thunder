@@ -6,7 +6,7 @@ from rich.table import Table
 from typer import Abort, Argument, Option, Typer
 from typing_extensions import Annotated
 
-from ..backend import MetaEntry
+from ..engine import MetaEntry
 from .backend import BACKENDS_CONFIG_PATH, BackendEntryConfig, load_backend_configs
 
 

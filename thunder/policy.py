@@ -4,7 +4,6 @@ from abc import ABCMeta, abstractmethod
 from copy import deepcopy
 from typing import Any, Callable, Dict, List, Union
 
-from more_itertools import zip_equal
 from toolz import juxt
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
@@ -87,7 +86,7 @@ class MappingPolicy(Policy, metaclass=ABCMeta):
         if len(self.current_lr_init) != len(optimizer.param_groups):
             raise ValueError(f"Got {len(self.current_lr_init)} lr_init and {len(optimizer.param_groups)} param groups")
 
-        for lr_init, param_group in zip_equal(self.current_lr_init, optimizer.param_groups):
+        for lr_init, param_group in zip(self.current_lr_init, optimizer.param_groups, strict=True):
             param_group["lr"] = lr_init
 
         super().set_optimizer(optimizer)
@@ -119,7 +118,7 @@ class Multiply(MappingPolicy):
     def get_lr(self) -> List[float]:
         return [
             param_group["lr"] * mapping.get(self.last_epoch, 1)
-            for param_group, mapping in zip_equal(self.optimizer.param_groups, self.current_mapping)
+            for param_group, mapping in zip(self.optimizer.param_groups, self.current_mapping, strict=True)
         ]
 
     def load_state_dict(self, state_dict):
@@ -175,7 +174,9 @@ class Switch(MappingPolicy):
     def get_lr(self) -> List[float]:
         return [
             mapping.get(self.last_epoch, param_group["lr"])
-            for param_group, mapping in zip_equal(self.optimizer.param_groups, self.current_mapping)
+            for param_group, mapping in zip(
+                self.optimizer.param_groups, self.current_mapping, strict=True
+            )
         ]
 
     def load_state_dict(self, state_dict: Dict[str, Any]) -> None:

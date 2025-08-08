@@ -10,7 +10,6 @@ import pandas as pd
 import torch
 from lightning import Callback, LightningModule, Trainer
 from lightning.pytorch.utilities.types import STEP_OUTPUT
-from more_itertools import zip_equal
 from toolz import compose, keymap, valmap
 
 from ..torch.utils import to_np
@@ -109,7 +108,7 @@ class MetricMonitor(Callback):
         if isinstance(outputs, dict):
             outputs = valmap(to_np, outputs)
         elif isinstance(outputs, (list, tuple)):
-            outputs = dict(zip_equal(map(str, range(len(outputs))), map(to_np, outputs)))
+            outputs = dict(zip(map(str, range(len(outputs))), map(to_np, outputs), strict=True))
         else:
             raise TypeError(f"Unknown type of outputs: {type(outputs[0])}")
 
@@ -182,10 +181,10 @@ class MetricMonitor(Callback):
         if self.group_metrics:
             for preprocess in self.group_preprocess.keys():
                 self._all_predictions[dataloader_idx][preprocess].extend(
-                    preprocess(*args) for args in zip_equal(*outputs)
+                    preprocess(*args) for args in zip(*outputs, strict=True)
                 )
 
-        for i, (target, pred) in enumerate(zip_equal(*outputs)):
+        for i, (target, pred) in enumerate(zip(*outputs, strict=True)):
             object_idx = f"{batch_idx}_{i}"
             for preprocess, metrics_names in self.single_preprocess.items():
                 preprocessed = preprocess(target, pred)
@@ -201,7 +200,7 @@ class MetricMonitor(Callback):
         for dataloader_idx, all_predictions in self._all_predictions.items():
             loader_postfix = f"/{dataloader_idx}" if len(self._all_predictions) > 1 else ""
             for preprocess, metrics_names in self.group_preprocess.items():
-                preprocessed = [np.asarray(p) for p in zip_equal(*all_predictions[preprocess])]
+                preprocessed = [np.asarray(p) for p in zip(*all_predictions[preprocess], strict=True)]
                 for name in metrics_names:
                     group_metric_values[f"{name}{loader_postfix}"] = self.group_metrics[name](*preprocessed)
 
@@ -257,7 +256,7 @@ def _identity(*args):
 
 
 def _recombine_batch(xs: Sequence) -> List:
-    return [squeeze_first(x) for x in zip_equal(*xs)]
+    return [squeeze_first(x) for x in zip(*xs, strict=True)]
 
 
 def _process_metrics(raw_metrics: Dict) -> Tuple[Dict[str, Callable], Dict[Callable, List[str]]]:

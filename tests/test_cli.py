@@ -144,7 +144,7 @@ def test_run(temp_dir, dumb_config):
 
 
 @pytest.mark.timeout(30)
-def test_run_slurm(temp_dir, dumb_config):
+def test_run_slurm_engine(temp_dir, dumb_config):
     """
     We do not need installed slurm in order to check if
     slurm cli works as we expect.
@@ -153,15 +153,31 @@ def test_run_slurm(temp_dir, dumb_config):
     experiment.mkdir()
     config = experiment / "experiment.config"
     shutil.copy(dumb_config, config)
-
+    
     # short flags
-    result = invoke("run", experiment, "--backend", "slurm",
-                    "-c", "10", "-r", "20G")
+    result = invoke(
+        "run", experiment, "--backend", "slurm",
+        "-r", "20G", "-c", "10"
+    )
     assert result.exit_code == 0, result.output
+    
+    # full flags
+    result = invoke(
+        "run", experiment, "--backend", "slurm",
+        "--cpu", "10", "--ram", "20G"
+    )
+    assert result.exit_code == 0, result.output
+    
+
+@pytest.mark.timeout(30)
+def test_run_cpu_engine(temp_dir, dumb_config):
+    experiment = temp_dir / "test_run_exp"
+    experiment.mkdir()
+    config = experiment / "experiment.config"
+    shutil.copy(dumb_config, config)
 
     # full flags
-    result = invoke("run", experiment, "--backend", "slurm",
-                    "--cpu", "10", "--ram", "20G")
+    result = invoke("run", experiment, "--backend", "cli", "--n-workers", "3")
     assert result.exit_code == 0, result.output
 
 

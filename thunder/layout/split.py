@@ -7,7 +7,6 @@ from typing import Any, Callable, Dict, Optional, Sequence, Tuple, Union
 import numpy as np
 from deli import load, save
 from lazycon import Config
-from more_itertools import zip_equal
 from torch.utils.data import Dataset, Subset
 
 from ..utils import collect
@@ -139,9 +138,9 @@ class SingleSplit(Layout):
 
         ids = entries_to_ids(entries)
         self.entries = entries
-        self.split = dict(zip_equal(sizes.keys(), multi_split(
+        self.split = dict(zip(sizes.keys(), multi_split(
             ids, list(sizes.values()), shuffle=shuffle, random_state=random_state
-        )))
+        ), strict=True))
 
     def __getattr__(self, name: str):
         if name not in self.split:

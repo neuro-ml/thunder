@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import datetime
 import re
 import shlex
@@ -11,10 +9,10 @@ from deli import save
 from pytimeparse.timeparse import timeparse
 from typer import Option
 from typing_extensions import Annotated
+from pydantic import field_validator
 
 from ..layout import Node
-from ..pydantic_compat import field_validator
-from .interface import Backend, BackendConfig, backends
+from .interface import Engine, EngineConfig, engines
 
 
 # TODO: neeeds generalization
@@ -24,23 +22,23 @@ ROOT_LOGS = ROOT / 'logs'
 ROOT_ARRAYS = ROOT / 'arrays'
 
 
-class Slurm(Backend):
-    class Config(BackendConfig):
+class Slurm(Engine):
+    class Config(EngineConfig):
         ram: Annotated[Optional[str], Option(
-            None, '-r', '--ram', '--mem',
+            None, '--ram', '--mem', '-r',
             help='The amount of RAM required per node. Default units are megabytes. '
                  'Different units can be specified using the suffix [K|M|G|T].'
         )] = None
         cpu: Annotated[Optional[int], Option(
-            None,  '--cpu', '-c', '--cpus-per-task', show_default=False,
+            None, '--cpu', '--cpus-per-task', '-c', show_default=False,
             help='Number of CPU cores to allocate. Default to 1'
         )] = None
         gpu: Annotated[Optional[int], Option(
-            None, '-g', '--gpu', '--gpus-per-node',
+            None, '--gpu', '--gpus-per-node', '-g',
             help='Number of GPUs to allocate'
         )] = None
         partition: Annotated[Optional[str], Option(
-            None, '-p', '--partition',
+            None, '--partition', '-p',
             help='Request a specific partition for the resource allocation'
         )] = None
         nodelist: Annotated[Optional[str], Option(
@@ -49,7 +47,7 @@ class Slurm(Backend):
                  'list of hosts, a range of hosts (host[1-5,7,None] for example).'
         )] = None
         time: Annotated[Optional[str], Option(
-            None, '-t', '--time',
+            None, '--time', '-t',
             help='Set a limit on the total run time of the job allocation. When the time limit is reached, '
                  'each task in each job step is sent SIGTERM followed by SIGKILL.'
         )] = None
@@ -70,7 +68,7 @@ class Slurm(Backend):
             return v
 
     @staticmethod
-    def run(config: Slurm.Config, experiment: Path, nodes: Optional[Sequence[Node]], wait: Optional[bool] = None):
+    def run(config: 'Slurm.Config', experiment: Path, nodes: Optional[Sequence[Node]], wait: Optional[bool] = None):
         def add_option(arg, value, *suffix):
             if value is not None:
                 args.extend((f'--{arg}', str(value)))
@@ -164,4 +162,4 @@ def parse_time_string(time):
 
 
 # TODO: need a registry
-backends['slurm'] = Slurm
+engines['slurm'] = Slurm
