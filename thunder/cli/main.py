@@ -72,10 +72,14 @@ def start(
 
         # TODO: match by type rather than name?
         module: LightningModule = config.module
+        
         trainer: Trainer = config.trainer
 
         # log hyperparams
-        names = set(config) - {"module", "trainer", "train_data", "val_data", "ExpName", "GroupName", "datamodule"}
+        names = set(config) - {
+            "module", "trainer", "train_data", "val_data",
+            "ExpName", "GroupName", "datamodule", "CALLBACKS"
+        }
         # TODO: lazily determine the types
         hyperparams = {}
         for name in names:

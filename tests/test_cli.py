@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import re
@@ -5,6 +6,10 @@ import shutil
 from contextlib import contextmanager
 from pathlib import Path
 
+import lazycon
+from more_itertools import substrings
+import numpy as np
+from lightning import seed_everything
 import pytest
 from deli import load_text, save_text
 from lazycon import Config, load as read_config
@@ -191,8 +196,44 @@ def test_run_callbacks(temp_dir, dumb_config, caplog):
     # absolute path
     with caplog.at_level(logging.INFO):
         cli_start(experiment)
-    assert any("seed set to" in r.message.lower() for r in caplog.records), caplog.records
+    assert sum("seed set to" in r.message.lower() for r in caplog.records) == 1, caplog.records
+    
+    
+@pytest.mark.timeout(60)
+def test_seed_as_actually_set_from_config(temp_dir, dumb_config, caplog):
+    from thunder.cli.main import start as cli_start
+    
+    experiment = temp_dir / "test_run_callbacks"
+    experiment.mkdir()
+    config = experiment / "experiment.config"
+    config_text = "\n".join([
+        "from lightning_utilities.core.rank_zero import rank_zero_info",
+        "from lightning import seed_everything; import numpy as np",
+        load_text(dumb_config),
+        "x = list(map(int, np.random.randint(0, 100, 8)))",
+        "CALLBACKS=[seed_everything(42)]",
+        'out = rank_zero_info(f"TESTSUBJECT{x}TESTSUBJECT")',
+    ])
+    
+    seed_everything(42)
+    x = list(map(int, np.random.randint(0, 100, 8)))
 
+    save_text(config_text, config)
+
+    # absolute path
+    with caplog.at_level(logging.INFO):
+        cli_start(experiment)
+    
+    lines = [r.message for r in caplog.records if "TESTSUBJECT" in r.message]
+    assert len(lines) == 1
+    
+    line = lines[0]
+    first = line.index("TESTSUBJECT")
+    scnd = line[first + 1:].index("TESTSUBJECT")
+    line = line[first + 11 : first + scnd + 1]
+    
+    array = list(map(int, json.loads(line)))
+    assert x == array, (x, array)
 
 def test_backend_add(temp_dir, mock_backend):
     result = invoke("backend", "add", "new_config", "backend=slurm", "ram=100")
