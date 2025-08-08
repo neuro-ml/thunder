@@ -6,8 +6,6 @@ import shutil
 from contextlib import contextmanager
 from pathlib import Path
 
-import lazycon
-from more_itertools import substrings
 import numpy as np
 from lightning import seed_everything
 import pytest
