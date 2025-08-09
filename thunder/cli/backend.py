@@ -39,8 +39,8 @@ class BackendCommand(TyperCommand):
         else:
             if index < len(args) - 1:
                 self._current_backend = args[index + 1]
-
-        return super(BackendCommand, self).parse_args(ctx, args)
+        parsed = super(BackendCommand, self).parse_args(ctx, args)
+        return parsed
 
     @property
     def params(self):
@@ -101,11 +101,26 @@ def collect_backend_params(entry):
     Config Annotation depends on pydantic version.
     """
     for field_name, field in entry.backend_cls.Config.model_fields.items():
-        field_clone = copy.deepcopy(field)
-        field_clone.default = getattr(entry.config, field_name)
-        yield ParamMeta(
-            name=field_name, default=field_clone.default, annotation=field.annotation,
-        )
+        # Extract the Option from field metadata
+        option = None
+        for metadata_item in field.metadata:
+            if hasattr(metadata_item, '__class__') and 'Option' in metadata_item.__class__.__name__:
+                option = metadata_item
+                break
+        
+        if option is not None:
+            # Update the option's default value
+            option.default = getattr(entry.config, field_name)
+            yield ParamMeta(
+                name=field_name, default=option, annotation=field.annotation,
+            )
+        else:
+            # Fallback for fields without Option metadata
+            field_clone = copy.deepcopy(field)
+            field_clone.default = getattr(entry.config, field_name)
+            yield ParamMeta(
+                name=field_name, default=field_clone.default, annotation=field.annotation,
+            )
 
 
 def collect_backends() -> ChainMap:

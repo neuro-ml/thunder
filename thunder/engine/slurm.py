@@ -25,35 +25,35 @@ ROOT_ARRAYS = ROOT / 'arrays'
 class Slurm(Engine):
     class Config(EngineConfig):
         ram: Annotated[Optional[str], Option(
-            None, '--ram', '--mem', '-r',
-            help='The amount of RAM required per node. Default units are megabytes. '
-                 'Different units can be specified using the suffix [K|M|G|T].'
+            None, "--ram", "--mem", "-r",
+            help="The amount of RAM required per node. Default units are megabytes. "
+                 "Different units can be specified using the suffix [K|M|G|T]."
         )] = None
         cpu: Annotated[Optional[int], Option(
-            None, '--cpu', '--cpus-per-task', '-c', show_default=False,
-            help='Number of CPU cores to allocate. Default to 1'
+            None, "--cpu", "--cpus-per-task", "-c", show_default=False,
+            help="Number of CPU cores to allocate. Default to 1"
         )] = None
         gpu: Annotated[Optional[int], Option(
-            None, '--gpu', '--gpus-per-node', '-g',
-            help='Number of GPUs to allocate'
+            None, "--gpu", "--gpus-per-node", "-g",
+            help="Number of GPUs to allocate"
         )] = None
         partition: Annotated[Optional[str], Option(
-            None, '--partition', '-p',
-            help='Request a specific partition for the resource allocation'
+            None, "--partition", "-p",
+            help="Request a specific partition for the resource allocation"
         )] = None
         nodelist: Annotated[Optional[str], Option(
             None,
-            help='Request a specific list of hosts. The list may be specified as a comma-separated '
-                 'list of hosts, a range of hosts (host[1-5,7,None] for example).'
+            help="Request a specific list of hosts. The list may be specified as a comma-separated "
+                 "list of hosts, a range of hosts (host[1-5,7,None] for example)."
         )] = None
         time: Annotated[Optional[str], Option(
-            None, '--time', '-t',
-            help='Set a limit on the total run time of the job allocation. When the time limit is reached, '
-                 'each task in each job step is sent SIGTERM followed by SIGKILL.'
+            None, "--time", "-t",
+            help="Set a limit on the total run time of the job allocation. When the time limit is reached, "
+                 "each task in each job step is sent SIGTERM followed by SIGKILL."
         )] = None
         limit: Annotated[Optional[int], Option(
             None,
-            help='Limit the number of jobs that are simultaneously running during the experiment',
+            help="Limit the number of jobs that are simultaneously running during the experiment",
         )] = None
 
         @field_validator("time")

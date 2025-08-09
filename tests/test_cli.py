@@ -159,14 +159,16 @@ def test_run_slurm_engine(temp_dir, dumb_config):
         "run", experiment, "--backend", "slurm",
         "-r", "20G", "-c", "10"
     )
-    assert result.exit_code == 0, result.output
+    # we might succeed but there is no guarantee that sbatch is installed
+    assert result.exit_code == 0 or "No such file" in result.output, result.output
     
     # full flags
     result = invoke(
         "run", experiment, "--backend", "slurm",
         "--cpu", "10", "--ram", "20G"
     )
-    assert result.exit_code == 0, result.output
+    # we might succeed but there is no guarantee that sbatch is installed
+    assert result.exit_code == 0 or "No such file" in result.output, result.output
     
 
 @pytest.mark.timeout(30)
@@ -255,12 +257,13 @@ def test_backend_add(temp_dir, mock_backend):
 
     result = invoke("backend", "add", "new_config", "backend=slurm", "ram=100")
     assert result.exit_code != 0 and "new_config" in load_backend_configs()
+    assert "`new_config` is already present in" in result.output.lower()
 
     result = invoke("backend", "add", "new_config", "backend=slurm", "ram=200G", "--force")
     assert result.exit_code == 0 and "new_config" in load_backend_configs()
     assert load_backend_configs()["new_config"].config.ram == "200G"
 
-    invoke("backend", "add", "new_config_2", "backend=slurm", "ram=200", "--force")
+    invoke("backend", "add", "new_config_2", "backend=slurm", "ram=200", "-f")
     local = load_backend_configs()
     assert "new_config" in local and "new_config_2" in local
 
