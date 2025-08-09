@@ -62,10 +62,12 @@ b = 2
         result = invoke("build", config, experiment)
         assert result.exit_code != 0
         assert re.match(
-            'Cannot create an experiment in the folder ".*", it already exists. '
+            f"Cannot create an experiment in the folder {experiment}, it already exists. "
             "If you want to overwrite it, use --overwrite / -o flag.\n",
             result.output,
-        )
+        ) or (f"Cannot create an experiment in the folder \"{experiment}\", it already exists. "
+            "If you want to overwrite it, use --overwrite / -o flag.\n") in result.output
+        
 
     with cleanup(experiment):
         result = invoke("build", config, experiment, "-u", "c=3")
