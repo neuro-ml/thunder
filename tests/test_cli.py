@@ -149,6 +149,7 @@ def test_run_slurm_engine(temp_dir, dumb_config):
     We do not need installed slurm in order to check if
     slurm cli works as we expect.
     """
+    PATTERN = "No such file or directory: \'sbatch\'"
     experiment = temp_dir / "test_run_exp"
     experiment.mkdir()
     config = experiment / "experiment.config"
@@ -160,7 +161,7 @@ def test_run_slurm_engine(temp_dir, dumb_config):
         "-r", "20G", "-c", "10"
     )
     # we might succeed but there is no guarantee that sbatch is installed
-    assert result.exit_code == 0 or "No such file" in result.output, result.output
+    assert result.exit_code == 0 or PATTERN in str(result.exception), result.output
     
     # full flags
     result = invoke(
@@ -168,7 +169,7 @@ def test_run_slurm_engine(temp_dir, dumb_config):
         "--cpu", "10", "--ram", "20G"
     )
     # we might succeed but there is no guarantee that sbatch is installed
-    assert result.exit_code == 0 or "No such file" in result.output, result.output
+    assert result.exit_code == 0 or PATTERN in str(result.exception), result.output
     
 
 @pytest.mark.timeout(30)
@@ -273,7 +274,7 @@ def test_backend_add(temp_dir, mock_backend):
     assert "new_config_3" in local
 
 
-def test_backend_list(temp_dir, mock_backend):
+def test_backend_list(mock_backend):
     # language=yaml
     mock_backend.write_text('''
     a:
