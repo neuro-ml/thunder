@@ -54,10 +54,7 @@ def node_to_str(root_name, node, unique_names):
         if sentinel in local:
             return local[sentinel]
 
-        if not local:
-            result = name
-        else:
-            result = f"{name}[{len(local)}]"
+        result = name if not local else f"{name}[{len(local)}]"
 
         local[sentinel] = result
         return result

@@ -1,5 +1,5 @@
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Dict, Optional, Sequence, Type
 
 from pydantic import BaseModel, field_validator
 
@@ -17,10 +17,10 @@ class EngineConfig(NoExtra):
 
 
 class Engine:
-    Config: Type[EngineConfig]
+    Config: type[EngineConfig]
 
     @staticmethod
-    def run(config: EngineConfig, experiment: Path, nodes: Optional[Sequence[Node]], wait: Optional[bool] = None):
+    def run(config: EngineConfig, experiment: Path, nodes: Sequence[Node] | None, wait: bool | None = None):
         """Start running the given `nodes` of an experiment located at the given path"""
 
 
@@ -50,4 +50,4 @@ class MetaEntry(BaseModel):
     default: str
 
 
-engines: Dict[str, Engine] = {}
+engines: dict[str, Engine] = {}

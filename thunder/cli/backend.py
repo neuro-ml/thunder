@@ -2,7 +2,7 @@ import copy
 import functools
 from collections import ChainMap
 from pathlib import Path
-from typing import Dict, Optional, Tuple, Union
+from typing import Optional
 
 import typer
 import yaml
@@ -20,7 +20,7 @@ BACKENDS_CONFIG_PATH = Path(typer.get_app_dir(app.info.name)) / "backends.yml"
 
 
 class BackendCommand(TyperCommand):
-    _current_backend: Optional[str] = None
+    _current_backend: str | None = None
 
     @staticmethod
     def get_engine(backend: str, kwargs: dict):
@@ -39,7 +39,7 @@ class BackendCommand(TyperCommand):
         else:
             if index < len(args) - 1:
                 self._current_backend = args[index + 1]
-        parsed = super(BackendCommand, self).parse_args(ctx, args)
+        parsed = super().parse_args(ctx, args)
         return parsed
 
     @property
@@ -76,7 +76,7 @@ def populate(backend_name):
         return [
             ParamMeta(
                 name="backend",
-                annotation=Optional[str],
+                annotation=Optional[str],  # noqa: UP007
                 default=Option(
                     ...,
                     help=f"The runner backend to use. Choices: {backend_choices}.",
@@ -89,7 +89,7 @@ def populate(backend_name):
     backend_params = [
         ParamMeta(
             name="backend",
-            annotation=Optional[str],
+            annotation=Optional[str],  # noqa: UP007
             default=Option(
                 backend_name,
                 help=f"The runner backend to use. Choices: {backend_choices}. Currently using {backend_name}. "
@@ -146,8 +146,8 @@ def collect_backends() -> ChainMap:
     return ChainMap(engines, local_backends)
 
 
-@functools.lru_cache()
-def collect_configs() -> Tuple[ChainMap, Union[MetaEntry, None]]:
+@functools.lru_cache
+def collect_configs() -> tuple[ChainMap, MetaEntry | None]:
     """
     Collects configs for `thunder run` command.
     Returns
@@ -157,12 +157,12 @@ def collect_configs() -> Tuple[ChainMap, Union[MetaEntry, None]]:
     meta - meta info (e.g. default backend), if no meta data found, returns None
     """
     local_configs = load_backend_configs()
-    builtin_configs = {name: BackendEntryConfig(backend=name, config={}) for name in engines.keys()}
+    builtin_configs = {name: BackendEntryConfig(backend=name, config={}) for name in engines}
     meta = local_configs.pop("meta", None)
     return ChainMap(builtin_configs, local_configs), meta
 
 
-def load_backend_configs() -> Dict[str, Union[BackendEntryConfig, MetaEntry]]:
+def load_backend_configs() -> dict[str, BackendEntryConfig | MetaEntry]:
     path = BACKENDS_CONFIG_PATH
     if not path.exists():
         # TODO: return Option[Dict]

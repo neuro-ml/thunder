@@ -1,7 +1,8 @@
 import shutil
+from collections.abc import Sequence
 from io import StringIO
 from pathlib import Path
-from typing import List, Optional, Sequence
+from typing import Annotated
 
 import yaml
 from deli import load, save
@@ -9,7 +10,6 @@ from lazycon import Config
 from lightning import LightningModule, Trainer
 from lightning_utilities.core.rank_zero import rank_zero_info
 from typer import Abort, Argument, Option
-from typing_extensions import Annotated
 
 from ..config import log_hyperparam
 from ..layout import Layout, Node, Single
@@ -22,16 +22,16 @@ from .backend import BackendCommand
 ExpArg = Annotated[Path, Argument(show_default=False, help="Path to the experiment.")]
 ConfArg = Annotated[Path, Argument(show_default=False, help="The config from which the experiment will be built.")]
 UpdArg = Annotated[
-    List[str], Option(..., "--update", "-u", help="Overwrite specific config entries.", show_default=False)
+    list[str], Option(..., "--update", "-u", help="Overwrite specific config entries.", show_default=False)
 ]
 OverwriteArg = Annotated[bool, Option("--overwrite", "-o", help="If specified, overwrites target directory.")]
-NamesArg = Annotated[Optional[str], Option(..., help="Names of sub-experiments to start.")]
+NamesArg = Annotated[str | None, Option(..., help="Names of sub-experiments to start.")]
 
 
 @app.command()
 def start(
     experiment: ExpArg,
-    name: Annotated[Optional[str], Argument(help="The name of the sub-experiment to start")] = None,
+    name: Annotated[str | None, Argument(help="The name of the sub-experiment to start")] = None,
 ):
     """Start a part of an experiment. Mainly used as an internal entrypoint for other commands."""
     experiment = Path(experiment)
@@ -88,7 +88,7 @@ def start(
         hyperparams = {}
         for name in names:
             value = config[name]
-            if isinstance(value, (int, float, bool)):
+            if isinstance(value, int | float | bool):
                 hyperparams[name] = value
             else:
                 log_hyperparam(trainer.logger, name, value)
@@ -205,7 +205,7 @@ def load_nodes(experiment: Path):
     return {x.name: Node.model_validate(x) for x in load(nodes)}
 
 
-def get_nodes(experiment: Path, names: Optional[Sequence[str]]):
+def get_nodes(experiment: Path, names: Sequence[str] | None):
     nodes = load_nodes(experiment)
 
     if names is None:

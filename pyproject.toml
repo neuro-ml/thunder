@@ -51,6 +51,20 @@ combine-as-imports = true
 lines-after-imports = 2
 
 [tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
 # W503: line break before binary operator is actually considered best-practice
 # E203: spaces around complex variables in slices are pep-right
 # F401: unused imports in __init__.py-s

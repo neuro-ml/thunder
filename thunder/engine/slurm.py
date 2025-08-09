@@ -2,14 +2,14 @@ import datetime
 import re
 import shlex
 import subprocess
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Optional, Sequence
+from typing import Annotated
 
 from deli import save
+from pydantic import field_validator
 from pytimeparse.timeparse import timeparse
 from typer import Option
-from typing_extensions import Annotated
-from pydantic import field_validator
 
 from ..layout import Node
 from .interface import Engine, EngineConfig, engines
@@ -25,7 +25,7 @@ ROOT_ARRAYS = ROOT / "arrays"
 class Slurm(Engine):
     class Config(EngineConfig):
         ram: Annotated[
-            Optional[str],
+            str | None,
             Option(
                 None,
                 "--ram",
@@ -36,7 +36,7 @@ class Slurm(Engine):
             ),
         ] = None
         cpu: Annotated[
-            Optional[int],
+            int | None,
             Option(
                 None,
                 "--cpu",
@@ -47,14 +47,14 @@ class Slurm(Engine):
             ),
         ] = None
         gpu: Annotated[
-            Optional[int], Option(None, "--gpu", "--gpus-per-node", "-g", help="Number of GPUs to allocate")
+            int | None, Option(None, "--gpu", "--gpus-per-node", "-g", help="Number of GPUs to allocate")
         ] = None
         partition: Annotated[
-            Optional[str],
+            str | None,
             Option(None, "--partition", "-p", help="Request a specific partition for the resource allocation"),
         ] = None
         nodelist: Annotated[
-            Optional[str],
+            str | None,
             Option(
                 None,
                 help="Request a specific list of hosts. The list may be specified as a comma-separated "
@@ -62,7 +62,7 @@ class Slurm(Engine):
             ),
         ] = None
         time: Annotated[
-            Optional[str],
+            str | None,
             Option(
                 None,
                 "--time",
@@ -72,7 +72,7 @@ class Slurm(Engine):
             ),
         ] = None
         limit: Annotated[
-            Optional[int],
+            int | None,
             Option(
                 None,
                 help="Limit the number of jobs that are simultaneously running during the experiment",
@@ -91,7 +91,7 @@ class Slurm(Engine):
             return v
 
     @staticmethod
-    def run(config: "Slurm.Config", experiment: Path, nodes: Optional[Sequence[Node]], wait: Optional[bool] = None):
+    def run(config: "Slurm.Config", experiment: Path, nodes: Sequence[Node] | None, wait: bool | None = None):
         def add_option(arg, value, *suffix):
             if value is not None:
                 args.extend((f"--{arg}", str(value)))

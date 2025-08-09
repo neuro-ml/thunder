@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Iterable
+from collections.abc import Callable, Iterable
 
 from toolz import compose
 

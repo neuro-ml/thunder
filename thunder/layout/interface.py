@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional, Tuple
+from typing import Any
 
 from lazycon import Config
-
 from pydantic import BaseModel
 
 
@@ -26,7 +26,7 @@ class Layout(ABC):
         pass
 
     @abstractmethod
-    def load(self, experiment: Path, node: Optional[Node]) -> Tuple[Config, Path, Dict[str, Any]]:
+    def load(self, experiment: Path, node: Node | None) -> tuple[Config, Path, dict[str, Any]]:
         pass
 
     @abstractmethod

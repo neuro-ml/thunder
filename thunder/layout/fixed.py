@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Sequence, Union
+from collections.abc import Sequence
 
 from more_itertools import collapse
 
@@ -35,7 +35,7 @@ class FixedSplit(Split):
         self.entries = sorted(set(collapse(splits)))
         self.splits = [tuple(fold) for fold in splits]
         self.names = names
-        self.fold: Optional[int] = None
+        self.fold: int | None = None
 
 
 class FixedSingleSplit(SingleSplit):
@@ -59,7 +59,7 @@ class FixedSingleSplit(SingleSplit):
     ```
     """
 
-    def __init__(self, split: Union[Sequence, Dict[str, Sequence]], *names: str):
+    def __init__(self, split: Sequence | dict[str, Sequence], *names: str):
         if isinstance(split, dict):
             names = split.keys()  # from python3.7 order is guaranteed.
             split = split.values()

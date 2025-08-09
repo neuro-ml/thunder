@@ -1,10 +1,10 @@
-from typing import Dict, List, Union
+
+from typing import Annotated
 
 import yaml
 from rich.console import Console
 from rich.table import Table
 from typer import Abort, Argument, Option, Typer
-from typing_extensions import Annotated
 
 from ..engine import MetaEntry
 from .backend import BACKENDS_CONFIG_PATH, BackendEntryConfig, load_backend_configs
@@ -12,9 +12,9 @@ from .backend import BACKENDS_CONFIG_PATH, BackendEntryConfig, load_backend_conf
 
 BackendNameArg = Annotated[str, Argument(show_default=False, help="Name of the config from your list of backends.")]
 BackendNamesArg = Annotated[
-    List[str], Argument(show_default=False, help="Names of the configs from your list of backends.")
+    list[str], Argument(show_default=False, help="Names of the configs from your list of backends.")
 ]
-BackendParamsArg = Annotated[List[str], Argument(show_default=False, help="Parameters of added run config.")]
+BackendParamsArg = Annotated[list[str], Argument(show_default=False, help="Parameters of added run config.")]
 ForceAddArg = Annotated[bool, Option("--force", "-f", help="Forces overwriting of the same backend in .yml file.")]
 CreateYMLArg = Annotated[bool, Option("--create", "-c", help="Creates .yml file with stored backends.")]
 
@@ -100,7 +100,7 @@ def _list(names: BackendNamesArg = None):
         console.print(f"[italic green]Default is [/italic green]{local['meta'].default}")
 
 
-def _dump_backend_entry(backend: BackendEntryConfig) -> Dict[str, Union[str, Dict]]:
+def _dump_backend_entry(backend: BackendEntryConfig) -> dict[str, str | dict]:
     entry = backend.model_dump()
     if hasattr(backend, "config"):
         entry["config"] = backend.config.model_dump()

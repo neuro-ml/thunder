@@ -1,9 +1,10 @@
 import warnings
 from collections import defaultdict
+from collections.abc import Callable, Hashable, Sequence
 from functools import partial
 from itertools import chain
 from pathlib import Path
-from typing import Any, Callable, Dict, Hashable, List, Optional, Sequence, Tuple, Union
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -19,9 +20,9 @@ from ..utils import squeeze_first
 class MetricMonitor(Callback):
     def __init__(
         self,
-        single_metrics: Dict = None,
-        group_metrics: Dict = None,
-        aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]] = None,
+        single_metrics: dict = None,
+        group_metrics: dict = None,
+        aggregate_fn: dict[str, Callable] | str | Callable | list[str | Callable] = None,
         log_individual_metrics: bool = False,
     ):
         """
@@ -71,10 +72,10 @@ class MetricMonitor(Callback):
         self.aggregate_fn = {"": np.mean}
         self.log_individual_metrics = log_individual_metrics
 
-        if isinstance(aggregate_fn, (str, Callable)):
+        if isinstance(aggregate_fn, str | Callable):
             aggregate_fn = [aggregate_fn]
 
-        if isinstance(aggregate_fn, (list, tuple)):
+        if isinstance(aggregate_fn, list | tuple):
             for fn in aggregate_fn:
                 if callable(fn):
                     self.aggregate_fn.update({_get_func_name(fn): fn})
@@ -107,7 +108,7 @@ class MetricMonitor(Callback):
             outputs = {"loss": to_np(outputs)}
         if isinstance(outputs, dict):
             outputs = valmap(to_np, outputs)
-        elif isinstance(outputs, (list, tuple)):
+        elif isinstance(outputs, list | tuple):
             outputs = dict(zip(map(str, range(len(outputs))), map(to_np, outputs), strict=True))
         else:
             raise TypeError(f"Unknown type of outputs: {type(outputs[0])}")
@@ -138,7 +139,7 @@ class MetricMonitor(Callback):
         self,
         trainer: Trainer,
         pl_module: LightningModule,
-        outputs: Optional[STEP_OUTPUT],
+        outputs: STEP_OUTPUT | None,
         batch: Any,
         batch_idx: int,
         dataloader_idx: int = 0,
@@ -152,7 +153,7 @@ class MetricMonitor(Callback):
         self,
         trainer: Trainer,
         pl_module: LightningModule,
-        outputs: Optional[STEP_OUTPUT],
+        outputs: STEP_OUTPUT | None,
         batch: Any,
         batch_idx: Hashable,
         dataloader_idx: int = 0,
@@ -166,7 +167,7 @@ class MetricMonitor(Callback):
         self,
         trainer: Trainer,
         pl_module: LightningModule,
-        outputs: Optional[STEP_OUTPUT],
+        outputs: STEP_OUTPUT | None,
         batch: Any,
         batch_idx: Hashable,
         dataloader_idx: int = 0,
@@ -174,13 +175,13 @@ class MetricMonitor(Callback):
         if len(outputs) != 2:
             raise ValueError(f"Expected step output in form of 2 elements (x, y), but received {len(outputs)}")
         xs, ys = outputs
-        xs = _recombine_batch(xs) if isinstance(xs, (list, tuple)) else xs
-        ys = _recombine_batch(ys) if isinstance(ys, (list, tuple)) else ys
+        xs = _recombine_batch(xs) if isinstance(xs, list | tuple) else xs
+        ys = _recombine_batch(ys) if isinstance(ys, list | tuple) else ys
 
         outputs = (ys, xs)
 
         if self.group_metrics:
-            for preprocess in self.group_preprocess.keys():
+            for preprocess in self.group_preprocess:
                 self._all_predictions[dataloader_idx][preprocess].extend(
                     preprocess(*args) for args in zip(*outputs, strict=True)
                 )
@@ -236,7 +237,7 @@ class MetricMonitor(Callback):
         for dataloader_idx, _ in self._all_predictions.items():
             for _, metrics_names in self.single_preprocess.items():
                 for name in metrics_names:
-                    if all(k.rsplit("_", 1)[1] == "0" for k in self._single_metric_values[dataloader_idx][name].keys()):
+                    if all(k.rsplit("_", 1)[1] == "0" for k in self._single_metric_values[dataloader_idx][name]):
                         self._single_metric_values[dataloader_idx][name] = keymap(
                             lambda k: k.rsplit("_", 1)[0], self._single_metric_values[dataloader_idx][name]
                         )
@@ -258,13 +259,13 @@ def _identity(*args):
     return squeeze_first(args)
 
 
-def _recombine_batch(xs: Sequence) -> List:
+def _recombine_batch(xs: Sequence) -> list:
     return [squeeze_first(x) for x in zip(*xs, strict=True)]
 
 
-def _process_metrics(raw_metrics: Dict) -> Tuple[Dict[str, Callable], Dict[Callable, List[str]]]:
+def _process_metrics(raw_metrics: dict) -> tuple[dict[str, Callable], dict[Callable, list[str]]]:
     processed_metrics = {}
-    preprocess: Dict[Callable, List[str]] = defaultdict(list)
+    preprocess: dict[Callable, list[str]] = defaultdict(list)
 
     # collect metrics
     for k, v in raw_metrics.items():
@@ -274,7 +275,7 @@ def _process_metrics(raw_metrics: Dict) -> Tuple[Dict[str, Callable], Dict[Calla
             if isinstance(k, tuple):
                 k = compose(*k)
 
-            if isinstance(v, (list, tuple)):
+            if isinstance(v, list | tuple):
                 metrics = {_get_func_name(f): f for f in v}
             elif isinstance(v, dict):
                 metrics = v

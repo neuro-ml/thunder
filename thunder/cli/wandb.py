@@ -1,10 +1,10 @@
 import os
 from pathlib import Path
+from typing import Annotated
 
 import yaml
 from lazycon import Config
 from typer import Abort, Argument, Typer
-from typing_extensions import Annotated
 
 from .backend import BackendCommand
 from .main import ConfArg, NamesArg, build_exp, get_nodes

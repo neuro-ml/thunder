@@ -27,9 +27,9 @@ def test_to_np(value, target):
     if isinstance(value, dict):
         for (k1, v1), (k2, v2) in zip(to_np(value).items(), target.items(), strict=True):
             assert k1 == k2 and np.all(v1 == v2)
-    elif isinstance(value, (list, tuple)):
+    elif isinstance(value, list | tuple):
         value = to_np(value)
-        assert isinstance(value, (list, tuple)), type(value)
+        assert isinstance(value, list | tuple), type(value)
         for v1, v2 in zip(value, target, strict=True):
             assert np.all(v1 == v2)
     else:
@@ -52,9 +52,9 @@ def test_maybe_from_np(value, target):
     if isinstance(value, dict):
         for (k1, v1), (k2, v2) in zip(maybe_from_np(value, device="cpu").items(), target.items(), strict=True):
             assert k1 == k2 and (v1 == v2).all(), (v1, v2)
-    elif isinstance(value, (list, tuple)):
+    elif isinstance(value, list | tuple):
         value = maybe_from_np(value, device="cpu")
-        assert isinstance(value, (list, tuple)), type(value)
+        assert isinstance(value, list | tuple), type(value)
         for v1, v2 in zip(value, target, strict=True):
             assert (v1 == v2).all()
     else:

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import warnings
+from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional, Sequence, Tuple, Union
+from typing import Any
 
 import numpy as np
 from deli import load, save
@@ -20,14 +21,14 @@ except ImportError:
 try:
     from sklearn.model_selection import BaseCrossValidator, BaseShuffleSplit
 
-    SplitType = Union[Callable, BaseShuffleSplit, BaseCrossValidator]
+    SplitType = Callable | BaseShuffleSplit | BaseCrossValidator
 except ImportError:
     SplitType = Callable
 
 
 class Split(Layout):
     def __init__(
-        self, split: SplitType, entries: Sequence, *args: Any, names: Optional[Sequence[str]] = None, **kwargs: Any
+        self, split: SplitType, entries: Sequence, *args: Any, names: Sequence[str] | None = None, **kwargs: Any
     ):
         """
         Splits data according to split function.
@@ -68,7 +69,7 @@ class Split(Layout):
         self.entries = entries
         self.splits = splits
         self.names = names
-        self.fold: Optional[int] = None
+        self.fold: int | None = None
 
     def __getitem__(self, item: int):
         return self._subset(item)
@@ -95,7 +96,7 @@ class Split(Layout):
             local.dump(folder / "experiment.config")
             yield Node(name=str(fold))
 
-    def load(self, experiment: Path, node: Optional[Node]) -> Tuple[Config, Path, Dict[str, Any]]:
+    def load(self, experiment: Path, node: Node | None) -> tuple[Config, Path, dict[str, Any]]:
         folder = experiment / f"fold_{node.name}"
         return (
             Config.load(folder / "experiment.config"),
@@ -106,7 +107,7 @@ class Split(Layout):
             },
         )
 
-    def set(self, fold: int, split: Optional[Sequence[Sequence]] = None):
+    def set(self, fold: int, split: Sequence[Sequence] | None = None):
         self.fold = fold
         if split is None:
             warnings.warn("No reference split provided. Your results might be inconsistent!", UserWarning)
@@ -122,8 +123,8 @@ class SingleSplit(Layout):
         entries: Sequence,
         *,
         shuffle: bool = True,
-        random_state: Union[np.random.RandomState, int, None] = 0,
-        **sizes: Union[int, float],
+        random_state: np.random.RandomState | int | None = 0,
+        **sizes: int | float,
     ):
         """
         Creates single fold experiment, with custom number of sets.
@@ -170,7 +171,7 @@ class SingleSplit(Layout):
         local.dump(experiment / "experiment.config")
         return []
 
-    def load(self, experiment: Path, node: Optional[Node]) -> Tuple[Config, Path, Dict[str, Any]]:
+    def load(self, experiment: Path, node: Node | None) -> tuple[Config, Path, dict[str, Any]]:
         return (
             Config.load(experiment / "experiment.config"),
             experiment,
@@ -179,7 +180,7 @@ class SingleSplit(Layout):
             },
         )
 
-    def set(self, split: Optional[Dict[str, Sequence]] = None):
+    def set(self, split: dict[str, Sequence] | None = None):
         if split is None:
             warnings.warn("No reference split provided. Your results might be inconsistent!", UserWarning)
         else:
@@ -209,7 +210,7 @@ def multi_split(
     ids: Sequence,
     sizes: Sequence[int, float],
     shuffle: bool = True,
-    random_state: Union[np.random.RandomState, int, None] = 0,
+    random_state: np.random.RandomState | int | None = 0,
 ):
     if shuffle:
         if not isinstance(random_state, np.random.RandomState):
@@ -241,8 +242,8 @@ def multi_split(
 
 
 def jsonify(x):
-    if isinstance(x, (np.generic, np.ndarray)):
+    if isinstance(x, np.generic | np.ndarray):
         return x.tolist()
-    if isinstance(x, (list, tuple)):
+    if isinstance(x, list | tuple):
         return list(map(jsonify, x))
     return x

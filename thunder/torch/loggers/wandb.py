@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from typing import Union
 
 import wandb
 from lightning.pytorch.loggers import WandbLogger as _WandbLogger
@@ -51,15 +50,14 @@ class WandbLogger(_WandbLogger):
         if remove_dead_duplicates and not allow_rerun:
             api, exp = wandb.Api(), self.experiment
             for run in api.runs(path=f"{exp.entity}/{exp.project}"):
-                if run.state in ["crashed", "failed"]:
-                    if _same_group(run.group, exp.group) and run.name == exp.name:
-                        run.delete()
+                if run.state in ["crashed", "failed"] and _same_group(run.group, exp.group) and run.name == exp.name:
+                    run.delete()
 
     def __del__(self) -> None:
         wandb.finish()
 
 
-def _same_group(run_group: Union[str, None], exp_group: str) -> bool:
+def _same_group(run_group: str | None, exp_group: str) -> bool:
     if run_group is None:
         return not exp_group
     return run_group == exp_group

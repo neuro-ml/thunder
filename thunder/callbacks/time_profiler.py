@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import Any, Dict, List, Literal, Union, overload
+from typing import Any, Literal, overload
 
 from lightning import Callback
 from lightning.pytorch.utilities.exceptions import MisconfigurationException
@@ -21,7 +21,7 @@ class TimeProfiler(Callback):
     @overload
     def __init__(self, keys: Literal[True]): ...
 
-    def __init__(self, *keys: Union[str, bool]):
+    def __init__(self, *keys: str | bool):
         self._default_keys = (
             "train batch",
             "validation batch",
@@ -45,19 +45,19 @@ class TimeProfiler(Callback):
             raise ValueError(f"TimeProfiler got unknown keys: {set(keys) - set(_keys)}")
 
         self.keys = sorted(set(keys).union(self._default_keys))
-        self.time_stamps: Dict[str, List[datetime]] = defaultdict(list)
-        self.batch_sizes: Dict[str, List[int]] = defaultdict(list)
+        self.time_stamps: dict[str, list[datetime]] = defaultdict(list)
+        self.batch_sizes: dict[str, list[int]] = defaultdict(list)
         self.deltas = dict()
 
     def log_time(self, key: str) -> None:
         self.time_stamps[key].append(datetime.now())
 
     def log_batch_size(self, batch, key: str) -> None:
-        if isinstance(batch, (list, tuple)):
+        if isinstance(batch, list | tuple):
             batch = batch[0]
         self.batch_sizes[key].append(len(batch))
 
-    def compute_time_delta(self) -> Dict[str, float]:
+    def compute_time_delta(self) -> dict[str, float]:
         deltas = {}
         for key, time_stamps in self.time_stamps.items():
             deltas[key] = [
@@ -141,7 +141,7 @@ class TimeProfiler(Callback):
             self.time_stamps.clear()
             self.batch_sizes.clear()
 
-    def state_dict(self) -> Dict[str, Any]:
+    def state_dict(self) -> dict[str, Any]:
         return {
             "keys": self.keys,
             "time_stamps": self.time_stamps,
@@ -149,7 +149,7 @@ class TimeProfiler(Callback):
             "deltas": self.deltas,
         }
 
-    def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
+    def load_state_dict(self, state_dict: dict[str, Any]) -> None:
         self.deltas = state_dict["deltas"]
         self.time_stamps = state_dict["time_stamps"]
         self.batch_sizes = state_dict["batch_sizes"]

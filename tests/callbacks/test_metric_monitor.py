@@ -93,7 +93,12 @@ def test_single_metrics(tmpdir):
     m = (np.asarray([[1, 1], [0, 0]]) == np.asarray([[1, 0], [0, 0]])).sum()
     assert all(np.allclose(m, metrics["train/loss"].dropna().iloc[i]) for i in range(2))
 
-    m = np.mean([accuracy(x, y) for y, x in zip(np.asarray([[1, 1], [1, 0]]), np.asarray([[1, 1], [0, 0]]))] * 4)
+    m = np.mean(
+        [
+            accuracy(x, y)
+            for y, x in 
+            zip(np.asarray([[1, 1], [1, 0]]), np.asarray([[1, 1], [0, 0]]), strict=False)] * 4
+    )
     assert all(np.allclose(m, metrics["val/accuracy"].dropna().iloc[i]) for i in range(2))
 
 
@@ -361,8 +366,8 @@ def test_multioutput(batch_size, tmpdir):
     metric_monitor = MetricMonitor(
         {
             lambda x, y: (
-                y[0] if isinstance(y, (tuple, list)) else y,
-                x[0] if isinstance(x, (tuple, list)) else x,
+                y[0] if isinstance(y, tuple | list) else y,
+                x[0] if isinstance(x, tuple | list) else x,
             ): accuracy
         }
     )

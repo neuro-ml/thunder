@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
+from collections.abc import Callable
 from copy import deepcopy
-from typing import Any, Callable, Dict, List, Union
+from typing import Any
 
 from toolz import juxt
 from torch.optim import Optimizer
@@ -26,7 +27,7 @@ class Policy(LRScheduler, metaclass=ABCMeta):
         super().__init__(optimizer)
 
     @abstractmethod
-    def get_lr(self) -> List[float]:
+    def get_lr(self) -> list[float]:
         """
         Computes new value of learning rate.
         Returns
@@ -35,7 +36,7 @@ class Policy(LRScheduler, metaclass=ABCMeta):
         """
         pass
 
-    def prepare_state_dict(self, *keys: str) -> Dict[str, Any]:
+    def prepare_state_dict(self, *keys: str) -> dict[str, Any]:
         """
         Creates state dict of scheduler, excluding optimizer and specified keys.
         Be aware that this method does not save state_dict. And only useful for preparing it.
@@ -52,7 +53,7 @@ class Policy(LRScheduler, metaclass=ABCMeta):
 
 
 class MappingPolicy(Policy, metaclass=ABCMeta):
-    def __init__(self, mapping, lr_init: Union[List[float], float] = 1e-3):
+    def __init__(self, mapping, lr_init: list[float] | float = 1e-3):
         """
         Base class for policy with mapping. Mapping can be a dict or a function
         (it should also be a list of latter types in case of multiple param groups).
@@ -78,7 +79,7 @@ class MappingPolicy(Policy, metaclass=ABCMeta):
             self.current_mapping = [deepcopy(self.mapping) for _ in optimizer.param_groups]
 
         self.current_lr_init = self.lr_init
-        if isinstance(self.lr_init, (float, int)):
+        if isinstance(self.lr_init, float | int):
             self.current_lr_init = [self.lr_init for _ in optimizer.param_groups]
 
         if len(self.current_mapping) != len(optimizer.param_groups):
@@ -115,9 +116,9 @@ class Multiply(MappingPolicy):
         Initial learning rate for each group of parameters.
     """
 
-    mapping: Union[List[Dict[int, float]], Dict[int, float]]
+    mapping: list[dict[int, float]] | dict[int, float]
 
-    def get_lr(self) -> List[float]:
+    def get_lr(self) -> list[float]:
         return [
             param_group["lr"] * mapping.get(self.last_epoch, 1)
             for param_group, mapping in zip(self.optimizer.param_groups, self.current_mapping, strict=True)
@@ -144,15 +145,15 @@ class Schedule(MappingPolicy):
         Initial learning rate for each group of parameters.
     """
 
-    mapping: Union[List[Callable], Callable]
+    mapping: list[Callable] | Callable
 
-    def get_lr(self) -> List[float]:
+    def get_lr(self) -> list[float]:
         return juxt(self.current_mapping)(self.last_epoch)
 
-    def state_dict(self) -> Dict[str, Any]:
+    def state_dict(self) -> dict[str, Any]:
         return self.prepare_state_dict("mapping", "current_mapping")
 
-    def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
+    def load_state_dict(self, state_dict: dict[str, Any]) -> None:
         super().load_state_dict(state_dict)
 
 
@@ -173,13 +174,13 @@ class Switch(MappingPolicy):
         Initial learning rate for each group of parameters.
     """
 
-    mapping: Union[List[Dict[int, float]], Dict[int, float]]
+    mapping: list[dict[int, float]] | dict[int, float]
 
-    def get_lr(self) -> List[float]:
+    def get_lr(self) -> list[float]:
         return [
             mapping.get(self.last_epoch, param_group["lr"])
             for param_group, mapping in zip(self.optimizer.param_groups, self.current_mapping, strict=True)
         ]
 
-    def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
+    def load_state_dict(self, state_dict: dict[str, Any]) -> None:
         super().load_state_dict(state_dict)

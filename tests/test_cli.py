@@ -7,10 +7,10 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import numpy as np
-from lightning import seed_everything
 import pytest
 from deli import load_text, save_text
 from lazycon import Config, load as read_config
+from lightning import seed_everything
 from typer.testing import CliRunner
 
 import thunder.cli.backend
