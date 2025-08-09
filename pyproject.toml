@@ -74,8 +74,8 @@ select = [
 # B008: calling the function as default value is just part of the typer's interface
 # C408: for identifier-like fields dict(x=y) is just more concise
 # Q000,Q001: we don't care for single vs double quotes
-ignore = ['E203', 'B019', 'B028', 'C408', 'Q000', 'Q001']
-
+# UP045: Optional[T] is probably better than T | None
+ignore = ['E203', 'B019', 'B028', 'C408', 'Q000', 'Q001', 'UP045']
 [tool.ruff.lint.per-file-ignores]
 "**/__init__.py" = ["F401", "F403"]
 "thunder/internals/cli.py" = ["B008"]
