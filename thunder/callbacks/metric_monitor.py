@@ -18,11 +18,11 @@ from ..utils import squeeze_first
 
 class MetricMonitor(Callback):
     def __init__(
-            self,
-            single_metrics: Dict = None,
-            group_metrics: Dict = None,
-            aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]] = None,
-            log_individual_metrics: bool = False
+        self,
+        single_metrics: Dict = None,
+        group_metrics: Dict = None,
+        aggregate_fn: Union[Dict[str, Callable], str, Callable, List[Union[str, Callable]]] = None,
+        log_individual_metrics: bool = False,
     ):
         """
         Parameters
@@ -52,12 +52,12 @@ class MetricMonitor(Callback):
             group_metrics[f"group/{name}"] = group_metrics.pop(name)
             names_to_replace.append(name)
 
-        single_preprocess = valmap(lambda names:
-                                   [f"single/{n}" if n in names_to_replace else n for n in names],
-                                   single_preprocess)
-        group_preprocess = valmap(lambda names:
-                                  [f"group/{n}" if n in names_to_replace else n for n in names],
-                                  group_preprocess)
+        single_preprocess = valmap(
+            lambda names: [f"single/{n}" if n in names_to_replace else n for n in names], single_preprocess
+        )
+        group_preprocess = valmap(
+            lambda names: [f"group/{n}" if n in names_to_replace else n for n in names], group_preprocess
+        )
 
         self.single_metrics = single_metrics
         self.group_metrics = group_metrics
@@ -98,13 +98,13 @@ class MetricMonitor(Callback):
                 raise ValueError(f"Unknown type of aggregate_fn: {type(aggregate_fn)}")
 
     def on_train_batch_end(
-            self, trainer: Trainer, pl_module: LightningModule, outputs: STEP_OUTPUT, batch: Any, batch_idx: int
+        self, trainer: Trainer, pl_module: LightningModule, outputs: STEP_OUTPUT, batch: Any, batch_idx: int
     ) -> None:
         if outputs is None:
             return
 
         if isinstance(outputs, torch.Tensor):
-            outputs = {'loss': to_np(outputs)}
+            outputs = {"loss": to_np(outputs)}
         if isinstance(outputs, dict):
             outputs = valmap(to_np, outputs)
         elif isinstance(outputs, (list, tuple)):
@@ -122,24 +122,26 @@ class MetricMonitor(Callback):
 
         n_entries = set(map(len, group.values()))
         if len(n_entries) != 1:
-            warnings.warn("Losses are inconsistent, number of entries for each loss: "
-                          f"{valmap(len, group)}. "
-                          "This can also happen due to rerun experiment, "
-                          "however please validate your loss function.")
+            warnings.warn(
+                "Losses are inconsistent, number of entries for each loss: "
+                f"{valmap(len, group)}. "
+                "This can also happen due to rerun experiment, "
+                "however please validate your loss function."
+            )
 
         for k, vs in group.items():
-            pl_module.log(f'train/{k}', np.mean(vs))
+            pl_module.log(f"train/{k}", np.mean(vs))
 
         self._train_losses.clear()
 
     def on_validation_batch_end(
-            self,
-            trainer: Trainer,
-            pl_module: LightningModule,
-            outputs: Optional[STEP_OUTPUT],
-            batch: Any,
-            batch_idx: int,
-            dataloader_idx: int = 0,
+        self,
+        trainer: Trainer,
+        pl_module: LightningModule,
+        outputs: Optional[STEP_OUTPUT],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int = 0,
     ) -> None:
         self.evaluate_batch(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
 
@@ -147,13 +149,13 @@ class MetricMonitor(Callback):
         self.evaluate_epoch(trainer, pl_module, "val")
 
     def on_test_batch_end(
-            self,
-            trainer: Trainer,
-            pl_module: LightningModule,
-            outputs: Optional[STEP_OUTPUT],
-            batch: Any,
-            batch_idx: Hashable,
-            dataloader_idx: int = 0,
+        self,
+        trainer: Trainer,
+        pl_module: LightningModule,
+        outputs: Optional[STEP_OUTPUT],
+        batch: Any,
+        batch_idx: Hashable,
+        dataloader_idx: int = 0,
     ) -> None:
         self.evaluate_batch(trainer, pl_module, outputs, batch, batch_idx, dataloader_idx)
 
@@ -161,17 +163,16 @@ class MetricMonitor(Callback):
         self.evaluate_epoch(trainer, pl_module, "test")
 
     def evaluate_batch(
-            self,
-            trainer: Trainer,
-            pl_module: LightningModule,
-            outputs: Optional[STEP_OUTPUT],
-            batch: Any,
-            batch_idx: Hashable,
-            dataloader_idx: int = 0,
+        self,
+        trainer: Trainer,
+        pl_module: LightningModule,
+        outputs: Optional[STEP_OUTPUT],
+        batch: Any,
+        batch_idx: Hashable,
+        dataloader_idx: int = 0,
     ) -> None:
         if len(outputs) != 2:
-            raise ValueError(f"Expected step output in form of 2 elements (x, y), "
-                             f"but received {len(outputs)}")
+            raise ValueError(f"Expected step output in form of 2 elements (x, y), but received {len(outputs)}")
         xs, ys = outputs
         xs = _recombine_batch(xs) if isinstance(xs, (list, tuple)) else xs
         ys = _recombine_batch(ys) if isinstance(ys, (list, tuple)) else ys
@@ -189,8 +190,9 @@ class MetricMonitor(Callback):
             for preprocess, metrics_names in self.single_preprocess.items():
                 preprocessed = preprocess(target, pred)
                 for name in metrics_names:
-                    self._single_metric_values[dataloader_idx][name][object_idx] = \
-                        self.single_metrics[name](*preprocessed)
+                    self._single_metric_values[dataloader_idx][name][object_idx] = self.single_metrics[name](
+                        *preprocessed
+                    )
 
     def evaluate_epoch(self, trainer: Trainer, pl_module: LightningModule, key: str) -> None:
         self._squeeze_ids_in_single_metrics()
@@ -220,23 +222,24 @@ class MetricMonitor(Callback):
 
                     dataframe.to_csv(root_dir / f"dataloader_{dataloader_idx}.csv")
 
-                single_metric_values.update({f"{prefix}{k}{loader_postfix}":
-                                            fn(list(v.values())) for k, v in metrics.items()})
+                single_metric_values.update(
+                    {f"{prefix}{k}{loader_postfix}": fn(list(v.values())) for k, v in metrics.items()}
+                )
 
         self._single_metric_values.clear()
         self._all_predictions.clear()
 
         for k, value in chain(single_metric_values.items(), group_metric_values.items()):
-            pl_module.log(f'{key}/{k}', value)
+            pl_module.log(f"{key}/{k}", value)
 
     def _squeeze_ids_in_single_metrics(self):
         for dataloader_idx, _ in self._all_predictions.items():
             for _, metrics_names in self.single_preprocess.items():
                 for name in metrics_names:
-                    if all(k.rsplit("_", 1)[1] == "0" for k in
-                           self._single_metric_values[dataloader_idx][name].keys()):
-                        self._single_metric_values[dataloader_idx][name] = \
-                            keymap(lambda k: k.rsplit("_", 1)[0], self._single_metric_values[dataloader_idx][name])
+                    if all(k.rsplit("_", 1)[1] == "0" for k in self._single_metric_values[dataloader_idx][name].keys()):
+                        self._single_metric_values[dataloader_idx][name] = keymap(
+                            lambda k: k.rsplit("_", 1)[0], self._single_metric_values[dataloader_idx][name]
+                        )
 
 
 def _get_func_name(function: Callable) -> str:

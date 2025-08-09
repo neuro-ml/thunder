@@ -69,7 +69,7 @@ def test_maybe_from_np(value, target):
         (LightningModule(), does_not_raise()),
         (ThunderModule(torch.nn.Linear(2, 1), lambda x, y: x + y), does_not_raise()),
         ([], pytest.raises(TypeError, match="list")),
-        (torch.nn.ReLU(), pytest.raises(RuntimeError, match="no parameters"))
+        (torch.nn.ReLU(), pytest.raises(RuntimeError, match="no parameters")),
     ],
 )
 def test_get_device(x, expected):

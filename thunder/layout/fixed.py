@@ -11,8 +11,8 @@ class FixedSplit(Split):
     Parameters
     ----------
     splits: Sequence
-        Split of data.  
-    *names: str  
+        Split of data.
+    *names: str
         Names of folds, e.g. 'train', 'val', test'.
     Examples
     ----------
@@ -24,6 +24,7 @@ class FixedSplit(Split):
     layout = FixedSplit(split, "train", "val")
     ```
     """
+
     def __init__(self, splits: Sequence, *names: str):
         if names:
             if len(set(names)) != len(names):
@@ -57,14 +58,14 @@ class FixedSingleSplit(SingleSplit):
     layout = FixedSingeSplit(split, "train", "val")
     ```
     """
+
     def __init__(self, split: Union[Sequence, Dict[str, Sequence]], *names: str):
         if isinstance(split, dict):
             names = split.keys()  # from python3.7 order is guaranteed.
             split = split.values()
 
         if len(names) != len(split):
-            raise ValueError("Difference in number of splits and number of names: "
-                             f"{len(split)} and {len(names)}")
+            raise ValueError(f"Difference in number of splits and number of names: {len(split)} and {len(names)}")
 
         self.split = dict(zip(names, split, strict=True))
         self.entries = sorted(collapse(split))

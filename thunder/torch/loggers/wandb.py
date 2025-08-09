@@ -7,12 +7,24 @@ from lightning.pytorch.loggers import WandbLogger as _WandbLogger
 
 
 class WandbLogger(_WandbLogger):
-    def __init__(self, name=None, save_dir='.', version=None,
-                 offline=False, dir=None, id=None, anonymous=None, project=None,
-                 log_model=False, experiment=None,
-                 remove_dead_duplicates: bool = False, allow_rerun: bool = False, prefix='',
-                 checkpoint_name=None, **kwargs):
-
+    def __init__(
+        self,
+        name=None,
+        save_dir=".",
+        version=None,
+        offline=False,
+        dir=None,
+        id=None,
+        anonymous=None,
+        project=None,
+        log_model=False,
+        experiment=None,
+        remove_dead_duplicates: bool = False,
+        allow_rerun: bool = False,
+        prefix="",
+        checkpoint_name=None,
+        **kwargs,
+    ):
         if allow_rerun:
             if project is None:
                 raise ValueError("If you want WandB to load old logs, you should specify 'project'")
@@ -20,8 +32,21 @@ class WandbLogger(_WandbLogger):
             if versions:
                 version = max(versions, key=lambda t: os.stat(t).st_mtime).name
 
-        super().__init__(name, save_dir, version, offline, dir, id, anonymous, project,
-                         log_model, experiment, prefix, checkpoint_name, **kwargs)
+        super().__init__(
+            name,
+            save_dir,
+            version,
+            offline,
+            dir,
+            id,
+            anonymous,
+            project,
+            log_model,
+            experiment,
+            prefix,
+            checkpoint_name,
+            **kwargs,
+        )
 
         if remove_dead_duplicates and not allow_rerun:
             api, exp = wandb.Api(), self.experiment

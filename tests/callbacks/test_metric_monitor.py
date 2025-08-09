@@ -221,10 +221,10 @@ def test_group_preprocessing(tmpdir):
 
 
 def test_metrics_collision(tmpdir):
-    metric_monitor = MetricMonitor(single_metrics={"accuracy": lambda y, x: y + x,
-                                                   "recall": lambda y, x: y + x},
-                                   group_metrics={"accuracy": lambda y, x: y + x,
-                                                  "precision": lambda y, x: y + x})
+    metric_monitor = MetricMonitor(
+        single_metrics={"accuracy": lambda y, x: y + x, "recall": lambda y, x: y + x},
+        group_metrics={"accuracy": lambda y, x: y + x, "precision": lambda y, x: y + x},
+    )
 
     assert sorted(metric_monitor.single_metrics.keys()) == sorted(["single/accuracy", "recall"])
     assert sorted(metric_monitor.group_metrics.keys()) == sorted(["group/accuracy", "precision"])
@@ -459,8 +459,12 @@ def test_log_table(tmpdir):
 
     root_dir = trainer.default_root_dir
     for p in Path(root_dir).glob("*/dataloader_*"):
-        assert str(p.relative_to(root_dir)) not in ["val/dataloader_0", "val/dataloader_1",
-                                                    "test/dataloader_0", "test/dataloader_1"]
+        assert str(p.relative_to(root_dir)) not in [
+            "val/dataloader_0",
+            "val/dataloader_1",
+            "test/dataloader_0",
+            "test/dataloader_1",
+        ]
 
 
 def test_empty_identity():
@@ -477,21 +481,26 @@ def test_empty_identity():
     def preproc2(y, x):
         return y, x * 2
 
-    group_metrics = {preproc1: accuracy_score, preproc2: {
-        "accuracy2": accuracy_score,
-        "accuracy3": accuracy_score,
-    }, "accuracy4": accuracy_score}
+    group_metrics = {
+        preproc1: accuracy_score,
+        preproc2: {
+            "accuracy2": accuracy_score,
+            "accuracy3": accuracy_score,
+        },
+        "accuracy4": accuracy_score,
+    }
 
     metric_monitor = MetricMonitor(group_metrics=group_metrics)
 
-    assert sorted(metric_monitor.group_metrics.keys()) == \
-           sorted(["accuracy_score", "accuracy2", "accuracy3", "accuracy4"])
+    assert sorted(metric_monitor.group_metrics.keys()) == sorted(
+        ["accuracy_score", "accuracy2", "accuracy3", "accuracy4"]
+    )
     assert list(metric_monitor.group_preprocess.keys()) == [preproc1, preproc2, _identity]
 
     group_metrics.pop("accuracy4")
     metric_monitor = MetricMonitor(group_metrics=group_metrics)
 
-    assert sorted(metric_monitor.group_metrics.keys()) == \
-           sorted(["accuracy_score", "accuracy2", "accuracy3"])
-    assert list(metric_monitor.group_preprocess.keys()) == \
-           [preproc1, preproc2], len(metric_monitor.group_preprocess.keys())
+    assert sorted(metric_monitor.group_metrics.keys()) == sorted(["accuracy_score", "accuracy2", "accuracy3"])
+    assert list(metric_monitor.group_preprocess.keys()) == [preproc1, preproc2], len(
+        metric_monitor.group_preprocess.keys()
+    )

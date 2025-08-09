@@ -8,7 +8,7 @@ from ..layout import Node
 
 class NoExtra(BaseModel):
     model_config = {
-        'extra': 'forbid',
+        "extra": "forbid",
     }
 
 
@@ -46,6 +46,7 @@ class MetaEntry(BaseModel):
     """
     Default backend set by `thunder backend set`
     """
+
     default: str
 
 

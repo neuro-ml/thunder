@@ -16,12 +16,10 @@ class TimeProfiler(Callback):
     """
 
     @overload
-    def __init__(self, *keys: str):
-        ...
+    def __init__(self, *keys: str): ...
 
     @overload
-    def __init__(self, keys: Literal[True]):
-        ...
+    def __init__(self, keys: Literal[True]): ...
 
     def __init__(self, *keys: Union[str, bool]):
         self._default_keys = (
@@ -62,8 +60,9 @@ class TimeProfiler(Callback):
     def compute_time_delta(self) -> Dict[str, float]:
         deltas = {}
         for key, time_stamps in self.time_stamps.items():
-            deltas[key] = [(t[1] - t[0]).total_seconds() for t in windowed(time_stamps, 2, step=2,
-                                                                           fillvalue=time_stamps[-1])]
+            deltas[key] = [
+                (t[1] - t[0]).total_seconds() for t in windowed(time_stamps, 2, step=2, fillvalue=time_stamps[-1])
+            ]
             deltas[key] = sum(deltas[key]) / len(deltas[key])
 
         if "train epoch" in deltas:
@@ -143,10 +142,12 @@ class TimeProfiler(Callback):
             self.batch_sizes.clear()
 
     def state_dict(self) -> Dict[str, Any]:
-        return {"keys": self.keys,
-                "time_stamps": self.time_stamps,
-                "batch_sizes": self.batch_sizes,
-                "deltas": self.deltas}
+        return {
+            "keys": self.keys,
+            "time_stamps": self.time_stamps,
+            "batch_sizes": self.batch_sizes,
+            "deltas": self.deltas,
+        }
 
     def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
         self.deltas = state_dict["deltas"]

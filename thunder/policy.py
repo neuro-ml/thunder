@@ -13,6 +13,7 @@ class Policy(LRScheduler, metaclass=ABCMeta):
     """
     Policy base class.
     """
+
     def __init__(self):
         pass
 
@@ -113,6 +114,7 @@ class Multiply(MappingPolicy):
     lr_init: Union[List[float], float]]
         Initial learning rate for each group of parameters.
     """
+
     mapping: Union[List[Dict[int, float]], Dict[int, float]]
 
     def get_lr(self) -> List[float]:
@@ -141,6 +143,7 @@ class Schedule(MappingPolicy):
     lr_init: Union[List[float], float]]
         Initial learning rate for each group of parameters.
     """
+
     mapping: Union[List[Callable], Callable]
 
     def get_lr(self) -> List[float]:
@@ -169,14 +172,13 @@ class Switch(MappingPolicy):
     lr_init: Union[List[float], float]]
         Initial learning rate for each group of parameters.
     """
+
     mapping: Union[List[Dict[int, float]], Dict[int, float]]
 
     def get_lr(self) -> List[float]:
         return [
             mapping.get(self.last_epoch, param_group["lr"])
-            for param_group, mapping in zip(
-                self.optimizer.param_groups, self.current_mapping, strict=True
-            )
+            for param_group, mapping in zip(self.optimizer.param_groups, self.current_mapping, strict=True)
         ]
 
     def load_state_dict(self, state_dict: Dict[str, Any]) -> None:

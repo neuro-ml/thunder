@@ -43,17 +43,14 @@ dependencies = { file = 'requirements.txt' }
 branch = true
 source = ['thunder/']
 
-[tool.black]
+[tool.ruff]
 line-length = 120
-skip-string-normalization = true
 
-[tool.isort]
-line_length = 120
-lines_after_imports = 2
-profile = 'black'
-combine_as_imports = true
+[tool.ruff.lint.isort]
+combine-as-imports = true
+lines-after-imports = 2
 
-[tool.flake8]
+[tool.ruff.lint]
 # W503: line break before binary operator is actually considered best-practice
 # E203: spaces around complex variables in slices are pep-right
 # F401: unused imports in __init__.py-s
@@ -63,12 +60,8 @@ combine_as_imports = true
 # B008: calling the function as default value is just part of the typer's interface
 # C408: for identifier-like fields dict(x=y) is just more concise
 # Q000,Q001: we don't care for single vs double quotes
-ignore = ['W503', 'E203', 'B019', 'B028', 'C408', 'Q000', 'Q001']
-per-file-ignores = [
-    '**/__init__.py:F401,F403',
-    'tests/*:I251',
-    'docs/*:I251',
-    'thunder/internals/cli.py:B008',
-]
-max-line-length = 120
-banned-modules = 'thunder.* = Use relative imports'
+ignore = ['E203', 'B019', 'B028', 'C408', 'Q000', 'Q001']
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F401", "F403"]
+"thunder/internals/cli.py" = ["B008"]

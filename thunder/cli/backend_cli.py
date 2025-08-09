@@ -10,20 +10,13 @@ from ..engine import MetaEntry
 from .backend import BACKENDS_CONFIG_PATH, BackendEntryConfig, load_backend_configs
 
 
-BackendNameArg = Annotated[str, Argument(
-    show_default=False, help="Name of the config from your list of backends."
-)]
-BackendNamesArg = Annotated[List[str], Argument(
-    show_default=False, help="Names of the configs from your list of backends."
-)]
-BackendParamsArg = Annotated[List[str], Argument(
-    show_default=False, help="Parameters of added run config.")]
-ForceAddArg = Annotated[bool, Option(
-    "--force", "-f", help="Forces overwriting of the same backend in .yml file."
-)]
-CreateYMLArg = Annotated[bool, Option(
-    "--create", "-c", help="Creates .yml file with stored backends."
-)]
+BackendNameArg = Annotated[str, Argument(show_default=False, help="Name of the config from your list of backends.")]
+BackendNamesArg = Annotated[
+    List[str], Argument(show_default=False, help="Names of the configs from your list of backends.")
+]
+BackendParamsArg = Annotated[List[str], Argument(show_default=False, help="Parameters of added run config.")]
+ForceAddArg = Annotated[bool, Option("--force", "-f", help="Forces overwriting of the same backend in .yml file.")]
+CreateYMLArg = Annotated[bool, Option("--create", "-c", help="Creates .yml file with stored backends.")]
 
 console = Console()
 backend_app = Typer(name="backend", help="Commands for managing your backends.")
@@ -31,11 +24,10 @@ backend_app = Typer(name="backend", help="Commands for managing your backends.")
 
 @backend_app.command(name="set")
 def _set(name: BackendNameArg):
-    """ Set specified backend from list of available backends as default. """
+    """Set specified backend from list of available backends as default."""
     local = load_backend_configs()
     if name not in local:
-        console.print(f"Specified backend `{name} is not among "
-                      f"available configs: {sorted(local)}`")
+        console.print(f"Specified backend `{name} is not among available configs: {sorted(local)}`")
         raise Abort(1)
 
     local["meta"] = MetaEntry.model_validate({"default": name})
@@ -44,13 +36,14 @@ def _set(name: BackendNameArg):
 
 
 @backend_app.command()
-def add(name: BackendNameArg, params: BackendParamsArg, force: ForceAddArg = False,
-        create_yml: CreateYMLArg = False):
-    """ Add run config to the list of available configs. """
+def add(name: BackendNameArg, params: BackendParamsArg, force: ForceAddArg = False, create_yml: CreateYMLArg = False):
+    """Add run config to the list of available configs."""
     local = load_backend_configs()
     if name in local and not force:
-        console.print(f"Backend `{name}` is already present in {str(BACKENDS_CONFIG_PATH)}. "
-                      f"If you want it to be overwritten, add --force flag.")
+        console.print(
+            f"Backend `{name}` is already present in {str(BACKENDS_CONFIG_PATH)}. "
+            f"If you want it to be overwritten, add --force flag."
+        )
         raise Abort(1)
 
     kwargs = dict(map(lambda p: p.split("="), params))
@@ -60,8 +53,7 @@ def add(name: BackendNameArg, params: BackendParamsArg, force: ForceAddArg = Fal
 
     if not BACKENDS_CONFIG_PATH.parent.exists() and not create_yml:
         path = str(BACKENDS_CONFIG_PATH)
-        console.print(f"Backends storage {path} does not exist, "
-                      f"you can create it by adding --create to the command.")
+        console.print(f"Backends storage {path} does not exist, you can create it by adding --create to the command.")
         raise Abort(1)
 
     if create_yml:
@@ -73,7 +65,7 @@ def add(name: BackendNameArg, params: BackendParamsArg, force: ForceAddArg = Fal
 
 @backend_app.command()
 def remove(name: BackendNameArg):
-    """ Delete backend from list. """
+    """Delete backend from list."""
     local = load_backend_configs()
     if name not in local:
         console.print(f"Backend `{name}` is not among your configs.")
@@ -86,11 +78,10 @@ def remove(name: BackendNameArg):
 
 @backend_app.command(name="list")
 def _list(names: BackendNamesArg = None):
-    """ Show parameters of specified backend(s). """
+    """Show parameters of specified backend(s)."""
     local = load_backend_configs()
 
-    table = Table("Name", "Backend", "Parameters",
-                  title=f"Configs at {str(BACKENDS_CONFIG_PATH.resolve())}")
+    table = Table("Name", "Backend", "Parameters", title=f"Configs at {str(BACKENDS_CONFIG_PATH.resolve())}")
 
     if names is None:
         names = local.copy()

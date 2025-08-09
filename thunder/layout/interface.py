@@ -8,10 +8,9 @@ from lazycon import Config
 
 from pydantic import BaseModel
 
+
 class NoExtra(BaseModel):
-    model_config = {
-        'extra': 'forbid'
-    }
+    model_config = {"extra": "forbid"}
 
 
 class Node(NoExtra):

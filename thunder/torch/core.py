@@ -16,15 +16,15 @@ from .utils import maybe_from_np, to_np
 
 class ThunderModule(LightningModule):
     def __init__(
-            self,
-            architecture: nn.Module,
-            criterion: Callable,
-            n_targets: int = 1,
-            activation: Callable = identity,
-            optimizer: Union[List[Optimizer], Optimizer] = None,
-            lr_scheduler: Union[List[LRScheduler], LRScheduler] = None,
-            predictor: BasePredictor = None,
-            n_val_targets: int = None
+        self,
+        architecture: nn.Module,
+        criterion: Callable,
+        n_targets: int = 1,
+        activation: Callable = identity,
+        optimizer: Union[List[Optimizer], Optimizer] = None,
+        lr_scheduler: Union[List[LRScheduler], LRScheduler] = None,
+        predictor: BasePredictor = None,
+        n_val_targets: int = None,
     ):
         """
         Parameters
@@ -65,7 +65,7 @@ class ThunderModule(LightningModule):
         return self.architecture(*args, **kwargs)
 
     def training_step(self, batch: Tuple[Tensor, ...], batch_idx: int) -> STEP_OUTPUT:
-        x, y = batch[: -self.n_targets], batch[-self.n_targets:]
+        x, y = batch[: -self.n_targets], batch[-self.n_targets :]
         return self.criterion(self(*x), *y)
 
     def validation_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> STEP_OUTPUT:
@@ -85,14 +85,13 @@ class ThunderModule(LightningModule):
         return to_np(self.activation(self(*x)))
 
     def inference_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
-        x, y = map(squeeze_first, (batch[:-self.n_val_targets], batch[-self.n_val_targets:]))
+        x, y = map(squeeze_first, (batch[: -self.n_val_targets], batch[-self.n_val_targets :]))
         return self.predictor([x], self.predict)[0], y
 
     def configure_optimizers(self) -> Tuple[List[Optimizer], List[LRScheduler]]:
         if not self.optimizer and not self.lr_scheduler:
             raise NotImplementedError(
-                "You must specify optimizer or lr_scheduler, "
-                "or implement configure_optimizers method"
+                "You must specify optimizer or lr_scheduler, or implement configure_optimizers method"
             )
 
         _optimizers = list(collapse([self.optimizer]))

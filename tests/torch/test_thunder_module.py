@@ -144,8 +144,7 @@ def test_no_schedulers(architecture, trainer):
 
 def test_no_optimizers_and_only_torch_schedulers(architecture, trainer):
     sgds = [SGD(architecture.parameters(), 1e-3), SGD(architecture.parameters(), 1e-3)]
-    schedulers = [LambdaLR(sgds[0], lr_lambda=np.exp),
-                  LambdaLR(sgds[1], lr_lambda=np.cos)]
+    schedulers = [LambdaLR(sgds[0], lr_lambda=np.exp), LambdaLR(sgds[1], lr_lambda=np.cos)]
     model = BoringManyOptim(architecture, loss, -1, lr_scheduler=schedulers)
     trainer.fit(model)
 
