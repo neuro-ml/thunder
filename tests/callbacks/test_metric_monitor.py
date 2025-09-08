@@ -1,3 +1,4 @@
+from collections import defaultdict
 from contextlib import nullcontext
 from functools import partial, wraps
 from itertools import chain
@@ -509,3 +510,38 @@ def test_empty_identity():
     assert list(metric_monitor.group_preprocess.keys()) == [preproc1, preproc2], len(
         metric_monitor.group_preprocess.keys()
     )
+
+
+def test_dict_as_group_preprocessing_result(tmpdir):
+    def restack_dict(batch_of_dicts: tuple[dict, ...]) -> dict:
+        new = defaultdict(list)
+        for dct in batch_of_dicts:
+            for k in dct:
+                new[k].append(dct[k])
+                
+        return new
+    
+    def metric(dct, _):
+        dct = restack_dict(dct)
+        return dct["y"] == dct["x"] 
+    
+    group_metrics = {
+        lambda y, x: ({"y": y, "x": x}, x): {
+            "y_eq_x": metric
+        }
+    }
+    
+    monitor = MetricMonitor(None, group_metrics, None)
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        max_epochs=2,
+        limit_train_batches=4,
+        limit_val_batches=4,
+        enable_checkpointing=False,
+        enable_progress_bar=False,
+        callbacks=[monitor],
+        logger=CSVLogger(tmpdir),
+    )
+    model = MultiLoaderModule(nn.Linear(2, 1), lambda x, y: x + y, -1)
+    trainer.fit(model)
+    trainer.test(model)
