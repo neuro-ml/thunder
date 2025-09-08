@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Iterable
+from collections.abc import Callable, Iterable
 
 from toolz import compose
 
@@ -55,5 +55,5 @@ class Decorated(Predictor):
     def __init__(self, *decorators: Callable):
         self.decorators = compose(*decorators)
 
-    def run(self, batches: Iterable, predict_fn: Callable) -> Iterable:
+    def run(self, batches: Iterable, predict_fn: Callable) -> tuple:
         return super().run(batches, self.decorators(predict_fn))

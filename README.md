@@ -13,10 +13,7 @@ The Deep Learning framework based on [Lightning](https://github.com/Lightning-AI
 
 ```bash
 pip install thunder
-```
-
-:warning:  
-> Currently thunder is not published on pypi. Install it via git clone.  
+``` 
 
 ## Start experimenting
 

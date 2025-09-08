@@ -16,10 +16,11 @@ from thunder.torch.utils import last_checkpoint
 
 
 TESTKEYS = [
-    tuple(), ("optimizer step",),
+    tuple(),
+    ("optimizer step",),
     ("backward", "optimizer step", "total train downtime", "total val downtime"),
     (True,),
-    ("backward", "wrong key")
+    ("backward", "wrong key"),
 ]
 
 
@@ -140,6 +141,7 @@ def test_load_from_checkpoint(args, tmpdir):
     """
     Checks whether state `TimeProfiler` is restored properly after experiment fails.
     """
+
     class Dataset(RandomDataset):
         def __getitem__(self, item):
             return super().__getitem__(item), torch.randn(1)[0]

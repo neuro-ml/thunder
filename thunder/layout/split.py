@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import warnings
+from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional, Sequence, Tuple, Union
+from typing import Any
 
 import numpy as np
 from deli import load, save
 from lazycon import Config
-from more_itertools import zip_equal
 from torch.utils.data import Dataset, Subset
 
 from ..utils import collect
@@ -21,14 +21,15 @@ except ImportError:
 try:
     from sklearn.model_selection import BaseCrossValidator, BaseShuffleSplit
 
-    SplitType = Union[Callable, BaseShuffleSplit, BaseCrossValidator]
+    SplitType = Callable | BaseShuffleSplit | BaseCrossValidator
 except ImportError:
     SplitType = Callable
 
 
 class Split(Layout):
-    def __init__(self, split: SplitType, entries: Sequence, *args: Any, names: Optional[Sequence[str]] = None,
-                 **kwargs: Any):
+    def __init__(
+        self, split: SplitType, entries: Sequence, *args: Any, names: Sequence[str] | None = None, **kwargs: Any
+    ):
         """
         Splits data according to split function.
         Parameters
@@ -53,8 +54,8 @@ class Split(Layout):
         ```
         """
         if not callable(split):
-            if not hasattr(split, 'split'):
-                raise TypeError(f'Expected either a function, or a sklearn splitter, got {type(split)!r}')
+            if not hasattr(split, "split"):
+                raise TypeError(f"Expected either a function, or a sklearn splitter, got {type(split)!r}")
             split = split.split
 
         ids = entries_to_ids(entries)
@@ -68,7 +69,7 @@ class Split(Layout):
         self.entries = entries
         self.splits = splits
         self.names = names
-        self.fold: Optional[int] = None
+        self.fold: int | None = None
 
     def __getitem__(self, item: int):
         return self._subset(item)
@@ -84,28 +85,32 @@ class Split(Layout):
         return entries_subset(self.entries, self.splits[self.fold][idx])
 
     def build(self, experiment: Path, config: Config):
-        config.dump(experiment / 'experiment.config')
+        config.dump(experiment / "experiment.config")
         name = experiment.name
         for fold, split in enumerate(self.splits):
-            folder = experiment / f'fold_{fold}'
+            folder = experiment / f"fold_{fold}"
             folder.mkdir()
-            save(split, folder / 'split.json')
+            save(split, folder / "split.json")
 
-            local = config.copy().update(ExpName=f'{name}({fold})', GroupName=name)
-            local.dump(folder / 'experiment.config')
+            local = config.copy().update(ExpName=f"{name}({fold})", GroupName=name)
+            local.dump(folder / "experiment.config")
             yield Node(name=str(fold))
 
-    def load(self, experiment: Path, node: Optional[Node]) -> Tuple[Config, Path, Dict[str, Any]]:
-        folder = experiment / f'fold_{node.name}'
-        return Config.load(folder / 'experiment.config'), folder, {
-            'fold': int(node.name),
-            'split': tuple(load(folder / 'split.json')),
-        }
+    def load(self, experiment: Path, node: Node | None) -> tuple[Config, Path, dict[str, Any]]:
+        folder = experiment / f"fold_{node.name}"
+        return (
+            Config.load(folder / "experiment.config"),
+            folder,
+            {
+                "fold": int(node.name),
+                "split": tuple(load(folder / "split.json")),
+            },
+        )
 
-    def set(self, fold: int, split: Optional[Sequence[Sequence]] = None):
+    def set(self, fold: int, split: Sequence[Sequence] | None = None):
         self.fold = fold
         if split is None:
-            warnings.warn('No reference split provided. Your results might be inconsistent!', UserWarning)
+            warnings.warn("No reference split provided. Your results might be inconsistent!", UserWarning)
         else:
             if split != self.splits[fold]:
                 # TODO: consistency error?
@@ -113,9 +118,14 @@ class Split(Layout):
 
 
 class SingleSplit(Layout):
-    def __init__(self, entries: Sequence, *, shuffle: bool = True,
-                 random_state: Union[np.random.RandomState, int, None] = 0,
-                 **sizes: Union[int, float]):
+    def __init__(
+        self,
+        entries: Sequence,
+        *,
+        shuffle: bool = True,
+        random_state: np.random.RandomState | int | None = 0,
+        **sizes: int | float,
+    ):
         """
         Creates single fold experiment, with custom number of sets.
         Parameters
@@ -139,9 +149,13 @@ class SingleSplit(Layout):
 
         ids = entries_to_ids(entries)
         self.entries = entries
-        self.split = dict(zip_equal(sizes.keys(), multi_split(
-            ids, list(sizes.values()), shuffle=shuffle, random_state=random_state
-        )))
+        self.split = dict(
+            zip(
+                sizes.keys(),
+                multi_split(ids, list(sizes.values()), shuffle=shuffle, random_state=random_state),
+                strict=True,
+            )
+        )
 
     def __getattr__(self, name: str):
         if name not in self.split:
@@ -149,22 +163,26 @@ class SingleSplit(Layout):
         return entries_subset(self.entries, self.split[name])
 
     def build(self, experiment: Path, config: Config):
-        config.dump(experiment / 'experiment.config')
+        config.dump(experiment / "experiment.config")
         name = experiment.name
-        save(self.split, experiment / 'split.json')
+        save(self.split, experiment / "split.json")
 
         local = config.copy().update(ExpName=name, GroupName=name)
-        local.dump(experiment / 'experiment.config')
+        local.dump(experiment / "experiment.config")
         return []
 
-    def load(self, experiment: Path, node: Optional[Node]) -> Tuple[Config, Path, Dict[str, Any]]:
-        return Config.load(experiment / 'experiment.config'), experiment, {
-            'split': load(experiment / 'split.json'),
-        }
+    def load(self, experiment: Path, node: Node | None) -> tuple[Config, Path, dict[str, Any]]:
+        return (
+            Config.load(experiment / "experiment.config"),
+            experiment,
+            {
+                "split": load(experiment / "split.json"),
+            },
+        )
 
-    def set(self, split: Optional[Dict[str, Sequence]] = None):
+    def set(self, split: dict[str, Sequence] | None = None):
         if split is None:
-            warnings.warn('No reference split provided. Your results might be inconsistent!', UserWarning)
+            warnings.warn("No reference split provided. Your results might be inconsistent!", UserWarning)
         else:
             if split != self.split:
                 # TODO: consistency error?
@@ -188,8 +206,12 @@ def entries_subset(entries, ids):
 
 
 @collect
-def multi_split(ids: Sequence, sizes: Sequence[int, float],
-                shuffle: bool = True, random_state: Union[np.random.RandomState, int, None] = 0):
+def multi_split(
+    ids: Sequence,
+    sizes: Sequence[int, float],
+    shuffle: bool = True,
+    random_state: np.random.RandomState | int | None = 0,
+):
     if shuffle:
         if not isinstance(random_state, np.random.RandomState):
             random_state = np.random.RandomState(random_state)
@@ -203,24 +225,25 @@ def multi_split(ids: Sequence, sizes: Sequence[int, float],
 
     total_size = sum(sizes)
     if total_size != 1 and isinstance(sizes, float):
-        raise ValueError("If sizes are specified as floats, they should sum up to 1, "
-                         f"got sum({sizes}) = {total_size}.")
+        raise ValueError(f"If sizes are specified as floats, they should sum up to 1, got sum({sizes}) = {total_size}.")
     elif all(isinstance(s, int) for s in sizes) and total_size != total:
-        raise ValueError("If sizes are specified as ints, they should sum up to number of cases, "
-                         f"got sum({sizes}) = {total_size} and {total} cases.")
+        raise ValueError(
+            "If sizes are specified as ints, they should sum up to number of cases, "
+            f"got sum({sizes}) = {total_size} and {total} cases."
+        )
 
     sizes = [round(total * x) if isinstance(x, float) else x for x in sizes]
 
     start = 0
     for size in sizes[:-1]:
-        yield ids[start:start + size]
+        yield ids[start : start + size]
         start += size
     yield ids[start:]
 
 
 def jsonify(x):
-    if isinstance(x, (np.generic, np.ndarray)):
+    if isinstance(x, np.generic | np.ndarray):
         return x.tolist()
-    if isinstance(x, (list, tuple)):
+    if isinstance(x, list | tuple):
         return list(map(jsonify, x))
     return x

@@ -5,7 +5,6 @@ from lightning import Trainer
 from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.demos.boring_classes import RandomDataset
 from lightning.pytorch.loggers import CSVLogger
-from more_itertools import zip_equal
 from torch import nn
 from torch.nn import Sequential
 from torch.optim import Adam
@@ -86,8 +85,13 @@ def test_multiply(mapping, targets, optim, tmpdir):
     check_scheduler_saving(new_scheduler, scheduler, optim, tmpdir)
 
 
-@pytest.mark.parametrize("mapping,targets", [(np.cos, [[np.cos(i), np.cos(i)] for i in range(5)]),
-                                             ([np.cos, np.sin], [[np.cos(i), np.sin(i)] for i in range(5)])])
+@pytest.mark.parametrize(
+    "mapping,targets",
+    [
+        (np.cos, [[np.cos(i), np.cos(i)] for i in range(5)]),
+        ([np.cos, np.sin], [[np.cos(i), np.sin(i)] for i in range(5)]),
+    ],
+)
 def test_schedule(mapping, targets, optim, tmpdir):
     scheduler = Schedule(mapping, [1, 100])
     scheduler(optim)
@@ -103,8 +107,11 @@ def test_schedule(mapping, targets, optim, tmpdir):
         ({0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, 100, [[1, 1], [1, 1], [10, 10], [4, 4], [5, 5]]),
         ({0: 2, 3: 6}, 100, [[2, 2], [2, 2], [2, 2], [6, 6], [6, 6]]),
         ({2: 0}, 100, [[100, 100], [100, 100], [0, 0], [0, 0], [0, 0]]),
-        ([{0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 3, 2: 56, 3: 4, 4: 5}], [100, 50],
-         [[1, 1], [1, 3], [10, 56], [4, 4], [5, 5]]),
+        (
+            [{0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 3, 2: 56, 3: 4, 4: 5}],
+            [100, 50],
+            [[1, 1], [1, 3], [10, 56], [4, 4], [5, 5]],
+        ),
         ([{0: 2, 3: 23}, {0: 2, 3: 6}], [100, 50], [[2, 2], [2, 2], [2, 2], [23, 6], [23, 6]]),
         ({2: 0}, [100, 50], [[100, 50], [100, 50], [0, 0], [0, 0], [0, 0]]),
     ],
@@ -121,10 +128,16 @@ def test_switch(mapping, lr_init, targets, optim, tmpdir):
 @pytest.mark.parametrize(
     "lr_scheduler, mapping, lr_mapping",
     [
-        (Switch({0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, lr_init=1),
-         {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 2, 2: 10, 3: 4, 4: 5}),
-        (Multiply({0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, lr_init=1),
-         {0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, {0: 1, 1: 1, 2: 10, 3: 40, 4: 200}),
+        (
+            Switch({0: 1, 1: 2, 2: 10, 3: 4, 4: 5}, lr_init=1),
+            {0: 1, 1: 2, 2: 10, 3: 4, 4: 5},
+            {0: 1, 1: 2, 2: 10, 3: 4, 4: 5},
+        ),
+        (
+            Multiply({0: 1, 1: 1, 2: 10, 3: 4, 4: 5}, lr_init=1),
+            {0: 1, 1: 1, 2: 10, 3: 4, 4: 5},
+            {0: 1, 1: 1, 2: 10, 3: 40, 4: 200},
+        ),
         (Schedule(lambda x: x + 1, lr_init=1), lambda x: x + 1, {i: i + 1 for i in range(5)}),
     ],
 )
@@ -132,6 +145,7 @@ def test_load_from_checkpoint(lr_scheduler, mapping, lr_mapping, model, tmpdir):
     """
     Checks whether state of schedulers is restored properly after experiment fails.
     """
+
     class Dataset(RandomDataset):
         def __getitem__(self, item):
             return super().__getitem__(item), torch.randn(1)[0]
@@ -145,9 +159,7 @@ def test_load_from_checkpoint(lr_scheduler, mapping, lr_mapping, model, tmpdir):
             super().__init__(*args, **kwargs)
 
         def training_step(self, batch, batch_idx):
-            """
-
-            """
+            """ """
             if FAILED[0]:
                 assert self.trainer.current_epoch >= 2
             out = super().training_step(batch, batch_idx)
@@ -192,7 +204,7 @@ def test_load_from_checkpoint(lr_scheduler, mapping, lr_mapping, model, tmpdir):
 
 
 def check_scheduler(scheduler, targets):
-    for i, target in zip_equal(range(5), targets):
+    for i, target in zip(range(5), targets, strict=True):
         assert np.allclose([pg["lr"] for pg in scheduler.optimizer.param_groups], target), f"epoch {i}"
         scheduler.optimizer.step()
         scheduler.step()

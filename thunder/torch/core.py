@@ -1,9 +1,10 @@
-from typing import Any, Callable, List, Tuple, Union
+from collections.abc import Callable
+from typing import Any
 
 import torch
 from lightning import LightningModule
 from lightning.pytorch.utilities.types import STEP_OUTPUT
-from more_itertools import collapse, padded, zip_equal
+from more_itertools import collapse, padded
 from toolz import identity
 from torch import Tensor, nn
 from torch.optim import Optimizer
@@ -16,15 +17,15 @@ from .utils import maybe_from_np, to_np
 
 class ThunderModule(LightningModule):
     def __init__(
-            self,
-            architecture: nn.Module,
-            criterion: Callable,
-            n_targets: int = 1,
-            activation: Callable = identity,
-            optimizer: Union[List[Optimizer], Optimizer] = None,
-            lr_scheduler: Union[List[LRScheduler], LRScheduler] = None,
-            predictor: BasePredictor = None,
-            n_val_targets: int = None
+        self,
+        architecture: nn.Module,
+        criterion: Callable,
+        n_targets: int = 1,
+        activation: Callable = identity,
+        optimizer: list[Optimizer] | Optimizer = None,
+        lr_scheduler: list[LRScheduler] | LRScheduler = None,
+        predictor: BasePredictor = None,
+        n_val_targets: int = None,
     ):
         """
         Parameters
@@ -56,7 +57,7 @@ class ThunderModule(LightningModule):
         self.lr_scheduler = lr_scheduler
         self.predictor = predictor if predictor else Predictor()
 
-    def transfer_batch_to_device(self, batch: Tuple, device: torch.device, dataloader_idx: int) -> Any:
+    def transfer_batch_to_device(self, batch: tuple, device: torch.device, dataloader_idx: int) -> Any:
         if self.trainer.state.stage != "train":
             return batch
         return super().transfer_batch_to_device(maybe_from_np(batch, device=device), device, dataloader_idx)
@@ -64,35 +65,34 @@ class ThunderModule(LightningModule):
     def forward(self, *args: Any, **kwargs: Any) -> Any:
         return self.architecture(*args, **kwargs)
 
-    def training_step(self, batch: Tuple[Tensor, ...], batch_idx: int) -> STEP_OUTPUT:
-        x, y = batch[: -self.n_targets], batch[-self.n_targets:]
+    def training_step(self, batch: tuple[Tensor, ...], batch_idx: int) -> STEP_OUTPUT:
+        x, y = batch[: -self.n_targets], batch[-self.n_targets :]
         return self.criterion(self(*x), *y)
 
-    def validation_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> STEP_OUTPUT:
+    def validation_step(self, batch: tuple, batch_idx: int, dataloader_idx: int = 0) -> STEP_OUTPUT:
         return self.inference_step(batch, batch_idx, dataloader_idx)
 
-    def test_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> STEP_OUTPUT:
+    def test_step(self, batch: tuple, batch_idx: int, dataloader_idx: int = 0) -> STEP_OUTPUT:
         return self.inference_step(batch, batch_idx, dataloader_idx)
 
-    def predict_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
+    def predict_step(self, batch: tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
         return self.inference_step(batch, batch_idx, dataloader_idx)
 
     def predict(self, x) -> STEP_OUTPUT:
         # TODO: do we need super(). ...?, also consider changing maybe_to_np to smth stricter
         x = maybe_from_np(x, device=self.device)
-        if not isinstance(x, (list, tuple)):
+        if not isinstance(x, list | tuple):
             x = (x,)
         return to_np(self.activation(self(*x)))
 
-    def inference_step(self, batch: Tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
-        x, y = map(squeeze_first, (batch[:-self.n_val_targets], batch[-self.n_val_targets:]))
+    def inference_step(self, batch: tuple, batch_idx: int, dataloader_idx: int = 0) -> Any:
+        x, y = map(squeeze_first, (batch[: -self.n_val_targets], batch[-self.n_val_targets :]))
         return self.predictor([x], self.predict)[0], y
 
-    def configure_optimizers(self) -> Tuple[List[Optimizer], List[LRScheduler]]:
+    def configure_optimizers(self) -> tuple[list[Optimizer], list[LRScheduler]]:
         if not self.optimizer and not self.lr_scheduler:
             raise NotImplementedError(
-                "You must specify optimizer or lr_scheduler, "
-                "or implement configure_optimizers method"
+                "You must specify optimizer or lr_scheduler, or implement configure_optimizers method"
             )
 
         _optimizers = list(collapse([self.optimizer]))
@@ -104,7 +104,7 @@ class ThunderModule(LightningModule):
         optimizers = []
         lr_schedulers = []
 
-        for optimizer, lr_scheduler in zip_equal(_optimizers, _lr_schedulers):
+        for optimizer, lr_scheduler in zip(_optimizers, _lr_schedulers, strict=True):
             if callable(lr_scheduler):
                 if optimizer is None:
                     raise ValueError("The scheduler demands an Optimizer, but received None")

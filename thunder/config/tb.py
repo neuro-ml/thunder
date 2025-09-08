@@ -54,10 +54,7 @@ def node_to_str(root_name, node, unique_names):
         if sentinel in local:
             return local[sentinel]
 
-        if not local:
-            result = name
-        else:
-            result = f'{name}[{len(local)}]'
+        result = name if not local else f"{name}[{len(local)}]"
 
         local[sentinel] = result
         return result
@@ -65,9 +62,9 @@ def node_to_str(root_name, node, unique_names):
     def scope_id(scope):
         if scope is None:
             return root_name
-        return f'{root_name}/{scope_id(scope.parent)}/{name_in_scope(scope.parent, scope.layer, scope)}'.strip('/')
+        return f"{root_name}/{scope_id(scope.parent)}/{name_in_scope(scope.parent, scope.layer, scope)}".strip("/")
 
-    return (scope_id(node.details) + '/' + name_in_scope(node.details, node.name, node)).strip('/')
+    return (scope_id(node.details) + "/" + name_in_scope(node.details, node.name, node)).strip("/")
 
 
 def parse(root_name, edges):
@@ -80,11 +77,12 @@ def parse(root_name, edges):
         all_nodes.update(inputs)
 
         nodes[output] = node_proto(
-            node_to_str(root_name, output, unique_names), [node_to_str(root_name, x, unique_names) for x in inputs],
+            node_to_str(root_name, output, unique_names),
+            [node_to_str(root_name, x, unique_names) for x in inputs],
             type(edge).__name__,
         )
 
     for node in all_nodes - set(nodes):
-        nodes[node] = node_proto(node_to_str(root_name, node, unique_names), [], 'Input')
+        nodes[node] = node_proto(node_to_str(root_name, node, unique_names), [], "Input")
 
     return list(nodes.values())

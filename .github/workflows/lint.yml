@@ -14,6 +14,5 @@ jobs:
 
       - name: Check code style
         run: |
-          pip install -r lint-requirements.txt
-          flake8 .
-          isort --check .
+          pip install -r tests/lint-requirements.txt
+          ruff check

@@ -6,7 +6,6 @@ import numpy as np
 import pytest
 import torch
 from lightning import LightningModule
-from more_itertools import zip_equal
 
 from thunder import ThunderModule
 from thunder.torch.utils import get_device, last_checkpoint, maybe_from_np, to_np
@@ -26,12 +25,12 @@ from thunder.torch.utils import get_device, last_checkpoint, maybe_from_np, to_n
 )
 def test_to_np(value, target):
     if isinstance(value, dict):
-        for (k1, v1), (k2, v2) in zip_equal(to_np(value).items(), target.items()):
+        for (k1, v1), (k2, v2) in zip(to_np(value).items(), target.items(), strict=True):
             assert k1 == k2 and np.all(v1 == v2)
-    elif isinstance(value, (list, tuple)):
+    elif isinstance(value, list | tuple):
         value = to_np(value)
-        assert isinstance(value, (list, tuple)), type(value)
-        for v1, v2 in zip_equal(value, target):
+        assert isinstance(value, list | tuple), type(value)
+        for v1, v2 in zip(value, target, strict=True):
             assert np.all(v1 == v2)
     else:
         assert np.all(to_np(value) == target)
@@ -51,12 +50,12 @@ def test_to_np(value, target):
 )
 def test_maybe_from_np(value, target):
     if isinstance(value, dict):
-        for (k1, v1), (k2, v2) in zip_equal(maybe_from_np(value, device="cpu").items(), target.items()):
+        for (k1, v1), (k2, v2) in zip(maybe_from_np(value, device="cpu").items(), target.items(), strict=True):
             assert k1 == k2 and (v1 == v2).all(), (v1, v2)
-    elif isinstance(value, (list, tuple)):
+    elif isinstance(value, list | tuple):
         value = maybe_from_np(value, device="cpu")
-        assert isinstance(value, (list, tuple)), type(value)
-        for v1, v2 in zip_equal(value, target):
+        assert isinstance(value, list | tuple), type(value)
+        for v1, v2 in zip(value, target, strict=True):
             assert (v1 == v2).all()
     else:
         assert (maybe_from_np(value, device="cpu") == target).all()
@@ -70,7 +69,7 @@ def test_maybe_from_np(value, target):
         (LightningModule(), does_not_raise()),
         (ThunderModule(torch.nn.Linear(2, 1), lambda x, y: x + y), does_not_raise()),
         ([], pytest.raises(TypeError, match="list")),
-        (torch.nn.ReLU(), pytest.raises(RuntimeError, match="no parameters"))
+        (torch.nn.ReLU(), pytest.raises(RuntimeError, match="no parameters")),
     ],
 )
 def test_get_device(x, expected):

@@ -2,7 +2,7 @@ import copy
 import functools
 from collections import ChainMap
 from pathlib import Path
-from typing import Dict, Optional, Tuple, Union
+from typing import Optional
 
 import typer
 import yaml
@@ -12,36 +12,35 @@ from typer.core import TyperCommand
 from typer.main import get_click_param
 from typer.models import ParamMeta
 
-from ..backend import BackendEntryConfig, MetaEntry, backends
-from ..pydantic_compat import model_validate, resolve_pydantic_major
+from ..engine import BackendEntryConfig, MetaEntry, engines
 from .app import app
 
 
-BACKENDS_CONFIG_PATH = Path(typer.get_app_dir(app.info.name)) / 'backends.yml'
+BACKENDS_CONFIG_PATH = Path(typer.get_app_dir(app.info.name)) / "backends.yml"
 
 
 class BackendCommand(TyperCommand):
-    _current_backend: Optional[str] = None
+    _current_backend: str | None = None
 
     @staticmethod
-    def get_backend(backend: str, kwargs: dict):
+    def get_engine(backend: str, kwargs: dict):
         kwargs = kwargs.copy()
-        duplicate = kwargs.pop('kwargs', None)
+        duplicate = kwargs.pop("kwargs", None)
         assert duplicate is None, duplicate
-        backend = collect_backends()[backend]
-        return backend, backend.Config(**kwargs)
+        engine = collect_backends()[backend]
+        return engine, engine.Config.model_validate(kwargs)
 
     def parse_args(self, ctx: Context, args):
         self._current_backend = None
         try:
-            index = args.index('--backend')
+            index = args.index("--backend")
         except ValueError:
             pass
         else:
             if index < len(args) - 1:
                 self._current_backend = args[index + 1]
-
-        return super(BackendCommand, self).parse_args(ctx, args)
+        parsed = super().parse_args(ctx, args)
+        return parsed
 
     @property
     def params(self):
@@ -55,7 +54,7 @@ class BackendCommand(TyperCommand):
 
 def populate(backend_name):
     configs, meta = collect_configs()
-    local_configs = sorted(set(configs) - set(backends))
+    local_configs = sorted(set(configs) - set(engines))
     if backend_name is None:
         if meta is not None:
             entry = configs[meta.default]
@@ -70,59 +69,67 @@ def populate(backend_name):
         if backend_name in configs:
             entry = configs[backend_name]
         else:
-            raise ValueError(f"Specified backend `{backend_name} is not among "
-                             f"available configs: {sorted(configs)}`")
+            raise ValueError(f"Specified backend `{backend_name} is not among available configs: {sorted(configs)}`")
 
     backend_choices = ", ".join(sorted(configs)).rstrip(", ")
     if entry is None:
-        return [ParamMeta(
-            name='backend', annotation=Optional[str],
-            default=Option(
-                ..., help=f'The runner backend to use. Choices: {backend_choices}.',
-                show_default=False,
+        return [
+            ParamMeta(
+                name="backend",
+                annotation=Optional[str],  # noqa: UP007
+                default=Option(
+                    ...,
+                    help=f"The runner backend to use. Choices: {backend_choices}.",
+                    show_default=False,
+                ),
             )
-        )]
+        ]
 
     backend_name = entry.backend
-    backend_params = [ParamMeta(
-        name='backend', annotation=Optional[str],
-        default=Option(
-            backend_name,
-            help=f'The runner backend to use. Choices: {backend_choices}. Currently using {backend_name}. '
-                 f'List of backends can be found at {str(BACKENDS_CONFIG_PATH.resolve())}',
-            show_default=False,
-        ),
-    )]
-    backend_params.extend(_collect_backend_params(entry, backend_name))
+    backend_params = [
+        ParamMeta(
+            name="backend",
+            annotation=Optional[str],  # noqa: UP007
+            default=Option(
+                backend_name,
+                help=f"The runner backend to use. Choices: {backend_choices}. Currently using {backend_name}. "
+                f"List of backends can be found at {str(BACKENDS_CONFIG_PATH.resolve())}",
+                show_default=False,
+            ),
+        )
+    ]
+    backend_params.extend(collect_backend_params(entry))
     return backend_params
 
 
-if resolve_pydantic_major() >= 2:
-    def _collect_backend_params(entry, backend_name):
-        """
-        Config Annotation depends on pydantic version.
-        """
-        for field_name, field in entry.backend_cls.Config.model_fields.items():
+def collect_backend_params(entry):
+    """
+    Config Annotation depends on pydantic version.
+    """
+    for field_name, field in entry.backend_cls.Config.model_fields.items():
+        # Extract the Option from field metadata
+        option = None
+        for metadata_item in field.metadata:
+            if hasattr(metadata_item, "__class__") and "Option" in metadata_item.__class__.__name__:
+                option = metadata_item
+                break
+
+        if option is not None:
+            # Update the option's default value
+            option.default = getattr(entry.config, field_name)
+            yield ParamMeta(
+                name=field_name,
+                default=option,
+                annotation=field.annotation,
+            )
+        else:
+            # Fallback for fields without Option metadata
             field_clone = copy.deepcopy(field)
             field_clone.default = getattr(entry.config, field_name)
             yield ParamMeta(
-                name=field_name, default=field_clone.default, annotation=field.annotation,
-            )
-else:
-    def _collect_backend_params(entry, backend_name):
-        for field in entry.backend_cls.Config.__fields__.values():
-            annotation = field.outer_type_
-            # TODO: https://stackoverflow.com/a/68337036
-            if not hasattr(annotation, '__metadata__') or not hasattr(annotation, '__origin__'):
-                raise ValueError('Please use the `Annotated` syntax to annotate you backend config')
-
-            # TODO
-            default, = annotation.__metadata__
-            default = copy.deepcopy(default)
-            default.default = getattr(entry.config, field.name)
-            default.help = f'[{backend_name} backend] {default.help}'
-            yield ParamMeta(
-                name=field.name, default=default, annotation=annotation.__origin__,
+                name=field_name,
+                default=field_clone.default,
+                annotation=field.annotation,
             )
 
 
@@ -135,12 +142,12 @@ def collect_backends() -> ChainMap:
     mapping config_name : backend
     """
     configs, _ = collect_configs()
-    local_backends = {name: backends[config.backend] for name, config in configs.items()}
-    return ChainMap(backends, local_backends)
+    local_backends = {name: engines[config.backend] for name, config in configs.items()}
+    return ChainMap(engines, local_backends)
 
 
-@functools.lru_cache()
-def collect_configs() -> Tuple[ChainMap, Union[MetaEntry, None]]:
+@functools.lru_cache
+def collect_configs() -> tuple[ChainMap, MetaEntry | None]:
     """
     Collects configs for `thunder run` command.
     Returns
@@ -150,25 +157,24 @@ def collect_configs() -> Tuple[ChainMap, Union[MetaEntry, None]]:
     meta - meta info (e.g. default backend), if no meta data found, returns None
     """
     local_configs = load_backend_configs()
-    builtin_configs = {
-        name: BackendEntryConfig(backend=name, config={})
-        for name in backends.keys()
-    }
+    builtin_configs = {name: BackendEntryConfig(backend=name, config={}) for name in engines}
     meta = local_configs.pop("meta", None)
     return ChainMap(builtin_configs, local_configs), meta
 
 
-def load_backend_configs() -> Dict[str, Union[BackendEntryConfig, MetaEntry]]:
+def load_backend_configs() -> dict[str, BackendEntryConfig | MetaEntry]:
     path = BACKENDS_CONFIG_PATH
     if not path.exists():
         # TODO: return Option[Dict]
         return {}
 
-    with path.open('r') as file:
+    with path.open("r") as file:
         local = yaml.safe_load(file)
     if local is None:
         return {}
     # FIXME
     assert isinstance(local, dict), type(local)
-    return {k: model_validate(BackendEntryConfig, v)
-            if k != "meta" else model_validate(MetaEntry, v) for k, v in local.items()}
+    return {
+        k: BackendEntryConfig.model_validate(v) if k != "meta" else MetaEntry.model_validate(v)
+        for k, v in local.items()
+    }

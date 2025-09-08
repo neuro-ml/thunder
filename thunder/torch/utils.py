@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any, Literal, Union
+from typing import Any, Literal
 
 import numpy as np
 import torch
@@ -11,7 +11,7 @@ from torch import nn
 from ..utils import squeeze_first
 
 
-def get_device(x: Union[torch.Tensor, nn.Module]) -> torch.device:
+def get_device(x: torch.Tensor | nn.Module) -> torch.device:
     """
     Infer device of torch.Tensor or nn.Module instance.
     Parameters
@@ -21,7 +21,7 @@ def get_device(x: Union[torch.Tensor, nn.Module]) -> torch.device:
     -------
     device: torch.device
     """
-    if isinstance(x, (torch.Tensor, LightningModule)):
+    if isinstance(x, torch.Tensor | LightningModule):
         return x.device
     elif isinstance(x, nn.Module):
         try:
@@ -65,7 +65,7 @@ def tensor2np(x: torch.Tensor) -> np.ndarray:
     return x.detach().cpu().numpy()
 
 
-def maybe_from_np(*x: Any, device: Union[torch.device, str] = "cpu") -> Any:
+def maybe_from_np(*x: Any, device: torch.device | str = "cpu") -> Any:
     """
     Recursively converts numpy arrays to torch.Tensor.
     Parameters
@@ -93,7 +93,7 @@ def maybe_from_np(*x: Any, device: Union[torch.device, str] = "cpu") -> Any:
     return squeeze_first(apply_to_collection(x, (np.ndarray, np.generic, torch.Tensor), to_tensor))
 
 
-def last_checkpoint(root: Union[Path, str]) -> Union[Path, Literal["last"]]:
+def last_checkpoint(root: Path | str) -> Path | Literal["last"]:
     """
     Load most fresh last.ckpt file based on time.
     Parameters

@@ -6,7 +6,6 @@ import torch
 from lightning import Trainer
 from lightning.pytorch.demos.boring_classes import RandomDataset
 from lightning.pytorch.loggers import CSVLogger
-from more_itertools import zip_equal
 from torch.optim import SGD
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data import DataLoader
@@ -145,12 +144,11 @@ def test_no_schedulers(architecture, trainer):
 
 def test_no_optimizers_and_only_torch_schedulers(architecture, trainer):
     sgds = [SGD(architecture.parameters(), 1e-3), SGD(architecture.parameters(), 1e-3)]
-    schedulers = [LambdaLR(sgds[0], lr_lambda=np.exp),
-                  LambdaLR(sgds[1], lr_lambda=np.cos)]
+    schedulers = [LambdaLR(sgds[0], lr_lambda=np.exp), LambdaLR(sgds[1], lr_lambda=np.cos)]
     model = BoringManyOptim(architecture, loss, -1, lr_scheduler=schedulers)
     trainer.fit(model)
 
-    for sch, opt in zip_equal(model.lr_schedulers(), model.optimizers()):
+    for sch, opt in zip(model.lr_schedulers(), model.optimizers(), strict=True):
         assert sch.optimizer is opt.optimizer
         assert opt.optimizer is not None
 
