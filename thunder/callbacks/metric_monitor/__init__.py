@@ -13,8 +13,8 @@ from lightning import Callback, LightningModule, Trainer
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from toolz import compose, keymap, valmap
 
-from ..torch.utils import to_np
-from ..utils import squeeze_first
+from ...torch.utils import to_np
+from ...utils import squeeze_first
 
 
 class MetricMonitor(Callback):
