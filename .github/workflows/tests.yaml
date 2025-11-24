@@ -14,6 +14,13 @@ jobs:
         # https://github.com/pytorch/pytorch/blob/main/RELEASE.md#release-compatibility-matrix
         python-version: [ '3.12', '3.13', '3.14' ]
         torch-version: [ '2.6.0', '2.7.0', '2.8.0', '2.9.0' ]
+        exclude:
+          - python-version: '3.14'
+            torch-version: '2.6.0'
+          - python-version: '3.14'
+            torch-version: '2.7.0'
+          - python-version: '3.14'
+            torch-version: '2.8.0'
 
 
     steps:
