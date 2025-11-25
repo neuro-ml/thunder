@@ -13,8 +13,8 @@ from lightning import Callback, LightningModule, Trainer
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from toolz import compose, keymap, valmap
 
-from ..torch.utils import to_np
-from ..utils import squeeze_first
+from ...torch.utils import to_np
+from ...utils import squeeze_first
 
 
 class MetricMonitor(Callback):
@@ -203,7 +203,7 @@ class MetricMonitor(Callback):
         for dataloader_idx, all_predictions in self._all_predictions.items():
             loader_postfix = f"/{dataloader_idx}" if len(self._all_predictions) > 1 else ""
             for preprocess, metrics_names in self.group_preprocess.items():
-                preprocessed = [np.asarray(p) for p in zip(*all_predictions[preprocess], strict=True)]
+                preprocessed = list(zip(*all_predictions[preprocess], strict=True))
                 for name in metrics_names:
                     group_metric_values[f"{name}{loader_postfix}"] = self.group_metrics[name](*preprocessed)
 
